@@ -57,22 +57,7 @@
 
 本教程使用Dune平台的“Dune Engine V2 (Beta)”数据库，通常被称为V2 Engine或者简称V2。与此对照，Dune平台支持的其他数据库也被统称为V1。
 
-我们使用以太坊区块链上流行的DeFi协议Uniswap V3的流动资金池作为案例. 对应的数据表为`uniswap_v3_ethereum.Factory_evt_PoolCreated`（已创建的流动资金池表）。同时，部分查询也用到了`token.erc20`（ERC20代币表）。
-
-已创建的流动资金池表`uniswap_v3_ethereum.Factory_evt_PoolCreated`的结构如下：
-
-| **列名**                 | **数据类型**   | **说明**                                    |
-| ----------------------- | ------------- | ------------------------------------------ |
-| contract\_address       | string        | 合约地址                                    |
-| evt\_block\_number      | long          | 区块编号                                    |
-| evt\_block\_time        | timestamp     | 区块被开采的时间                             |
-| evt\_index              | integer       | 事件的索引编号                               |
-| evt\_tx\_hash           | string        | 事件归属交易的唯一哈希值                      |
-| fee                     | integer       | 流动资金池的收费费率（百万分之N）               |
-| pool                    | string        | 流动资金池的地址                             |
-| tickSpacing             | integer       | 刻度间距                                    |
-| token0                  | string        | 资金池中的第一个ERC20代币地址                  |
-| token1                  | string        | 资金池中的第二个ERC20代币地址                  |
+在本节的SQL查询示例中，我们使用ERC20代币表`token.erc20`做例子。ERC20代币表是由Dune社区用户通过魔法书（Spellbook）创建的抽象数据表（Spells，也称为Abstractions），该表记录了Dune支持的各种区块链上面的兼容ERC20标准的主流代币。针对每种记录了其归属的区块链、代币合约地址、代币支持的小数位数和代币符号。
 
 ERC20代币表`token.erc20`的结构如下：
 
@@ -85,17 +70,20 @@ ERC20代币表`token.erc20`的结构如下：
 
 ## SQL查询快速入门
 
-SQL语句类型包括新增（Insert）、删除（Delete）、修改（Update）、查找（Select）。链上数据分析绝大多数时候只需关注查找也就是Select语句，后续我们会交替使用查询、Query、Select等词汇，如无特别说明，都是指使用Select 语句编写Query进行查询。
+广义的SQL查询语句类型包括新增（Insert）、删除（Delete）、修改（Update）、查找（Select）等多个类型。狭义的SQL查询主要指使用Select语句查询数据。链上数据分析绝大多数时候只需关注数据查找也就是Select语句，后续我们会交替使用查询、Query、Select等词汇，如无特别说明，都是指使用Select语句编写Query进行查询。
 
 ### 编写第一个查询
 
-SQL中的Hello World！从Uniswap 流动资金池查询返回所有记录的全部字段。
+下面的SQL可以查询所有的ERC20代币信息：
 
 ```SQL
-select * from uniswap_v3_ethereum.Factory_call_createPool
+select * from tokens.erc20
 ```
 
 ### Select 查询语句基本语法介绍
+
+一个典型的简单SQL查询语句的结构如下所示：
+
 ```SQL
 select 字段列表
 from 数据表
@@ -104,10 +92,69 @@ order by 排序字段
 limit 返回记录数量限制
 ```
 
-使用Limit子句限制返回的记录数量：
+其中，字段列表可以逐个列出查询需要返回的字段（数据列），多个字段之间用英文逗号分隔，比如可以这样指定查询返回的字段列表`contract_address, decimals, symbol`。也可以使用通配符`*`来表示返回数据表的全部字段。
+
+数据表以`schema_name.table_name`的格式来指定，例如`token.erc20`。
+
+筛选条件用于按指定的条件筛选返回的数据。对于不同数据类型的字段，适用的筛选条件语法各有不同。字符串（`string`）类型的字段，可以用`=`，`like`等条件做筛选。日期时间（`datetime`）类型的字段可以用`>=`，`<=`，`between ... and ...`等条件做筛选。使用`like`条件时，可以用通配符`%`匹配一个或多个任意字符。多个筛选条件可以用`and`（表示必须同时满足）或`or`（表示满足任意一个条件即可）连接起来。
+
+排序字段用于指定对查询结果集进行排序的判断依据，这里是一个或多个字段名称，加上可选的排序方向指示（`asc`表示升序，`desc`表示降序）。多个排序字段之间用英文逗号分隔。
+
+返回记录数量限制用于指定查询最多返回的记录数。区块链保存的是海量数据，通常我们需要添加返回记录数量限制来提高查询的效率。
+
+这里是一些示例查询：
+
+**指定返回的字段列表：**
+
+```SQL
+select blockchain, contract_address, decimals, symbol
+from tokens.erc20
+```
+
+**添加筛选条件：**
+
+```SQL
+select blockchain, contract_address, decimals, symbol
+from tokens.erc20
+where blockchain = 'ethereum'   -- 只返回以太坊区块链的ERC20代币信息
+```
+
+注意上面的SQL中，`--`用于添加注释说明。
+
+**多个筛选条件：**
+
+```SQL
+select blockchain, contract_address, decimals, symbol
+from tokens.erc20
+where blockchain = 'ethereum'   -- 返回以太坊区块链的ERC20代币信息
+    and symbol like 'E%'    -- 代币符号以字母E开头
+```
+
+**指定排序字段：**
+
+```SQL
+select blockchain, contract_address, decimals, symbol
+from tokens.erc20
+where blockchain = 'ethereum'   -- 返回以太坊区块链的ERC20代币信息
+    and symbol like 'E%'    -- 代币符号以字母E开头
+order by symbol asc -- 按代币符号升序排列
+```
+
+**多个排序字段：**
+
+```SQL
+select blockchain, contract_address, decimals, symbol
+from tokens.erc20
+where blockchain = 'ethereum'   -- 返回以太坊区块链的ERC20代币信息
+    and symbol like 'E%'    -- 代币符号以字母E开头
+order by decimals desc, symbol asc  -- 先按代币支持的小数位数降序排列，再按代币符号升序排列
+```
+
+**使用Limit子句限制返回的记录数量：**
+
 ```SQL
 select *
-from uniswap_v3_ethereum.Factory_evt_PoolCreated
+from tokens.erc20
 limit 10
 ```
 
@@ -158,14 +205,32 @@ Union
 #### 简单的窗口函数
 Sum() Over (Order by block_date) As 
 
-
 ## 创建数据看板
 
 ### 背景知识
 
 Uniswap V3 流动资金池简介
 
-### 数据看板的内容
+### Uniswap流动资金池表
+
+在这个示例数据看板中，我们主要使用以太坊区块链上流行的DeFi协议Uniswap V3的流动资金池作为案例. 对应的数据表为`uniswap_v3_ethereum.Factory_evt_PoolCreated`。同时，部分查询也用到了前面介绍过的`token.erc20`表。
+
+流动资金池表`uniswap_v3_ethereum.Factory_evt_PoolCreated`的结构如下：
+
+| **列名**                 | **数据类型**   | **说明**                                    |
+| ----------------------- | ------------- | ------------------------------------------ |
+| contract\_address       | string        | 合约地址                                    |
+| evt\_block\_number      | long          | 区块编号                                    |
+| evt\_block\_time        | timestamp     | 区块被开采的时间                             |
+| evt\_index              | integer       | 事件的索引编号                               |
+| evt\_tx\_hash           | string        | 事件归属交易的唯一哈希值                      |
+| fee                     | integer       | 流动资金池的收费费率（百万分之N）               |
+| pool                    | string        | 流动资金池的地址                             |
+| tickSpacing             | integer       | 刻度间距                                    |
+| token0                  | string        | 资金池中的第一个ERC20代币地址                  |
+| token1                  | string        | 资金池中的第二个ERC20代币地址                  |
+
+### 数据看板的主要内容
 
 我们的第一个Dune数据看板将包括以下查询内容。每个查询会输出1个或多个可视化图表。
 - 查询流动资金池总数
