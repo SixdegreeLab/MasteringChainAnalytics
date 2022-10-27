@@ -360,7 +360,7 @@ Uniswap V3 流动资金池简介
 - 按周汇总的新建流动资金池总数
 - 最近30天的每日新建流动资金池总数
 - 按周汇总的新建流动资金池总数-按收费等级分组
-- 按代币类型统计各种代币的资金池数量
+- 统计资金池数量最多的代币Token
 - 最新的100个流动资金池记录
 
 ### 查询1: 查询流动资金池总数
@@ -467,7 +467,7 @@ order by 1
 with pool_details as (
     select date_trunc('day', evt_block_time) as block_date, evt_tx_hash, pool
     from uniswap_v3_ethereum.Factory_evt_PoolCreated
-    where evt_block_time >= now() - interval '29 days'
+    where evt_block_time >= now() - interval '29 days'  -- now()存贮了当前日期+时间，当天的数据已包含在内
 )
 
 select block_date, count(pool) as pool_count
@@ -476,10 +476,16 @@ group by 1
 order by 1
 ```
 
+本查询在Dune上的参考链接：[https://dune.com/queries/1455382](https://dune.com/queries/1455382)
+
+我们同样使用条形图来做可视化。添加一个条形图类型的新图表，将标题修改为“近30天每日新增资金池数量”。图表的水平坐标轴（X Column）选择“block_date“，垂直坐标轴“Y Column 1”选择“pool_count”。取消勾选左侧的“Show chart legend”选项，同时勾选上“Show data labels”选项。然后把这个可视化图表添加到数据看板中。其显示效果如下：
+
+![image_05.png](./img/image_05.png)
+
+
 ### 查询5：按周汇总的新建流动资金池总数-按收费等级分组
 
-我们可以进一步细分分组统计的维度，按收费等级来汇总统计每周新建的流动资金池数量。这样我们可以对比不同收费等级在不同时间段的流行程度。
-这个例子中我们将演示Group by多级分组，可视化图表数据的柱状图（Bar Chart）、分组、叠加等功能。
+我们可以对分组统计的维度做进一步的细分，按收费等级来汇总统计每周内新建的流动资金池数量。这样我们可以对比不同收费等级在不同时间段的流行程度。这个例子中我们演示Group by多级分组，可视化图表数据的条形图的叠加等功能。
 
 ```SQL
 with pool_details as (
@@ -495,17 +501,22 @@ group by 1, 2
 order by 1, 2
 ```
 
-### 查询6：按代币（Token）类型统计各种代币的资金池数量
+本查询在Dune上的参考链接：[https://dune.com/queries/1455535](https://dune.com/queries/1455535)
 
-如果想分析哪些ERC20代币在Uniswap资金池中更流行，我们可以按代币类型来做分组统计。
+我们同样使用条形图来做可视化。添加一个条形图类型的新图表，将标题修改为“不同收费等级每周新建流动资金池数量”。图表的水平坐标轴（X Column）选择“block_date“，垂直坐标轴“Y Column 1”选择“pool_count”。同时，我们需要在“Group by”中选择“fee_tier”作为可视化图表的分组来实现分组显示，同时勾选左侧的“Enable stacking”选项让同一日期同一分组的数据叠加到一起显示。把这个可视化图表添加到数据看板中的显示效果如下：
+
+![image_06.png](./img/image_06.png)
+
+
+### 查询6：统计资金池数量最多的代币Token
+
+如果想分析哪些ERC20代币在Uniswap资金池中更流行（即它们对应的资金池数量更多），我们可以按代币类型来做分组统计。
 
 每一个Uniswap流动资金池都由两个ERC20代币组成（token0和token1），根据其地址哈希值的字母顺序，同一种ERC20代币可能保存在token0中，也可能保存在token1中。所以，在下面的查询中，我们通过使用集合（Union）来得到完整的资金池详细信息列表。
 
-资金池中保存的是ERC20代币的合约地址，直接显示不够直观。Dune社区用户提交的魔法书生成的抽象数据表`tokens.erc20`保存了ERC20代币的基本信息。通过关联这个表，我们可以取到代币的符号（Symbol），小数位数（Decimals）等。这里我们只需使用代币符号。
+另外，资金池中保存的是ERC20代币的合约地址，直接显示不够直观。Dune社区用户提交的魔法书生成的抽象数据表`tokens.erc20`保存了ERC20代币的基本信息。通过关联这个表，我们可以取到代币的符号（Symbol），小数位数（Decimals）等。这里我们只需使用代币符号。
 
-Uniswap V3 一共有8000多个资金池，涉及6000多种不同的ERC20代币，我们只关注资金池最多的100个代币的数据。
-
-下面的查询演示以下概念：多个CTE，Union，Join，Limit等。
+因为Uniswap V3 一共有8000多个资金池，涉及6000多种不同的ERC20代币，我们只关注资金池最多的100个代币的数据。下面的查询演示以下概念：多个CTE，Union，Join，Limit等。
 
 ```SQL
 with pool_details as (
@@ -531,13 +542,26 @@ token_pool_summary as (
 
 select t.symbol, p.token_address, p.pool_count
 from token_pool_summary p
-inner join tokens.erc20 t on p.token_address = t.contract_address and t.blockchain = 'ethereum'
+inner join tokens.erc20 t on p.token_address = t.contract_address
 order by 3 desc
 ```
 
+本查询在Dune上的参考链接：[https://dune.com/queries/1455706](https://dune.com/queries/1455706)
+
+我们同样使用条形图来做可视化。添加一个条形图类型的新图表，将标题修改为“不同ERC20代币的资金池数量（Top 100）”。图表的水平坐标轴（X Column）选择“symbol“，垂直坐标轴“Y Column 1”选择“pool_count”。为了保持排序顺序（按数量从多到少），取消勾选右侧的“Sort values”选项。虽然我们限定了只取前面的100个代币的数据，从查询结果中仍然可以看到，各种Token的资金池数量差异很大，最多的有5000多个，少的则只有几个。为了让图表更直观，请勾选右侧的“Logarithmic”选项，让图表数据以对数化后显示。把这个可视化图表添加到数据看板中的显示效果如下：
+
+![image_07.png](./img/image_07.png)
+
+由于对数化显示处理从视觉上弱化了差异值，我们可以同时添加一个“Table“数据表类型的可视化图表，方便用户查看实际的数值。继续为这个查询添加新的可视化图表，选择“Table”图表类型。标题设置为“前100种ERC20代币的资金池数量统计”。可以根据需要对这个可视化表格的相关选项做调整，然后将其添加到Dashboard中。
+
+![image_08.png](./img/image_08.png)
+
+你可能留意到表格返回的数据实际上没有100行，这是因为部分新出现的代币可能还未被添加到到Dune到数据表中。
+
+
 ### 查询7：最新的100个流动资金池记录
 
-当某个项目方发行了新的ERC20代币并支持上市流通时，Uniswap用户可能会在第一时间创建相应的流动资金池，以允许其他用户进行兑换。比如，XEN代币就是近期的一个比较轰动的案例。
+当某个项目方发行了新的ERC20代币并支持上市流通时，Uniswap用户可能会在第一时间创建相应的流动资金池，以让其他用户进行兑换。比如，XEN代币就是近期的一个比较轰动的案例。
 
 我们可以通过查询最新创建的资金池来跟踪新的趋势。下面的查询同样关联`tokens.erc20`表获，通过不同的别名多次关联相同的表来获取不同代币的符号。本查询还演示了输出可视化表格，连接字符串生成超链接等功能。
 
@@ -569,10 +593,20 @@ from last_crated_pools
 order by evt_block_time desc
 ```
 
+本查询在Dune上的参考链接：[https://dune.com/queries/1455897](https://dune.com/queries/1455897)
+
+我们为查询添加一个“Table“数据表类型的可视化图表，将标题设置为“最新创建的资金流动池列表”。可以根据需要对这个可视化表格的相关选项做调整，然后将其添加到Dashboard中。
+
+![image_09.png](./img/image_09.png)
 
 ## 总结
 
-## SixDegreeLab 介绍
+至此，我们就完成了第一个Dune数据看板的创建。请大家将自己的数据看板链接分享到Dune交流微信群、Dune的Discord中文频道。
 
+数据看板的完整界面显示效果如下图所示：
 
-脚注
+![dashboard.png](./img/dashboard.png)
+
+## SixDegreeLab介绍
+
+关于我们
