@@ -374,7 +374,7 @@ from uniswap_v3_ethereum.Factory_evt_PoolCreated
 
 我们建议你复制上面的代码，创建并保存查询。保存查询时为其起一个容易识别的名称，比如我使用“uniswap-pool-count”作为这个查询的名称。当然你也可以直接Fork下面列出的参考查询。Fork查询的便利之处是可以了解更多可视化图表的细节。
 
-Dune上的参考查询链接：[https://dune.com/queries/1454941](https://dune.com/queries/1454941)
+本查询在Dune上的参考链接：[https://dune.com/queries/1454941](https://dune.com/queries/1454941)
 
 ### 创建数据看板并添加图表
 
@@ -390,9 +390,9 @@ Dune上的参考查询链接：[https://dune.com/queries/1454941](https://dune.c
 
 ![image_01.png](./img/image_01.png)
 
-
-
 #### 添加文本组件
+
+在数据看板的编辑页面，我们可以通过点击“Add text widget”按钮，添加文本组件到看板中。文本组件可以用来为数据看板的核心内容添加说明，添加作者信息等。文本组件支持使用Markdown语法实现一些格式化处理，在添加文本组件的对话框中点击“Some markdown is supported”展开可以看到支持的相关语法。请根据需要自行添加相应的文本组件，这里就不详细说明了。
 
 ### 查询2：不同收费等级的流动资金池数量
 
@@ -406,6 +406,12 @@ select count(*) filter (where fee = 100) as pool_count_100,
     count(*) filter (where fee = 10000) as pool_count_10000
 from uniswap_v3_ethereum.Factory_evt_PoolCreated
 ```
+
+本查询在Dune上的参考链接：[https://dune.com/queries/1454947](https://dune.com/queries/1454947)
+
+上面这个查询返回了4个输出值，我们为他们添加相应的计数器组件，分别命名为“0.01%资金池数量”、“0.05%资金池数量”等。然后添加到数据看板中，在数据看板编辑界面调整各组件的大小和顺序。调整后的显示效果如下图所示：
+
+![image_02.png](./img/image_02.png)
 
 **使用Group By子句：**
 ```SQL
