@@ -409,7 +409,7 @@ from uniswap_v3_ethereum.Factory_evt_PoolCreated
 
 本查询在Dune上的参考链接：[https://dune.com/queries/1454947](https://dune.com/queries/1454947)
 
-上面这个查询返回了4个输出值，我们为他们添加相应的计数器组件，分别命名为“0.01%资金池数量”、“0.05%资金池数量”等。然后添加到数据看板中，在数据看板编辑界面调整各组件的大小和顺序。调整后的显示效果如下图所示：
+这个查询返回了4个输出值，我们为他们添加相应的计数器组件，分别命名为“0.01%资金池数量”、“0.05%资金池数量”等。然后添加到数据看板中，在数据看板编辑界面调整各组件的大小和顺序。调整后的显示效果如下图所示：
 
 ![image_02.png](./img/image_02.png)
 
@@ -431,6 +431,13 @@ group by 1
 ```
 其中，`concat((fee / 1e4)::string, '%') as fee_tier`部分的作用是将费率转换为百分比表示的值，再连接上“%”符号，使用别名`fee_tier`输出。
 
+本查询在Dune上的参考链接：[https://dune.com/queries/1455127](https://dune.com/queries/1455127)
+
+我们为这个查询添加一个扇形图图表。点击“New visualization”，从图表类型下拉列表选择“Pie Chart”扇形图类型，点击“Add visualization”。将图表的标题修改为“不同收费等级的资金池数量”。图表的水平坐标轴（X Column）选择“fee_tier“，垂直坐标轴“Y Column 1”选择“pool_count”。勾选左侧的“Show data label”选项。然后用“Add to dashboard”把这个可视化图表添加到数据看板中。其显示效果如下：
+
+![image_03.png](./img/image_03.png)
+
+
 ### 查询3：按周汇总的新建流动资金池总数
 
 要实现汇总每周新建的流动资金池数量的统计，我们可以先在一个子查询中使用date_trunc()函数将资金池的创建日期转换为每周的开始日期（星期一），然后再用Group By进行汇总统计。
@@ -444,6 +451,13 @@ from (
 group by 1
 order by 1
 ```
+
+本查询在Dune上的参考链接：[https://dune.com/queries/1455311](https://dune.com/queries/1455311)
+
+按时间统计的数据，适合用条形图、面积图、折线图等形式来进行可视化，这里我们用条形图。点击“New visualization”，从图表类型下拉列表选择“Bar Chart”条形图类型，点击“Add visualization”。将图表的标题修改为“每周新建资金池数量统计”。图表的水平坐标轴（X Column）选择“block_date“，垂直坐标轴“Y Column 1”选择“pool_count”。取消勾选左侧的“Show chart legend”选项。然后用“Add to dashboard”把这个可视化图表添加到数据看板中。其显示效果如下：
+
+![image_04.png](./img/image_04.png)
+
 
 ### 查询4：最近30天的每日新建流动资金池总数
 
