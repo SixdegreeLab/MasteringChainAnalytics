@@ -1,10 +1,10 @@
 # 新手上路--创建第一个Dune数据看板
 
-## 教程简介
+## 0. 写在前面
 
 我们的教程偏重实战，结合日常链上数据分析的场景与需求来编写。本文将结合Uniswap协议的一个已解析表来带领大家做一个简单的数据看板。本教程为入门级，主要面向希望学习数据分析的新手用户。我们假定您之前并无编写SQL查询的经验，有SQL经验但不熟悉Dune平台的用户也可快速浏览本教程。本教程主要包括以下内容：Dune平台简介，SQL查询快速入门、编写查询并创建可视化图表、使用查询图表创建数据看板。
 
-## Dune 平台简介
+## 1. Dune 平台简介
 
 ### Dune平台是什么
 [Dune](https://dune.com/)是一个强大的区块链数据分析平台，以SQL数据库的方式提供原始区块链数据和已解析的数据。通过使用SQL查询，我们可以从Dune的数据库中快速搜索和提取各种区块链信息，然后将其转换为人类可读的表格和可视化图表。
@@ -15,11 +15,11 @@
 
 使用Dune处理数据的一般过程可以概括为：编写SQL查询显示数据 -》可视化查询结果 -》在数据看板中组装可视化图表 -》调整美化数据看板。关于Dune平台的使用，可以查看其[官方文档](https://dune.com/docs/)。Dune最新文档的中文版本目前正在翻译整理中，你可以在这里找到V1版本的[Dune中文文档](https://docs.dune.com/v/chinese/)。
 
-## SQL查询基础知识
+## 2. 数据库基础知识
 
 在开始编写我们的数据看板所需的第一个SQL查询之前，我们需要先了解一些必备的SQL查询基础知识。
 
-### 数据库基础
+### 数据库的基本概念介绍
 
 **数据库（Database）**：数据库是结构化信息或数据的有序集合，是按照数据结构来组织、存储和管理数据的仓库。Dune平台目前提供了多个数据库，分别支持来自不同区块链的数据。本教程使用Dune平台的“Dune Engine V2 (Beta)”数据库，通常被称为V2 Engine或者简称V2。与此对照，Dune平台支持的其他数据库也被统称为V1。
 
@@ -154,6 +154,8 @@ limit 10
 
 #### Distinct筛选唯一值
 
+通过使用`distinct`关键词，我们可以筛选出出现在Select子句列表中的字段的唯一值。当Select子句包含多个字段时，返回的是这些字段的唯一值当组合。
+
 ```SQL
 select distinct blockchain
 from tokens.erc20
@@ -208,7 +210,7 @@ select (cast(25 as string) || ' users') as user_counts, ('123'::numeric + 55) as
 select 1.23 * power(10, 18) as raw_amount, 1230000000000000000 / pow(10, 18) as original_amount, 7890000 / 1e6 as usd_amount
 ```
 
-### Select查询语句进阶语法介绍
+### Select查询进阶
 
 #### Group By分组与常用汇总函数
 
@@ -238,13 +240,13 @@ from (
 )
 ```
 
-#### 子查询
+#### 子查询（Sub Query）
 
 子查询（Sub Query）是嵌套在一个Query中的Query，子查询会返回一个完整的数据集供外层查询（也叫父查询、主查询）进一步查询使用。当我们需要必须从原始数据开始通过多个步骤的查询、关联、汇总操作才能得到理想的输出结果时，我们就可以使用子查询。将子查询放到括号之中并为其赋予一个别名后，就可以像使用其他数据表一样使用子查询了。
 
 在前面的例子中就用到了子查询`from ( 子查询语句 )`，这里不再单独举例。
 
-#### 多表关联
+#### 多表关联（Join）
 
 当我们需要从相关的多个表分别取数据，或者从同一个表分别取不同的数据并连接到一起时，就需要使用多表关联。多表关联的基本语法为：`from table_a inner join table_b on table_a.field_name = table_b.field_name`。其中`table_a`和`table_b`可以是不同的表，也可以是同一个表，可以有不同的别名。
 
@@ -259,7 +261,7 @@ where a.blockchain = 'ethereum'
     and b.blockchain = 'bnb'
 ```
 
-#### 集合
+#### 集合（Union）
 
 当我们需要将来自不同数据表的记录合并到一起，或者将由同一个数据表取出的包含不同字段的结果集合并到一起时，可以使用`Union`或者`Union All`集合子句来实现。`Union`会自动去除合并后的集合里的重复记录，`Union All`则不会做去重处理。对于包括海量数据的链上数据库表，去重处理有可能相当耗时，所以建议尽可能使用`Union All`以提升查询效率。
 
@@ -293,7 +295,7 @@ group by 1
 order by 2 desc
 ```
 
-#### CTE 简单示例
+#### CTE公共表表达式
 公共表表达式，即CTE（Common Table Expression），是一种在SQL语句内执行（且仅执行一次）子查询的好方法。数据库将执行所有的WITH子句，并允许你在整个查询的后续任意位置使用其结果。
 
 CTE的定义方式为`with cte_name as ( sub_query )`，其中`sub_query`就是一个子查询语句。我们也可以在同一个Query中连续定义多个CTE，多个CTE之间用英文逗号分隔即可。按定义的先后顺序，后面的CTE可以访问使用前面的CTE。在后续数据看板部分的“查询6”中，你可以看到定义多个CTE的示例。将前面子查询的例子用CTE格式改写：
@@ -317,9 +319,14 @@ from blockchain_token_count
 Sum() Over (Order by block_date) As 
 TODO
 
-## 创建数据看板
+## 3. 创建数据看板
 
-到此为止，我们已经了解了创建第一个Dune数据看板所需要的全部知识点。接下来让我们一起来创建一个真正意义上的数据看板。为了帮助大家更快上手实践，我们这个数据看板将结合具体的项目来制作。
+到此为止，我们已经了解了创建第一个Dune数据看板所需要的全部知识点。下面将进入新的阶段，让我们一起来编写查询创建一个Dune数据看板。为了帮助大家更快上手实践，我们这个数据看板将结合具体的项目来制作。开始创建看板之前，我们还需要了解一些额外的背景知识。
+
+请注意，我们不会详细描述每一个操作步骤。关于如何使用Dune的查询编辑器（Query Editor）和数据看板（Dashboard）的基础知识，你可以通过以下方式来学习：
+- [Dune平台的官方文档](https://dune.com/docs/)（Dune）
+- [Dune入门指南](https://mirror.xyz/0xa741296A1E9DDc3D6Cf431B73C6225cFb5F6693a/iVzr5bGcGKKCzuvl902P05xo7fxc2qWfqfIHwmCXDI4)（SixDegreeLab成员Louis Wang翻译）
+- [Dune Analytics零基础极简入门指南](https://mirror.xyz/gm365.eth/OE_CGx6BjCd-eQ441139sjsa3kTyUsmKVTclgMv09hY)（Dune社区用户gm365撰写）
 
 ### 背景知识
 
@@ -365,7 +372,7 @@ select count(*) as pool_count
 from uniswap_v3_ethereum.Factory_evt_PoolCreated
 ```
 
-我们建议你复制上面的代码，创建新的查询，并按说明添加可视化图表。当然你也可以直接Fork下面列出的参考查询。Fork查询的便利之处是可以了解更多可视化图表的细节。
+我们建议你复制上面的代码，创建并保存查询。保存查询时为其起一个容易识别的名称，比如我使用“uniswap-pool-count”作为这个查询的名称。当然你也可以直接Fork下面列出的参考查询。Fork查询的便利之处是可以了解更多可视化图表的细节。
 
 Dune上的参考查询链接：[https://dune.com/queries/1454941](https://dune.com/queries/1454941)
 
@@ -373,7 +380,17 @@ Dune上的参考查询链接：[https://dune.com/queries/1454941](https://dune.c
 
 #### 创建看板
 
+首先请登录进入[Dune网站](https://dune.com/)。然后点击头部导航栏中的“My Creation”，再点击下方的“Dashboards”，进入到已创建的数据看板页面[https://dune.com/browse/dashboards/authored](https://dune.com/browse/dashboards/authored)。要创建新的数据看板，点击右侧边栏中的“New dashboard”按钮即可。在弹出对话框中输入Dashboard的名称，然后点击“Save and open”按钮即可创建新数据看板并进入预览界面。我这里使用“Uniswap V3 Pool Tutorial”作为这个数据看板的名称。
+
 #### 添加查询图表
+
+新创建的数据看板是没有内容的，预览页面会显示“This dashboard is empty.”。我们可以将上一步“查询1”中得到的资金池数量转为可视化图表并添加到数据看板中。在一个新的浏览器Tab中打开“My Creations”页面[https://dune.com/browse/queries/authored](https://dune.com/browse/queries/authored)，找到已保存的“查询1”Query，点击名称进入编辑页面。因为查询已经保存并执行过，我们可以自己点击“New visualization”按钮来新建一个可视化图表。单个数值类型的的查询结果，通常使用计数器（Counter）类型的可视化图表。从下拉列表“Select visualization type”中选择“Counter”，再点击“Add Visualization”按钮。然后可以给这个图表命名，将Title值从默认的“Counter”修改为“流动资金池总数”。最后，通过点击“Add to dashboard“按钮，并在弹出对话框中点击对应数据看板右边的“Add”按钮，就把这个计数器类型的图表添加到了数据看板中。
+
+此时我们可以回到数据看板页面，刷新页面可以看到新添加的可视化图表。点击页面右上方的“Edit”按钮可以对数据看板进行编辑，包括调整各个图表的大小、位置，添加文本组件等。下面是对“流动资金池总数”这个计数器图表调整了高度之后的截图。
+
+![image_01.png](./img/image_01.png)
+
+
 
 #### 添加文本组件
 
