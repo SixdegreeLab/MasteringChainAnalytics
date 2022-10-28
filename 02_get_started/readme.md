@@ -328,12 +328,12 @@ from blockchain_token_count
 
 ### 背景知识
 
-TODO
-Uniswap V3 流动资金池简介
+Uniswap是最流行的去中心化金融（DeFi）协议之一，是一套持久的且不可升级的智能合约，它们共同创建了一个自动做市商（AMM），该协议主要提供以太坊区块链上的点对点ERC20代币的交换。
+Uniswap工厂合约（Factory）部署新的智能合约来创建流动资金池（Pool），将两个ERC20代币资产进行配对，同时设置不同的费率（fee）。流动性（Liquidity）是指存储在Uniswap资金池合约中的数字资产，可供交易者进行交易。流动性提供者（Liquidity Provider，简称LP）是将其拥有的ERC20代币存入给定的流动性池的人。流动性提供者获得交易费用的补偿作为收益，同时也承担价格波动带来的风险。普通用户（Swapper）通过可以在流动资金池中将自己拥有的一种ERC20代币兑换为另一种代币，同时支付一定的服务费。比如你可以在费率为0.30%的USDC-WETH流动资金池中，将自己的USDC兑换为WETH，或者将WETH兑换为USDC，仅需支付少量的服务费即可完成兑换。Uniswap V3协议的工作方式可以简要概括为：工厂合约创建流动资金池（包括两种ERC20代币） -》 LP用户添加对应资产到流动资金池 -》 其他用户使用流动资金池兑换其持有的代币资产，支付服务费 -》 LP获得服务费奖励。
+
+初学者可能对这部分引入的一些概念比较陌生，不过完全不用紧张，你无需了解更多DeFi的知识就可以顺利完成本教程的内容。本篇教程不会深入涉及DeFi协议的各种细节，我们只是想通过实际的案例，让你对“链上数据分析到底分析什么”有一个更感性的认识。在我们将要创建的这个数据看板中，主要使用Uniswap V3的流动资金池作为案例. 对应的数据表为`uniswap_v3_ethereum.Factory_evt_PoolCreated`。同时，部分查询也用到了前面介绍过的`token.erc20`表。开始之前，你只需要了解这些就足够了：可以创建很多个不同的流动资金池（Pool），每一个流动资金池包含两种不同的ERC20代币（称之为代币对，Pair），有一个给定的费率；相同的代币对（比如USDC-WETH）可以创建多个流动资金池，分别对应不同的收费费率。
 
 ### Uniswap流动资金池表
-
-在这个示例数据看板中，我们主要使用以太坊区块链上流行的DeFi协议Uniswap V3的流动资金池作为案例. 对应的数据表为`uniswap_v3_ethereum.Factory_evt_PoolCreated`。同时，部分查询也用到了前面介绍过的`token.erc20`表。
 
 流动资金池表`uniswap_v3_ethereum.Factory_evt_PoolCreated`的结构如下：
 
@@ -344,20 +344,24 @@ Uniswap V3 流动资金池简介
 | evt\_block\_time        | timestamp     | 区块被开采的时间                             |
 | evt\_index              | integer       | 事件的索引编号                               |
 | evt\_tx\_hash           | string        | 事件归属交易的唯一哈希值                      |
-| fee                     | integer       | 流动资金池的收费费率（百万分之N）               |
+| fee                     | integer       | 流动资金池的收费费率（以“百万分之N”的形式表示）   |
 | pool                    | string        | 流动资金池的地址                             |
 | tickSpacing             | integer       | 刻度间距                                    |
 | token0                  | string        | 资金池中的第一个ERC20代币地址                  |
 | token1                  | string        | 资金池中的第二个ERC20代币地址                  |
 
+流动资金池表的部分数据如下图所示（这里只显示了部分字段）：
+
+![image_00.png](./img/image_00.png)
+
 ### 数据看板的主要内容
 
 我们的第一个Dune数据看板将包括以下查询内容。每个查询会输出1个或多个可视化图表。
 - 查询流动资金池总数
-- 不同收费等级的流动资金池数量
+- 不同费率的流动资金池数量
 - 按周汇总的新建流动资金池总数
 - 最近30天的每日新建流动资金池总数
-- 按周汇总的新建流动资金池总数-按收费等级分组
+- 按周汇总的新建流动资金池总数-按费率分组
 - 统计资金池数量最多的代币Token
 - 最新的100个流动资金池记录
 
@@ -392,7 +396,7 @@ from uniswap_v3_ethereum.Factory_evt_PoolCreated
 
 在数据看板的编辑页面，我们可以通过点击“Add text widget”按钮，添加文本组件到看板中。文本组件可以用来为数据看板的核心内容添加说明，添加作者信息等。文本组件支持使用Markdown语法实现一些格式化处理，在添加文本组件的对话框中点击“Some markdown is supported”展开可以看到支持的相关语法。请根据需要自行添加相应的文本组件，这里就不详细说明了。
 
-### 查询2：不同收费等级的流动资金池数量
+### 查询2：不同费率的流动资金池数量
 
 根据我们需要的结果数据的格式，有不同的方式来统计。如果想使用计数器（Counter）类型的可视化图表，可以把相关统计数字在同一行中返回。如果想用一个扇形图（Pie Chart）来显示结果，则可以选择使用Group By分组，将结果数据以多行方式返回。
 
@@ -419,7 +423,7 @@ from uniswap_v3_ethereum.Factory_evt_PoolCreated
 group by 1
 ```
 
-收费等级“fee”是数值形式，代表百万分之N的收费费率。比如，3000，代表3000/1000000，即“0.30%”。用`fee`的值除以10000 （1e4）即可得到用百分比表示的费率。
+费率“fee”是数值形式，代表百万分之N的收费费率。比如，3000，代表3000/1000000，即“0.30%”。用`fee`的值除以10000 （1e4）即可得到用百分比表示的费率。
 将数值转换为百分比表示的费率更加直观。我们可以使用修改上面的查询来做到这一点：
 ```SQL
 select concat((fee / 1e4)::string, '%') as fee_tier,
@@ -431,7 +435,7 @@ group by 1
 
 本查询在Dune上的参考链接：[https://dune.com/queries/1455127](https://dune.com/queries/1455127)
 
-我们为这个查询添加一个扇形图图表。点击“New visualization”，从图表类型下拉列表选择“Pie Chart”扇形图类型，点击“Add visualization”。将图表的标题修改为“不同收费等级的资金池数量”。图表的水平坐标轴（X Column）选择“fee_tier“，垂直坐标轴“Y Column 1”选择“pool_count”。勾选左侧的“Show data label”选项。然后用“Add to dashboard”把这个可视化图表添加到数据看板中。其显示效果如下：
+我们为这个查询添加一个扇形图图表。点击“New visualization”，从图表类型下拉列表选择“Pie Chart”扇形图类型，点击“Add visualization”。将图表的标题修改为“不同费率的资金池数量”。图表的水平坐标轴（X Column）选择“fee_tier“，垂直坐标轴“Y Column 1”选择“pool_count”。勾选左侧的“Show data label”选项。然后用“Add to dashboard”把这个可视化图表添加到数据看板中。其显示效果如下：
 
 ![image_03.png](./img/image_03.png)
 
@@ -481,9 +485,9 @@ order by 1
 ![image_05.png](./img/image_05.png)
 
 
-### 查询5：按周汇总的新建流动资金池总数-按收费等级分组
+### 查询5：按周汇总的新建流动资金池总数-按费率分组
 
-我们可以对分组统计的维度做进一步的细分，按收费等级来汇总统计每周内新建的流动资金池数量。这样我们可以对比不同收费等级在不同时间段的流行程度。这个例子中我们演示Group by多级分组，可视化图表数据的条形图的叠加等功能。
+我们可以对分组统计的维度做进一步的细分，按费率来汇总统计每周内新建的流动资金池数量。这样我们可以对比不同费率在不同时间段的流行程度。这个例子中我们演示Group by多级分组，可视化图表数据的条形图的叠加等功能。
 
 ```SQL
 with pool_details as (
@@ -501,7 +505,7 @@ order by 1, 2
 
 本查询在Dune上的参考链接：[https://dune.com/queries/1455535](https://dune.com/queries/1455535)
 
-我们同样使用条形图来做可视化。添加一个条形图类型的新图表，将标题修改为“不同收费等级每周新建流动资金池数量”。图表的水平坐标轴（X Column）选择“block_date“，垂直坐标轴“Y Column 1”选择“pool_count”。同时，我们需要在“Group by”中选择“fee_tier”作为可视化图表的分组来实现分组显示，同时勾选左侧的“Enable stacking”选项让同一日期同一分组的数据叠加到一起显示。把这个可视化图表添加到数据看板中的显示效果如下：
+我们同样使用条形图来做可视化。添加一个条形图类型的新图表，将标题修改为“不同费率每周新建流动资金池数量”。图表的水平坐标轴（X Column）选择“block_date“，垂直坐标轴“Y Column 1”选择“pool_count”。同时，我们需要在“Group by”中选择“fee_tier”作为可视化图表的分组来实现分组显示，同时勾选左侧的“Enable stacking”选项让同一日期同一分组的数据叠加到一起显示。把这个可视化图表添加到数据看板中的显示效果如下：
 
 ![image_06.png](./img/image_06.png)
 
@@ -607,4 +611,8 @@ order by evt_block_time desc
 
 ## SixDegreeLab介绍
 
-关于我们
+SixDegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)）是专业的链上数据团队，我们的使命是为用户提供准确的链上数据图表、分析以及洞见，并致力于普及链上数据分析。通过建立社区、编写教程等方式，培养链上数据分析师，输出有价值的分析内容，推动社区构建区块链的数据层，为未来广阔的区块链数据应用培养人才。
+
+欢迎访问[SixDegreeLab的Dune主页](https://dune.com/sixdegree)。
+
+本文由SixDegreeLab成员Spring Zhang（[@superamscom](https://twitter.com/superamscom)）撰稿。因水平所限，不足之处在所难免。如有发现任何错误，敬请指正。
