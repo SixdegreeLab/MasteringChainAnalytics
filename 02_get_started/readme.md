@@ -54,7 +54,7 @@ ERC20代币表`token.erc20`的结构如下：
 
 下面的SQL可以查询所有的ERC20代币信息：
 
-```SQL
+```sql
 select * from tokens.erc20
 ```
 
@@ -91,7 +91,7 @@ from tokens.erc20
 
 **添加筛选条件：**
 
-```SQL
+```sql
 select blockchain, contract_address, decimals, symbol
 from tokens.erc20
 where blockchain = 'ethereum'   -- 只返回以太坊区块链的ERC20代币信息
