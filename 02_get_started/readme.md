@@ -483,7 +483,7 @@ order by 1
 
 类似的，要实现汇总每天新建的流动资金池数量的统计，我们可以先在一个子查询中使用date_trunc()函数将资金池的创建日期转换为天（不含时分秒值），然后再用Group By进行汇总统计。这里我们使用公共表表达式（CTE）的方式来查询。与使用子查询相比，CTE能让查询逻辑更加直观易懂、定义后可以多次重用以提升效率、也更方便调试。后续的查询都会倾向于使用CTE方式。
 
-```s q l
+```sql
 with pool_details as (
     select date_trunc('day', evt_block_time) as block_date,
         evt_tx_hash, pool
