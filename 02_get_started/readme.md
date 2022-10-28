@@ -141,7 +141,9 @@ limit 10
 可以通过使用“as”子句给表、字段定义别名。别名对于表名（或字段名）较长、包含特殊字符或关键字等情况，或者需要对输出字段名称做格式化时，非常实用。别名经常用于计算字段、多表关联、子查询等场景中。
 
 ```sql
-select t.contract_address as `代币合约地址`, t.decimals as `代币小数位数`, t.symbol as `代币符号`
+select t.contract_address as `代币合约地址`,
+    t.decimals as `代币小数位数`,
+    t.symbol as `代币符号`
 from tokens.erc20 as t
 limit 10
 ```
@@ -149,7 +151,9 @@ limit 10
 
 ```sql
 -- 定义别名时，as 关键词可以省略
-select t.contract_address `代币合约地址`, t.decimals `代币小数位数`, t.symbol `代币符号`
+select t.contract_address `代币合约地址`,
+    t.decimals `代币小数位数`,
+    t.symbol `代币符号`
 from tokens.erc20 t
 limit 10
 ```
@@ -176,7 +180,9 @@ select now(), current_date
 区块链中的日期时间字段通常是以“年-月-日 时:分:秒”的格式保存的。如果要按天、按周、按月等进行汇总统计，可以使用`date_trunc()`函数对日期先进行转换。例如：`date_trunc('day', block_time`将block_time的值转换为以“天”表示的日期值，`date_trunc('month', block_time`将block_time的值转换为以“月”表示的日期值。
 
 ```sql
-select now(), date_trunc('day', now()) as today, date_trunc('month', now()) as current_month
+select now(),
+    date_trunc('day', now()) as today,
+    date_trunc('month', now()) as current_month
 ```
 
 #### Interval获取时间间隔
@@ -184,8 +190,10 @@ select now(), date_trunc('day', now()) as today, date_trunc('month', now()) as c
 使用`interval '2 days'`这样的语法，我们可以指定一个时间间隔。支持多种不同的时间间隔表示方式，比如：`'12 hours'`，`'7 days'`，`'3 months'`, `'1 year'`等。时间间隔通常用来在某个日期时间值的基础上增加或减少指定的间隔以得到某个日期区间。
 
 ```sql
-select now() as current_time, (now() - interval '2 hours') as two_hours_ago, 
-    (now() - interval '2 days') as two_days_ago, (current_date - interval '1 year') as one_year_ago
+select now() as current_time, 
+    (now() - interval '2 hours') as two_hours_ago, 
+    (now() - interval '2 days') as two_days_ago,
+    (current_date - interval '1 year') as one_year_ago
 ```
 
 #### Concat连接字符串
@@ -193,7 +201,8 @@ select now() as current_time, (now() - interval '2 hours') as two_hours_ago,
 我们可以使用`concat()`函数将多个字符串连接到一起的到一个新的值。还可以使用更简洁的连接操作符`||`。
 
 ```sql
-select concat('Hello ', 'world!') as hello_world, 'Hello' || ' ' || 'world' || '!' as hello_world_again
+select concat('Hello ', 'world!') as hello_world,
+    'Hello' || ' ' || 'world' || '!' as hello_world_again
 ```
 
 #### Cast转换字段数据类型
@@ -201,7 +210,8 @@ select concat('Hello ', 'world!') as hello_world, 'Hello' || ' ' || 'world' || '
 SQL查询种的某些操作要求相关的字段的数据类型一致，比如concat()函数就需要参数都是字符串`string`类型。如果需要将不同类型的数据连接起来，我们可以用`cast()`函数强制转换为需要的数据类型，比如：`cast(25 as string)`将数字25转换为字符串“25”。还可以使用`::data_type`操作符方式完成类型转换，比如：`'123'::numeric`将字符串转换为数值类型。
 
 ```sql
-select (cast(25 as string) || ' users') as user_counts, ('123'::numeric + 55) as digital_count
+select (cast(25 as string) || ' users') as user_counts,
+    ('123'::numeric + 55) as digital_count
 ```
 
 #### Power求幂
@@ -209,7 +219,9 @@ select (cast(25 as string) || ' users') as user_counts, ('123'::numeric + 55) as
 区块链上的ERC20代币通常都支持很多位的小数位。以太坊的官方代币ETH支持18位小数，因为相关编程语言的限制，代币金额通常是以整数形式存贮的，使用时必须结合支持的小数位数进行换算才能得到正确的金额。使用`power()`函数，或者`pow()`可以进行求幂操作实现换算。在Dune V2中，可以用简洁的形式表示10的N次幂，例如`1e18`等价于`power(10, 18)`。
 
 ```sql
-select 1.23 * power(10, 18) as raw_amount, 1230000000000000000 / pow(10, 18) as original_amount, 7890000 / 1e6 as usd_amount
+select 1.23 * power(10, 18) as raw_amount,
+    1230000000000000000 / pow(10, 18) as original_amount,
+    7890000 / 1e6 as usd_amount
 ```
 
 ### Select查询进阶
@@ -255,8 +267,12 @@ from (
 下面的查询使用`tokens.erc20`与其自身关联，来筛选出同时存在于以太坊区块链和币安区块链上且代币符号相同的记录：
 
 ```sql
-select a.symbol, a.decimals, a.blockchain as blockchain_a, a.contract_address as contract_address_a,
-b.blockchain as blockchain_b, b.contract_address as contract_address_b
+select a.symbol,
+    a.decimals,
+    a.blockchain as blockchain_a,
+    a.contract_address as contract_address_a,
+    b.blockchain as blockchain_b,
+    b.contract_address as contract_address_b
 from tokens.erc20 a
 inner join tokens.erc20 b on a.symbol = b.symbol
 where a.blockchain = 'ethereum'
@@ -447,7 +463,9 @@ group by 1
 ```sql
 select block_date, count(pool) as pool_count
 from (
-    select date_trunc('week', evt_block_time) as block_date, evt_tx_hash, pool
+    select date_trunc('week', evt_block_time) as block_date,
+        evt_tx_hash,
+        pool
     from uniswap_v3_ethereum.Factory_evt_PoolCreated
 )
 group by 1
@@ -467,9 +485,11 @@ order by 1
 
 ```s q l
 with pool_details as (
-    select date_trunc('day', evt_block_time) as block_date, evt_tx_hash, pool
+    select date_trunc('day', evt_block_time) as block_date,
+        evt_tx_hash, pool
     from uniswap_v3_ethereum.Factory_evt_PoolCreated
-    where evt_block_time >= now() - interval '29 days'  -- now()存贮了当前日期+时间，当天的数据已包含在内
+    -- 下面的代码中，now()存贮了当前日期+时间，当天的数据已包含在内
+    where evt_block_time >= now() - interval '29 days'
 )
 
 select block_date, count(pool) as pool_count
@@ -491,7 +511,10 @@ order by 1
 
 ```sql
 with pool_details as (
-    select date_trunc('week', evt_block_time) as block_date, fee, evt_tx_hash, pool
+    select date_trunc('week', evt_block_time) as block_date,
+        fee,
+        evt_tx_hash,
+        pool
     from uniswap_v3_ethereum.Factory_evt_PoolCreated
 )
 
@@ -578,15 +601,19 @@ with last_crated_pools as (
         p.pool,
         p.evt_tx_hash
     from uniswap_v3_ethereum.Factory_evt_PoolCreated p
-    inner join tokens.erc20 t0 on p.token0 = t0.contract_address and t0.blockchain = 'ethereum'
-    inner join tokens.erc20 t1 on p.token1 = t1.contract_address and t1.blockchain = 'ethereum'
+    inner join tokens.erc20 t0
+        on p.token0 = t0.contract_address and t0.blockchain = 'ethereum'
+    inner join tokens.erc20 t1
+        on p.token1 = t1.contract_address and t1.blockchain = 'ethereum'
     order by p.evt_block_time desc
     limit 100
 )
 
 select evt_block_time,
-    token0_symbol || '-' || token1_symbol || ' ' || (fee / 1e4)::string || '%' as pool_name,
-    '<a href=https://etherscan.io/address/' || pool || ' target=_blank>' || pool || '</a>' as pool_link,
+    token0_symbol || '-' || token1_symbol || ' '
+        || (fee / 1e4)::string || '%' as pool_name,
+    '<a href=https://etherscan.io/address/' || pool
+        || ' target=_blank>' || pool || '</a>' as pool_link,
     token0,
     token1,
     fee,
