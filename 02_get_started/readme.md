@@ -62,7 +62,7 @@ select * from tokens.erc20
 
 一个典型的SQL查询语句的结构如下所示：
 
-```SQL
+```sql
 select 字段列表
 from 数据表
 where 筛选条件
@@ -84,7 +84,7 @@ limit 返回记录数量
 
 **指定返回的字段列表：**
 
-```SQL
+```sql
 select blockchain, contract_address, decimals, symbol   -- 逐个指定需要返回的列
 from tokens.erc20
 ```
@@ -99,7 +99,7 @@ where blockchain = 'ethereum'   -- 只返回以太坊区块链的ERC20代币信�
 
 **使用多个筛选条件：**
 
-```SQL
+```sql
 select blockchain, contract_address, decimals, symbol
 from tokens.erc20
 where blockchain = 'ethereum'   -- 返回以太坊区块链的ERC20代币信息
@@ -108,7 +108,7 @@ where blockchain = 'ethereum'   -- 返回以太坊区块链的ERC20代币信息
 
 **指定排序字段：**
 
-```SQL
+```sql
 select blockchain, contract_address, decimals, symbol
 from tokens.erc20
 where blockchain = 'ethereum'   -- 返回以太坊区块链的ERC20代币信息
@@ -118,7 +118,7 @@ order by symbol asc -- 按代币符号升序排列
 
 **指定多个排序字段：**
 
-```SQL
+```sql
 select blockchain, contract_address, decimals, symbol
 from tokens.erc20
 where blockchain = 'ethereum'   -- 返回以太坊区块链的ERC20代币信息
@@ -128,7 +128,7 @@ order by decimals desc, symbol asc  -- 先按代币支持的小数位数降序�
 
 **使用Limit子句限制返回的最大记录数量：**
 
-```SQL
+```sql
 select *
 from tokens.erc20
 limit 10
@@ -140,14 +140,14 @@ limit 10
 
 可以通过使用“as”子句给表、字段定义别名。别名对于表名（或字段名）较长、包含特殊字符或关键字等情况，或者需要对输出字段名称做格式化时，非常实用。别名经常用于计算字段、多表关联、子查询等场景中。
 
-```SQL
+```sql
 select t.contract_address as `代币合约地址`, t.decimals as `代币小数位数`, t.symbol as `代币符号`
 from tokens.erc20 as t
 limit 10
 ```
 实际上为了书写更加简洁，定义别名时`as`关键词可以省略，可以直接将别名跟在表名或字段名后，用一个空格分隔。下面的查询，功能和上一个查询完全相同。
 
-```SQL
+```sql
 -- 定义别名时，as 关键词可以省略
 select t.contract_address `代币合约地址`, t.decimals `代币小数位数`, t.symbol `代币符号`
 from tokens.erc20 t
@@ -158,7 +158,7 @@ limit 10
 
 通过使用`distinct`关键词，我们可以筛选出出现在Select子句列表中的字段的唯一值。当Select子句包含多个字段时，返回的是这些字段的唯一值当组合。
 
-```SQL
+```sql
 select distinct blockchain
 from tokens.erc20
 ```
@@ -167,7 +167,7 @@ from tokens.erc20
 
 使用`now()`可以获得当前系统的日期时间值。我们还可以使用`current_date`来得到当前系统日期，注意这里不需要加括号。
 
-```SQL
+```sql
 select now(), current_date
 ```
 
@@ -175,7 +175,7 @@ select now(), current_date
 
 区块链中的日期时间字段通常是以“年-月-日 时:分:秒”的格式保存的。如果要按天、按周、按月等进行汇总统计，可以使用`date_trunc()`函数对日期先进行转换。例如：`date_trunc('day', block_time`将block_time的值转换为以“天”表示的日期值，`date_trunc('month', block_time`将block_time的值转换为以“月”表示的日期值。
 
-```SQL
+```sql
 select now(), date_trunc('day', now()) as today, date_trunc('month', now()) as current_month
 ```
 
@@ -183,7 +183,7 @@ select now(), date_trunc('day', now()) as today, date_trunc('month', now()) as c
 
 使用`interval '2 days'`这样的语法，我们可以指定一个时间间隔。支持多种不同的时间间隔表示方式，比如：`'12 hours'`，`'7 days'`，`'3 months'`, `'1 year'`等。时间间隔通常用来在某个日期时间值的基础上增加或减少指定的间隔以得到某个日期区间。
 
-```SQL
+```sql
 select now() as current_time, (now() - interval '2 hours') as two_hours_ago, 
     (now() - interval '2 days') as two_days_ago, (current_date - interval '1 year') as one_year_ago
 ```
@@ -192,7 +192,7 @@ select now() as current_time, (now() - interval '2 hours') as two_hours_ago,
 
 我们可以使用`concat()`函数将多个字符串连接到一起的到一个新的值。还可以使用更简洁的连接操作符`||`。
 
-```SQL
+```sql
 select concat('Hello ', 'world!') as hello_world, 'Hello' || ' ' || 'world' || '!' as hello_world_again
 ```
 
@@ -200,7 +200,7 @@ select concat('Hello ', 'world!') as hello_world, 'Hello' || ' ' || 'world' || '
 
 SQL查询种的某些操作要求相关的字段的数据类型一致，比如concat()函数就需要参数都是字符串`string`类型。如果需要将不同类型的数据连接起来，我们可以用`cast()`函数强制转换为需要的数据类型，比如：`cast(25 as string)`将数字25转换为字符串“25”。还可以使用`::data_type`操作符方式完成类型转换，比如：`'123'::numeric`将字符串转换为数值类型。
 
-```SQL
+```sql
 select (cast(25 as string) || ' users') as user_counts, ('123'::numeric + 55) as digital_count
 ```
 
@@ -208,7 +208,7 @@ select (cast(25 as string) || ' users') as user_counts, ('123'::numeric + 55) as
 
 区块链上的ERC20代币通常都支持很多位的小数位。以太坊的官方代币ETH支持18位小数，因为相关编程语言的限制，代币金额通常是以整数形式存贮的，使用时必须结合支持的小数位数进行换算才能得到正确的金额。使用`power()`函数，或者`pow()`可以进行求幂操作实现换算。在Dune V2中，可以用简洁的形式表示10的N次幂，例如`1e18`等价于`power(10, 18)`。
 
-```SQL
+```sql
 select 1.23 * power(10, 18) as raw_amount, 1230000000000000000 / pow(10, 18) as original_amount, 7890000 / 1e6 as usd_amount
 ```
 
@@ -220,7 +220,7 @@ SQL中有一些常用的汇总函数，`count()`计数，`sum()`求和，`avg()`
 
 **统计目前支持的各个区块链的ERC20代币类型数量：**
 
-```SQL
+```sql
 select blockchain, count(*) as token_count
 from tokens.erc20
 group by blockchain
@@ -228,7 +228,7 @@ group by blockchain
 
 **统计支持的所有区块链的代币类型总数量、平均值、最小值、最大值：**
 
-```SQL
+```sql
 -- 这里为了演示相关函数，使用了子查询
 select count(*) as blockchain_count,
     sum(token_count) as total_token_count,
@@ -254,7 +254,7 @@ from (
 
 下面的查询使用`tokens.erc20`与其自身关联，来筛选出同时存在于以太坊区块链和币安区块链上且代币符号相同的记录：
 
-```SQL
+```sql
 select a.symbol, a.decimals, a.blockchain as blockchain_a, a.contract_address as contract_address_a,
 b.blockchain as blockchain_b, b.contract_address as contract_address_b
 from tokens.erc20 a
@@ -269,7 +269,7 @@ where a.blockchain = 'ethereum'
 
 因为暂时我们尽可能保持简单，下面演示集合的SQL语句可能显得意义不大。不过别担心，这里只是为了显示语法。后续我们在做数据看板的部分有更合适的例子：
 
-```SQL
+```sql
 select contract_address, symbol, decimals
 from tokens.erc20
 where blockchain = 'ethereum'
@@ -285,7 +285,7 @@ where blockchain = 'bnb'
 
 使用Case语句，我们可以基于某个字段的值来生成另一种类型的值，通常是为了让结果更直观。举例来说，ERC20代币表有一个`decimals`字段，保存各种代币支持的小数位数。如果我们想按支持的小数位数把各种代币划分为高精度、中等精度和低精度、无精度等类型，则可以使用Case语句进行转换。
 
-```SQL
+```sql
 select (case when decimals >= 10 then 'High precision'
             when decimals >= 5 then 'Middle precision'
             when decimals >= 1 then 'Low precision'
@@ -302,7 +302,7 @@ order by 2 desc
 
 CTE的定义方式为`with cte_name as ( sub_query )`，其中`sub_query`就是一个子查询语句。我们也可以在同一个Query中连续定义多个CTE，多个CTE之间用英文逗号分隔即可。按定义的先后顺序，后面的CTE可以访问使用前面的CTE。在后续数据看板部分的“查询6”中，你可以看到定义多个CTE的示例。将前面子查询的例子用CTE格式改写：
 
-```SQL
+```sql
 with blockchain_token_count as (
     select blockchain, count(*) as token_count
     from tokens.erc20
@@ -369,7 +369,7 @@ Uniswap工厂合约（Factory）部署新的智能合约来创建流动资金池
 
 通过使用汇总函数Count()，我们可以统计当前已创建的全部资金池的数量。
 
-```SQL
+```sql
 select count(*) as pool_count
 from uniswap_v3_ethereum.Factory_evt_PoolCreated
 ```
@@ -401,7 +401,7 @@ from uniswap_v3_ethereum.Factory_evt_PoolCreated
 根据我们需要的结果数据的格式，有不同的方式来统计。如果想使用计数器（Counter）类型的可视化图表，可以把相关统计数字在同一行中返回。如果想用一个扇形图（Pie Chart）来显示结果，则可以选择使用Group By分组，将结果数据以多行方式返回。
 
 **使用Filter子句：**
-```SQL
+```sql
 select count(*) filter (where fee = 100) as pool_count_100,
     count(*) filter (where fee = 500) as pool_count_500,
     count(*) filter (where fee = 3000) as pool_count_3000,
@@ -416,7 +416,7 @@ from uniswap_v3_ethereum.Factory_evt_PoolCreated
 ![image_02.png](./img/image_02.png)
 
 **使用Group By子句：**
-```SQL
+```sql
 select fee,
     count(*) as pool_count
 from uniswap_v3_ethereum.Factory_evt_PoolCreated
@@ -425,7 +425,7 @@ group by 1
 
 费率“fee”是数值形式，代表百万分之N的收费费率。比如，3000，代表3000/1000000，即“0.30%”。用`fee`的值除以10000 （1e4）即可得到用百分比表示的费率。
 将数值转换为百分比表示的费率更加直观。我们可以使用修改上面的查询来做到这一点：
-```SQL
+```sql
 select concat((fee / 1e4)::string, '%') as fee_tier,
     count(*) as pool_count
 from uniswap_v3_ethereum.Factory_evt_PoolCreated
@@ -444,7 +444,7 @@ group by 1
 
 要实现汇总每周新建的流动资金池数量的统计，我们可以先在一个子查询中使用date_trunc()函数将资金池的创建日期转换为每周的开始日期（星期一），然后再用Group By进行汇总统计。
 
-```SQL
+```sql
 select block_date, count(pool) as pool_count
 from (
     select date_trunc('week', evt_block_time) as block_date, evt_tx_hash, pool
@@ -465,7 +465,7 @@ order by 1
 
 类似的，要实现汇总每天新建的流动资金池数量的统计，我们可以先在一个子查询中使用date_trunc()函数将资金池的创建日期转换为天（不含时分秒值），然后再用Group By进行汇总统计。这里我们使用公共表表达式（CTE）的方式来查询。与使用子查询相比，CTE能让查询逻辑更加直观易懂、定义后可以多次重用以提升效率、也更方便调试。后续的查询都会倾向于使用CTE方式。
 
-```SQL
+```s q l
 with pool_details as (
     select date_trunc('day', evt_block_time) as block_date, evt_tx_hash, pool
     from uniswap_v3_ethereum.Factory_evt_PoolCreated
@@ -489,7 +489,7 @@ order by 1
 
 我们可以对分组统计的维度做进一步的细分，按费率来汇总统计每周内新建的流动资金池数量。这样我们可以对比不同费率在不同时间段的流行程度。这个例子中我们演示Group by多级分组，可视化图表数据的条形图的叠加等功能。
 
-```SQL
+```sql
 with pool_details as (
     select date_trunc('week', evt_block_time) as block_date, fee, evt_tx_hash, pool
     from uniswap_v3_ethereum.Factory_evt_PoolCreated
@@ -520,7 +520,7 @@ order by 1, 2
 
 因为Uniswap V3 一共有8000多个资金池，涉及6000多种不同的ERC20代币，我们只关注资金池最多的100个代币的数据。下面的查询演示以下概念：多个CTE，Union，Join，Limit等。
 
-```SQL
+```sql
 with pool_details as (
     select token0 as token_address,
         evt_tx_hash, pool
@@ -567,7 +567,7 @@ order by 3 desc
 
 我们可以通过查询最新创建的资金池来跟踪新的趋势。下面的查询同样关联`tokens.erc20`表获，通过不同的别名多次关联相同的表来获取不同代币的符号。本查询还演示了输出可视化表格，连接字符串生成超链接等功能。
 
-```SQL
+```sql
 with last_crated_pools as (
     select p.evt_block_time,
         t0.symbol as token0_symbol,
