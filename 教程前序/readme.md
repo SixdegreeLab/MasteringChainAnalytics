@@ -134,4 +134,4 @@ SixDegreeLab是专业的链上数据团队，我们的使命是为用户提供�
 3. 《IOSG：解析链上数据分析平台现状与前景》https://foresightnews.pro/article/detail/8473
 4. 《An Introduction to «On-chain» Analysis》https://www.blockstar.ch/post/an-introduction-to-on-chain-analysis
 5. 《The Architecture of a Web 3.0 application》https://www.preethikasireddy.com/post/the-architecture-of-a-web-3-0-application
-6. Dashborads https://dune.com/sixdegree
+6.  Dashborads https://dune.com/sixdegree
