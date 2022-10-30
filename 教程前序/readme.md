@@ -8,7 +8,7 @@
 ## 什么是链上数据
 大部分人刚接触区块链时都会得到这样的概念：区块链是个公开的、不可篡改的记账本，一切的转账、交易记录是透明可信的。然而这一功能并不是区块链的全部，只是最初我们从“点对点的电子现金系统”，也就是“记账本”这个角度出发的。随着智能合约的发展，区块链实际上正在成为一个大型的数据库，下图从架构对比了传统web2和web3应用的区别：智能合约代替了后端，区块链也承担起一部分数据库的功能。越来越多的链上项目涌现，我们在链上的交互越来越频繁，比如在DeFi协议里添加了多少流动性，mint了哪些NFT，甚至关注哪个社交账号记录都能上链，我们一切与区块链的交互都将被记录在这个数据库中，这些记录就属于链上数据。
 
-![image](https://github.com/LvisWang/MasteringChainAnalytics/blob/Lvis/%E6%95%99%E7%A8%8B%E5%89%8D%E5%BA%8F/images/01.jpg)
+![image](images/01.jpg)
 
 **链上数据大致分为三类：**
 1. 交易数据
@@ -22,21 +22,21 @@
 
 链上数据分析就是从这三类数据中提取想要的信息进行解读。 从数据栈角度来看，区块链数据产品可以分为数据源、数据开发工具和数据app三类。
 
-![image](https://github.com/LvisWang/MasteringChainAnalytics/blob/Lvis/%E6%95%99%E7%A8%8B%E5%89%8D%E5%BA%8F/images/02.jpg)
+![image](images/02.jpg)
 
 灵活运用各类数据产品，会为我们在crypto世界提供崭新的视角。
 
 虽然我们一直在说链上数据是公开透明的，但是我们很难直接读取那些数据，因为一笔简单的swap交易在链上看起来可能是这样的：
 
-![image](https://github.com/LvisWang/MasteringChainAnalytics/blob/Lvis/%E6%95%99%E7%A8%8B%E5%89%8D%E5%BA%8F/images/03.jpg)
+![image](images/03.jpg)
 
 我们能在区块链浏览器里看到一些原始链上数据，但是我的问题是想知道今天UniswapV3成交量是多少，这不解决我问题阿！我想看到的是下面这张图：
 
-![image](https://github.com/LvisWang/MasteringChainAnalytics/blob/Lvis/%E6%95%99%E7%A8%8B%E5%89%8D%E5%BA%8F/images/04.jpg)
+![image](images/04.jpg)
 
 链上原始数据并不能给我们答案，我们需要通过索引 (indexing)，处理 (processing)，存储 (storage) 等等一系列数据摄取 (ingestion) 的处理过程，再根据所提问题来聚合运算对应的数据，才能得到问题的答案。
 
-![image](https://github.com/LvisWang/MasteringChainAnalytics/blob/Lvis/%E6%95%99%E7%A8%8B%E5%89%8D%E5%BA%8F/images/05.jpg)
+![image](images/05.jpg)
 
 要从头做起，我们可能需要自己搭节点来接区块链数据，再作处理，但是这明显是非常耗时耗力的。还好，有许多数据平台，如Dune，Flipside，Footprint，他们将索引得到的原始链上数据，经过一系列处理后，存入由平台负责更新和管理的数据仓库，也就是说整个区块链数据被他们做成了好多张关系型数据表格，我们要做的就是从表格里选一些我们想要的数据构建我们的分析数据。更进一步地，有Nansen，Messari，DeBank这些数据类产品，不光整理好数据，还按照需求分门别类地封装起来，方便用户直接使用。
 
@@ -51,7 +51,7 @@
 
 以大家熟悉的DeFi协议流动性挖矿为例：你添加流动性收获了奖励，池子增加了深度，用户享受了更低的滑点，大家都有光明的未来，你安心地将钱锁在合约里。可是某一天，黑天鹅悄然而至，聪明钱消息灵通立马撤退，而你只是个普通投资者，等你看到负面新闻再想到去提款时，手里的奖励几乎分文不值，猛烈的无常损失让你保本都难，直呼区块链骗局。
 
-![image](https://github.com/LvisWang/MasteringChainAnalytics/blob/Lvis/%E6%95%99%E7%A8%8B%E5%89%8D%E5%BA%8F/images/06.jpg)
+![image](images/06.jpg)
 
 但如果你有个链上数据的视角，你可能会发现：协议TVL陡然下降，奖励的代币在Uniswap上抛量激增，换句话说，有聪明人得到消息或者发现不对，池子里的流动性变差钱在逃跑，大家都看跌代币疯狂出售，请问现在应该离场吗？
 
@@ -62,12 +62,12 @@ DeFi summer之后，我们开始关心协议的锁仓量；Axie爆火，我们�
 ## 链上数据分析谁来做
 对于大部分用户来说，成熟的数据产品已经够用，灵活组合多个数据工具就能取到不错的效果。比如使用Nansen帮助用户追踪巨鲸的实时动向；用Token Terminal查看各协议的收入；NFT类的数据监控平台更是五花八门。这些“成品”类数据产品虽然门槛低，使用方便，却也有无法满足高定制化要求的瓶颈。
 
-![image](https://github.com/LvisWang/MasteringChainAnalytics/blob/Lvis/%E6%95%99%E7%A8%8B%E5%89%8D%E5%BA%8F/images/07.jpg)
+![image](images/07.jpg)
 
 举个例子， 你通过https://ultrasound.money/ 发现以太坊上Gas消耗突然上涨，是由这个没有听说过的XEN推动的，你敏锐地意识到，这可能是个早期机会！通过推特搜索，你了解了XEN采用PoP（Proof of Participation）挖矿机制，XEN挖矿参与者拥有挖出的XEN代币的所有权，随参与人数增加，挖矿难度加大，供应量降低。你想了解大家的参与情况，光靠个gas消耗可不够，你还想知道参与的人数，趋势，参与者都选择锁仓多久？同时你还发现，他好像没有防女巫？付个gas就能参与，冲进来的科学家多吗？我还有利润吗？分析到这你急需数据来支撑你“冲不冲”的决策，可是正因为早期，数据app中还没有对它的分析，同时数据app也很可能不会对每一个协议都进行监控分析。这就是为什么已经有很多数据产品的情况下，我们仍然需要自己会写一些数据分析：现成的产品难以满足定制化的需求。
 
-![image](https://github.com/LvisWang/MasteringChainAnalytics/blob/Lvis/%E6%95%99%E7%A8%8B%E5%89%8D%E5%BA%8F/images/08.jpg)
-![image](https://github.com/LvisWang/MasteringChainAnalytics/blob/Lvis/%E6%95%99%E7%A8%8B%E5%89%8D%E5%BA%8F/images/09.jpg)
+![image](images/08.jpg)
+![image](images/09.jpg)
 
 
 通过自己分析数据：https://dune.com/sixdegree/xen-crypto-overview， 我得知了大部分人都选择的是短期质押，且接近百分70的都是新钱包，说明被大家撸坏了，那我就明白了短期抛售压力会非常大，所以我如果想选择参与，就选质押最短的时间，尽快卖出，比谁跑得快。
@@ -90,7 +90,7 @@ DeFi summer之后，我们开始关心协议的锁仓量；Axie爆火，我们�
 
 需要监控Smart money地址的持仓动向，甚至考量代币的交易量和持仓分布；要查一下协议的TVL，未偿债务数额，资金利用率，APR等；考虑每日新增用户数，增长趋势，每日活跃用户数，交易笔数，玩家出入金情况，NFT市场里道具的销售情况。
 
-![image](https://github.com/LvisWang/MasteringChainAnalytics/blob/Lvis/%E6%95%99%E7%A8%8B%E5%89%8D%E5%BA%8F/images/10.jpg)
+![image](images/10.jpg)
 
 这三个问题的难度逐渐增加，一二还容易回答，想明白第三个问题需要大量的学习和理解，这也是区分数据分析师们水平高低的小门槛。一名优秀的分析师应该具备以下三种特点：
 
@@ -110,7 +110,7 @@ DeFi summer之后，我们开始关心协议的锁仓量；Axie爆火，我们�
 
 这里包含取数据（链上数据从哪来），处理数据（怎么筛选想要的滤除无关的），以及数据可视化的能力。
 
-![image](https://github.com/LvisWang/MasteringChainAnalytics/blob/Lvis/%E6%95%99%E7%A8%8B%E5%89%8D%E5%BA%8F/images/11.jpg)
+![image](images/11.jpg)
 
 总的来说，数据分析只是支撑研究的工具，不要为了分析而分析。这个过程首先是出于你想对某个项目、概念、赛道进行研究、投资，然后学习、了解项目的运行机制，抽象出对定性概念的定量分析，最后才是找数据，做可视化。
 
@@ -129,9 +129,9 @@ DeFi summer之后，我们开始关心协议的锁仓量；Axie爆火，我们�
 SixDegreeLab是专业的链上数据团队，我们的使命是为用户提供准确的链上数据图表、分析以及洞见，并致力于普及链上数据分析。通过建立社区、编写教程等方式，培养链上数据分析师，输出有价值的分析内容，推动社区构建区块链的数据层，为未来广阔的区块链数据应用培养人才，欢迎大家加入社区交流！
 
 ## 参考资料
-1. 《The Capital Efficiency Era of DeFi》https://blog.hashflow.com/the-capital-efficiency-era-of-defi-d8b3427feae4
-2. 《Using On-Chain Data for Policy Research: Part 1》https://policy.paradigm.xyz/writing/using-on-chain-data-for-policy-research-part-1
-3. 《IOSG：解析链上数据分析平台现状与前景》https://foresightnews.pro/article/detail/8473
-4. 《An Introduction to «On-chain» Analysis》https://www.blockstar.ch/post/an-introduction-to-on-chain-analysis
-5. 《The Architecture of a Web 3.0 application》https://www.preethikasireddy.com/post/the-architecture-of-a-web-3-0-application
-6.  Dashborads https://dune.com/sixdegree
+1. [The Capital Efficiency Era of DeFi](https://blog.hashflow.com/the-capital-efficiency-era-of-defi-d8b3427feae4)
+2. [Using On-Chain Data for Policy Research: Part 1](https://policy.paradigm.xyz/writing/using-on-chain-data-for-policy-research-part-1)
+3. [IOSG：解析链上数据分析平台现状与前景](https://foresightnews.pro/article/detail/8473)
+4. [An Introduction to «On-chain» Analysis](https://www.blockstar.ch/post/an-introduction-to-on-chain-analysis)
+5. [The Architecture of a Web 3.0 application](https://www.preethikasireddy.com/post/the-architecture-of-a-web-3-0-application)
+6. [Sixdegree Dune Dashborads](https://dune.com/sixdegree)
