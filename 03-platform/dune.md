@@ -19,7 +19,7 @@
   - Dashboard：自己收藏的dashboard，可以在右侧搜索框搜索
   - Queries：自己收藏的query，可以在右侧搜索框搜索
 - **My Creations**：
-  - Dashboard：自己创建的dashboard，可以在右侧搜索框搜索，如果你有团多，仪表盘可以在不同的团队中
+  - Dashboard：自己创建的dashboard，可以在右侧搜索框搜索，如果你有团队，仪表盘可以在不同的团队中
   - Queries：自己创建的query，可以在右侧搜索框搜索
   - Contracts：自己提交解析的合约，可以在右侧搜索框搜索
 - **New Query**：新建一个查询
