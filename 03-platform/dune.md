@@ -68,8 +68,15 @@ spellbook是Dune平台非常重要的一个数据表，它是由社区用户贡�
 
  ### 仪表盘Dashboard
 
-上一小节的单个图表可视化，可以在仪表盘中灵活的组合，形成一个数据指标的聚合看板，并附带解释说明，这样可以从一个更加全面的角度去说明。在`Discover`中找到`New Dashboard`可以新建一个仪表盘，在仪表盘中可以添加所有query中生成的图表，并且可以添加markdown格式的文本信息。
+上一小节的单个图表可视化，可以在仪表盘中灵活的组合，形成一个数据指标的聚合看板，并附带解释说明，这样可以从一个更加全面的角度去说明。在`Discover`中找到`New Dashboard`可以新建一个仪表盘，在仪表盘中可以添加所有query中生成的图表，并且可以添加markdown格式的文本信息，每个可视化的控件都可以拖拽并调整大小。
 
 
 
 ![](images/dashboard.png)
+
+
+### Dune相关资料
+- [Dune官方文档（包括中文文档）](https://dune.com/docs/)
+- [Discord](https://discord.com/invite/ErrzwBz)
+- [Youtube](https://www.youtube.com/channel/UCPrm9d2hLd_YxSExH7oRyAg)
+- [Github Spellbook](https://github.com/duneanalytics/spellbook)
