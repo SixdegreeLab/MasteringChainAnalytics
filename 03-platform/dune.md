@@ -50,7 +50,7 @@
 
 **spellbook**
 
-spellbook是Dune平台非常重要的一个数据表，它是由社区用户贡献的一系列加工后的数据表，可以在github页面[duneanalytics/spellbook](https://github.com/duneanalytics/spellbook)贡献自己定义的数据表，dune平台会通过该定义，在后台生成相应的数据，在上图的前端页面中可以直接使用这些定义好的数据表，这些数据表的定义和字段意义可以到这里查看：https://spellbook-docs.dune.com/#!/overview
+spellbook是Dune平台非常重要的一个数据表，它是由社区用户贡献的一系列加工后的数据表，可以在github页面[duneanalytics/spellbook](https://github.com/duneanalytics/spellbook)贡献自己定义的数据表，dune平台会通过该定义，在后台生成相应的数据，在上图的前端页面中可以直接使用这些定义好的数据表，这些数据表的定义和字段意义可以到这里查看：[https://spellbook-docs.dune.com/#!/overview](https://spellbook-docs.dune.com/#!/overview)
 
 目前spellbook中已经由社区用户贡献了几百张各种各样的表，比如nft.trades, dex.trades, tokens.erc20等等
 
