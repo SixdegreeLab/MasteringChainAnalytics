@@ -1,4 +1,6 @@
 ## Dune平台介绍
+前文提到从数据栈角度来看，区块链数据产品可以分为`数据源`、`数据开发工具`和`数据app`三类，直接接入数据源成本太高，难度也更大，而数据app又是固定好的，我们要想分析数据，
+需要一个开发工作量不大，又能接获取各种数据的平台，这类数据开发工具中，最便捷的便是Dune平台。
 
 [Dune](dune.com)是一个链上的数据分析平台，用户可以在平台上面书写SQL语句，从Dune解析的区块链数据库中筛选出自己需要的数据，并生成对应的图表，组成仪表盘。
 
@@ -76,7 +78,14 @@ spellbook是Dune平台非常重要的一个数据表，它是由社区用户贡�
 
 
 ### Dune相关资料
-- [Dune官方文档（包括中文文档）](https://dune.com/docs/)
-- [Discord](https://discord.com/invite/ErrzwBz)
-- [Youtube](https://www.youtube.com/channel/UCPrm9d2hLd_YxSExH7oRyAg)
-- [Github Spellbook](https://github.com/duneanalytics/spellbook)
+- 官方资料
+  - [Dune官方文档（包括中文文档）](https://dune.com/docs/)
+  - [Discord](https://discord.com/invite/ErrzwBz)
+  - [Youtube](https://www.youtube.com/channel/UCPrm9d2hLd_YxSExH7oRyAg)
+  - [Github Spellbook](https://github.com/duneanalytics/spellbook)
+- 社区教程
+  - [Dune 数据看板零基础极简入门指南](https://twitter.com/gm365/status/1525013340459716608)
+  - [Dune入门指南——以Pooly为例，做一个NFT看板](https://mirror.xyz/0xa741296A1E9DDc3D6Cf431B73C6225cFb5F6693a/iVzr5bGcGKKCzuvl902P05xo7fxc2qWfqfIHwmCXDI4)
+  - [从0到1构建你的Dune V1 Analytics看板（基础篇）](https://mirror.xyz/0xbi.eth/6cbedGOx0GwZdvuxHeyTAgn333jaT34y-2qryvh8Fio)
+  - [从0到1构建你的Dune V1 Analytics看板（实战篇）](https://mirror.xyz/0xbi.eth/603BIaKXn7s2_7A84oayY_Fn5XUPh6zDsv2OlQTdzCg)
+  - [从0到1构建你的Dune V1 Analytics看板（常用表结构）](https://mirror.xyz/0xbi.eth/uSr336PzXtqMuE_LPBewbJ1CHN2oUs40-TDET2rnkqU)
