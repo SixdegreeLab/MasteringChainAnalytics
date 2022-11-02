@@ -56,7 +56,7 @@ Dune 平台的数据集分为几种不同的类型：
 - `topic2`、`topic3`、`topic4` 存贮的是最多3个事件中的可索引参数（主题）。当索引主题参数不足3个时，剩余的字段不保存任何值。具体到每一个事件，这几个主题参数所保存的值可能各不相同。一个简单的方法是结合EtherScan这样的区块链浏览器上显示的日志来对照确认每一个主题参数代表什么含义。或者也可以查阅对应智能合约的源代码来了解事件参数的详细定义。
 - `data`存贮的是事件参数中为标记为索引主题类型的其他字段的16进制值，字符串格式，以`0x`开头，每个参数包括64个字符，实际参数值不足64位则在左侧填充`0`来补足位数。当我们需要从data里面解析数据时，就要按照上述特征，从第3个字符开始，每64个字符为一组拆分开，然后再按其实际存贮的数据类型进行转换处理（转为地址、转为数值或者字符串等）。
 
-这个直接解析logs表的示例查询：[https://dune.com/queries/956896](https://dune.com/queries/956896)。你可以复制查询结果中的tx_hash值访问EtherScan站点，并切换到“Logs”标签页进行对照。下图显示了EtherScan上的例子：
+这个直接解析logs表的示例查询：[https://dune.com/queries/1510688](https://dune.com/queries/1510688)。你可以复制查询结果中的tx_hash值访问EtherScan站点，并切换到“Logs”标签页进行对照。下图显示了EtherScan上的例子：
 
 ![image_04.png](img/image_04.png)
 
@@ -71,12 +71,14 @@ category name -> project name (namespace) -> contract name -> function name / ev
 Decoded projects -> uniswap_v3 -> Factory -> PoolCreated
 ```
 
-已解析项目表的命名规则为：`projectname_blockchain.contractName_evt_eventName` （事件日志）或者`projectname_blockchain.contractName_call_functionName`（函数调用）。例如，上面的Uniswap V3 的 PoolCreated 事件对应的表名为`uniswap_v3_ethereum.Factory_evt_PoolCreated`。
+已解析项目表的命名规则如下：
+事件日志：`projectname_blockchain.contractName_evt_eventName`
+函数调用：`projectname_blockchain.contractName_call_functionName`
+例如，上面的Uniswap V3 的 PoolCreated 事件对应的表名为`uniswap_v3_ethereum.Factory_evt_PoolCreated`。
 
-TODO：
-知道名称 -》 搜索名称
-不知道名称知道地址 -》 检查 表
+一个非常实用的方法是查询`ethereum.contracts`魔法表来确认你关心的智能合约是否已经被解析。这个表存贮了所有已解析的智能合约的记录。如果查询结果显示智能合约已被解析，你就可以用上面介绍的方法在查询编辑器界面快速浏览或搜索定位到对应的智能合约的数据表列表。如果查询无结果，则表示智能合约尚未被解析，你可以将其提交给Dune团队去解析处理：[提交解析新合约](https://dune.com/contracts/new)。你可以提交任意的合约地址，只要是有效的智能合约地址并且是可以被解码的（Dune能自动提取到其ABI代码或者你有它的ABI代码）就行。
 
+为方便大家查询，我们特意制作了一个数据看板，你可以直接查询：[检查智能合约是否已被解码](https://dune.com/sixdegree/decoded-projects-contracts-check)
 
 ## 魔法表
 
