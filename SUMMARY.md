@@ -4,4 +4,5 @@
 ## 入门教程
 
 * [#1 Dune平台简介](03-platform/dune.md)
+* [#2 数据分析新手上路](02_get_started/readme.md)
 
