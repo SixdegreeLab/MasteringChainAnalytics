@@ -62,8 +62,8 @@ https://dune.com/queries/1523799
   - lower():字符串中的字母统一换成小写
   - upper():字符串中的字母统一换成大写
 
-### 2.聚合函数
-**案例1**:我想看看孙哥钱包(0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296)在2022年1月份以来的每一笔ETH的大额转出(>1000ETH)是在什么时候以及具体的转出数量  
+### 3.聚合函数
+**案例3**:我想看看孙哥钱包(0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296)在2022年1月份以来的每一笔ETH的大额转出(>1000ETH)是在什么时候以及具体的转出数量  
 #### SQL
 ```sql
 select 
@@ -89,3 +89,35 @@ https://dune.com/queries/1525555
   - max()：求最大值
   - avg()：求平均
 
+### 2.日期时间函数
+**案例1**:我想看看孙哥钱包(0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296)在2022年1月份以来的每一笔ETH的大额转出(>1000ETH)是在什么时候以及具体的转出数量  
+#### SQL
+```sql
+-- 把粒度到秒的时间转化为天/小时/分钟(为了方便后续按照天或者小时聚合)
+select --Select后跟着需要查询的字段，多个字段用空格隔开
+    block_time --transactions发生的时间
+    ,date_trunc('hour',block_time) as stat_hour --转化成小时的粒度
+    ,date_trunc('day',block_time) as stat_date --转化成天的粒度
+    ,date_trunc('week',block_time) as stat_minute--转化成week的粒度
+    ,from
+    ,to
+    ,hash
+    ,value /power(10,18) as value --通过将value除以/power(10,18)来换算精度，18是以太坊的精度
+from ethereum.transactions --从 ethereum.transactions表中获取数据
+where block_time > '2021-01-01'  --限制Transfer时间是在2022年1月1日之后
+and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的钱包，这里用lower()将字符串里的字母变成小写格式(dune数据库里存的模式是小写，直接从以太坊浏览器粘贴可能大些混着小写)
+and value /power(10,18) >1000 --限制ETH Transfer量大于1000
+order by block_time --基于blocktime做升序排列，如果想降序排列需要在末尾加desc
+```
+![query-page](images/agg.png)
+#### Dune Query URL  
+https://dune.com/queries/1525555 
+
+#### 语法说明
+  - 时间戳的截断函数 DATE_TRUNC('datepart', timestamp)
+  - 根据datepart参数的不同会得到不同的效果
+    - minute:将输入时间戳截断至分钟
+    - hour:将输入时间戳截断至小时
+    - day:将输入时间戳截断至天
+    - week:将输入时间戳截断至某周的星期一
+    - year:将输入时间戳截断至一年的第一天
