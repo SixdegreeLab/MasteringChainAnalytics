@@ -190,15 +190,21 @@ left join --讲transactions_info与price_info的数据关联，关联方式为 l
 on  transactions_info.stat_minute = price_info.stat_minute --left join关联的主键为stat_minute
 
 ```
-![query-page](images/agg.png)
+![query-page](images/left_join.png)
 ##### Dune Query URL  
 https://dune.com/queries/1528027
 
 ##### 语法说明
-- 聚合函数
-  - count()：计数，统计有多少个；如果需要去重计数，括号内加distinct
-  - sum()：求和
-  - min()：求最小值
-  - max()：求最大值
-  - avg()：求平均
-
+  - 联表查询
+    - 大部分情况下我们需要的数据不是在同一张表里，比如transaction表存储的就是只有transaction数据，没有价格数据。如果我们希望能够计算出transaction对应USD 价值，那就需要用联表查询把价格数据给关联进来
+    - 联表查询可以理解为把两个表通过一定的条件关联起来形成一张虚拟的表，你可以方便地对这虚拟表做更多处理。
+  - 联表查询有2个部分构成
+    - 联表方式(join,left join ,right join ,cross join,full join)
+    - 关联条件(on)
+  - 用得最多的联表方式是join 跟left join，以这2个为例子去解释下具体的用法
+ ![query-page](images/left_join_case.png)
+      - join:把两个表按照关联条件(on)关联在一起，取交集
+      - Table A 跟 Table B通过姓名关联，其中交集是小红和小明，因为join是取交集，因此最终结果里姓名就只有小明和小红
+      - 两表中所有符合要求的数据都需要关联，因为Table B中小明有2条记录，所以关联的结果中小明也有两条数据
+    - left join：以左表为主，把右表按照关联条件(on)往左表去关联，如果关联不到就用null填充
+      - Table A 跟 Table B通过姓名关联，因为是以左表为主，所以尽管左表中小兰和小绿在右表中没有符合关联条件的数据，但是小兰和小绿也会出现在结果中，右表那部分因为关联不到数据，因此都用null填充
