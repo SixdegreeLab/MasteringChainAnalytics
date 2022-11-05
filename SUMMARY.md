@@ -7,4 +7,4 @@
 * [#2 数据分析新手上路](02_get_started/readme.md)
 * [#3 创建第一个Dune数据看板](03_build_first_dashboard/readme.md)
 * [#4 熟悉数据表](04_data_tables/readme.md)
-* [#5 熟悉数据表](05_SQL Syntax/sql_syntax_1.md)
+* [#5 熟悉数据表](05_SQL_Syntax/sql_syntax_1.md)
