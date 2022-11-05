@@ -142,7 +142,7 @@ order by stat_date --按照stat_date去排序
 https://dune.com/queries/1525668
 
 #### 语法说明
-- 分组聚合(group by)
+- 分组聚合(group by)  
 分组聚合的语法是group by。分组聚合顾名思义就是先分组后聚合，需要配合聚合函数一起使用。
 ![query-page](images/group_by_case.png)
 假设上边表格是一个家庭(3个人)2020年前2个月的生活开销明细，如果你只用简单的sum，那你只能得到总计的12900；如果你想的到右边2种统计数据，那就需要用到分组聚合group by（按照【人员】分组聚合或者按照【月份】分组聚合）
