@@ -27,3 +27,16 @@ PS:可以随便抽1个hash粘贴到以太坊浏览器里会更容易理解这些
 ## 常见语法以及使用案例
 ### 1.基础结构·运算符·排序
 **案例1**:我想看看孙哥钱包(0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296)在2022年1月份以来的每一笔ETH的大额转出(>1000ETH)是在什么时候以及具体的转出数量
+```sql
+select --Select后跟着需要查询的字段，多个字段用空格隔开
+    block_time 
+    ,from
+    ,to
+    ,hash
+    ,value /power(10,18) as value --通过将value除以/power(10,18)来换算精度，18是以太坊的精度
+from ethereum.transactions --从 ethereum.transactions表中获取数据
+where block_time > '2022-01-01'  --限制Transfer时间是在2022年1月1日之后
+and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的钱包，这里用lower()将字符串里的字母变成小写格式(dune数据库里存的模式是小写，直接从以太坊浏览器粘贴可能大些混着小写)
+and value /power(10,18) >1000 --限制ETH Transfer量大于1000
+order by block_time --基于blocktime做升序排列，如果想降序排列需要在末尾加desc
+```
