@@ -20,9 +20,7 @@
 - **from**：ETH从哪个钱包转出的
 - **to**： ETH转到了哪个钱包
 - **hash**：这个transaction的tx hash
-- **success**：transaction是否成功
-PS:可以随便抽1个hash粘贴到以太坊浏览器里会更容易理解这些字段的含义
-
+- **success**：transaction是否成功  
 
 ## 常见语法以及使用案例
 ### 1.基础结构·运算符·排序
