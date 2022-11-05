@@ -44,3 +44,20 @@ order by block_time --基于blocktime做升序排列，如果想降序排列需�
 ![query-page](images/base.png)
 #### Dune Query URL  
 https://dune.com/queries/1523799 
+
+#### 语法说明
+- SELECT
+  - SELECT后边跟着，需要查询的字段，多个字段用英文逗号隔开
+- FROM 
+  - FROM 后边跟着数据来源的表
+- WHERE
+  - WHERE后跟着对数据的筛选条件
+- 运算符：and / or
+  - 如果筛选条件条件有多个，可以用运算符来连接
+    - and:多个条件取并集
+    - or:多个条件取交集
+- 排序：order by  [字段A]  ,按照字段A升序排列，如果需要按照降序排列就在末尾加上 desc
+- 幂乘计算：用于换算Value的精度，函数是Power(Number,Power)，其中number表示底数；power表示指数
+- 字符串中字母换算大小写
+  - lower():字符串中的字母统一换成小写
+  - upper():字符串中的字母统一换成大写
