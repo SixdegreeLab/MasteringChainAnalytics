@@ -10,5 +10,5 @@
 **select**: 取哪个字段？
 **from**：从哪个表里取？
 **where**：限制条件是什么？    
-**3、数据表长什么样？**
+**3、数据表长什么样？**  
 你可以认为表就是一个一个的Excel 表，每一个Excel 表里存的不同的数据。以ethereum.transactions(以太坊上的transactions记录)为例
