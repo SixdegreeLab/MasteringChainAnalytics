@@ -149,7 +149,8 @@ https://dune.com/queries/1525668
 
 ### 4.联表查询*子查询
 **案例4**:我想从转出ETH的USD金额的角度去看孙哥的转出行为
-#### SQL
+#### 4.1 把时间戳转化成小时/天/周的格式，方便进一步做聚合统计
+##### SQL
 ```sql
 
 select
@@ -190,10 +191,10 @@ on  transactions_info.stat_minute = price_info.stat_minute --left join关联的�
 
 ```
 ![query-page](images/agg.png)
-#### Dune Query URL  
-https://dune.com/queries/1525555 
+##### Dune Query URL  
+https://dune.com/queries/1528027
 
-#### 语法说明
+##### 语法说明
 - 聚合函数
   - count()：计数，统计有多少个；如果需要去重计数，括号内加distinct
   - sum()：求和
