@@ -3,7 +3,7 @@
 
 ## 入门教程
 
-* [#1 Dune平台简介](01-platform/dune.md)
+* [#1 Dune平台简介](01_platform/dune.md)
 * [#2 数据分析新手上路](02_get_started/readme.md)
 * [#3 创建第一个Dune数据看板](03_build_first_dashboard/readme.md)
 * [#4 熟悉数据表](04_data_tables/readme.md)
