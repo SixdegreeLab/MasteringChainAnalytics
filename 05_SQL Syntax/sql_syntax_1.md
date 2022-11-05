@@ -123,3 +123,26 @@ https://dune.com/queries/1527740
         - day:将输入时间戳截断至天
         - week:将输入时间戳截断至某周的星期一
         - year:将输入时间戳截断至一年的第一天
+
+#### 3.2 基于之前得到的处理后的时间字段，使用group by + sum 完成分组聚合
+##### SQL
+```sql
+select 
+    date_trunc('day',block_time) as stat_date --用date_trunc函数将block_time转化为只保留日期的格式
+    ,sum( value /power(10,18) ) as value --对符合要求的数据的value字段求和
+from ethereum.transactions --从 ethereum.transactions表中获取数据
+where block_time > '2022-01-01'  --限制Transfer时间是在2022年1月1日之后
+and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的钱包，这里用lower()将字符串里的字母变成小写格式(dune数据库里存的模式是小写，直接从以太坊浏览器粘贴可能大些混着小写)
+and value /power(10,18) > 1000 --限制ETH Transfer量大于1000
+group by  stat_date --按照stat_date去分组，stat_date是用 'as'对date_trunc('day',block_time)取别名
+order by stat_date --按照stat_date去排序
+```
+![query-page](images/group_by.png)
+#### Dune Query URL  
+https://dune.com/queries/1525668
+
+#### 语法说明
+- 分组聚合(group by)
+分组聚合的语法是group by。分组聚合顾名思义就是先分组后聚合，需要配合聚合函数一起使用。
+![query-page](images/group_by_case.png)
+假设上边表格是一个家庭(3个人)2020年前2个月的生活开销明细，如果你只用简单的sum，那你只能得到总计的12900；如果你想的到右边2种统计数据，那就需要用到分组聚合group by（按照【人员】分组聚合或者按照【月份】分组聚合）
