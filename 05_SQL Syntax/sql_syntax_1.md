@@ -111,7 +111,7 @@ order by block_time --基于blocktime做升序排列，如果想降序排列需�
 ```
 ![query-page](images/agg.png)
 #### Dune Query URL  
-https://dune.com/queries/1525555 
+https://dune.com/queries/1527740
 
 #### 语法说明
   - 时间戳的截断函数 DATE_TRUNC('datepart', timestamp)
