@@ -208,3 +208,64 @@ https://dune.com/queries/1528027
       - 两表中所有符合要求的数据都需要关联，因为Table B中小明有2条记录，所以关联的结果中小明也有两条数据
     - left join：以左表为主，把右表按照关联条件(on)往左表去关联，如果关联不到就用null填充
       - Table A 跟 Table B通过姓名关联，因为是以左表为主，所以尽管左表中小兰和小绿在右表中没有符合关联条件的数据，但是小兰和小绿也会出现在结果中，右表那部分因为关联不到数据，因此都用null填充
+      
+ #### 4.2 把时间戳转化成小时/天/周的格式，方便进一步做聚合统计
+##### SQL
+```sql
+
+with  transactions_info as --通过with as 建立子查询命名为transactions_info
+(
+    select
+         block_time
+         ,transactions_info.stat_minute  as stat_minute
+        ,from
+        ,to
+        ,hash
+        ,eth_amount --通过将value除以/power(10,18)来换算精度，18是以太坊的精度
+        ,price
+        ,eth_amount* price as usd_value
+    from 
+    (
+        select --Select后跟着需要查询的字段，多个字段用空格隔开
+            block_time
+            ,date_trunc('minute',block_time) as stat_minute --把block_time用date_trunc处理成分钟，方便作为主键去关联
+            ,from
+            ,to
+            ,hash
+            ,value /power(10,18) as eth_amount --通过将value除以/power(10,18)来换算精度，18是以太坊的精度
+        from ethereum.transactions --从 ethereum.transactions表中获取数据
+        where block_time > '2022-01-01'  --限制Transfer时间是在2022年1月1日之后
+        and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的钱包，这里用lower()将字符串里的字母变成小写格式(dune数据库里存的模式是小写，直接从以太坊浏览器粘贴可能大些混着小写)
+        and value /power(10,18) >1000 --限制ETH Transfer量大于1000
+        order by block_time --基于blocktime做升序排列，如果想降序排列需要在末尾加desc
+    )transactions_info
+    left join --讲transactions_info与price_info的数据关联，关联方式为 left join
+    (
+        --prices.usd表里存的是分钟级别的价格数据
+        select
+            date_trunc('minute',minute) as stat_minute --把minute用date_trunc处理成分钟，方便作为主键去关联
+            ,price
+        from prices.usd
+        where blockchain = 'ethereum' --取以太坊上的价格数据
+        and symbol = 'WETH' --取WETH的数据
+    )price_info
+    on  transactions_info.stat_minute = price_info.stat_minute --left join关联的主键为stat_minute
+)
+
+select
+    date_trunc('day',block_time) as stat_date
+    ,sum(eth_amount) as eth_amount
+    ,sum(usd_value) as usd_value
+from transactions_info --从子查询形成的‘虚拟表’transactions_info中取需要的数据
+group by  date_trunc('day',block_time)
+order by  date_trunc('day',block_time)
+
+```
+![query-page](images/with_as.png)
+##### Dune Query URL  
+https://dune.com/queries/1528564
+
+##### 语法说明
+   - 子查询(with as )
+   - 通过with as 可以构建一个子查询，把一段SQL的结果变成一个'虚拟表'，接下来的SQL中可以直接从这个'虚拟表'中取数据
+   - 通过with as 可以比较好地提高SQL的逻辑的可读性，也可以避免多重嵌套
