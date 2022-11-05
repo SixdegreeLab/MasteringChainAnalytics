@@ -111,10 +111,10 @@ and value /power(10,18) >1000 --限制ETH Transfer量大于1000
 order by block_time --基于blocktime做升序排列，如果想降序排列需要在末尾加desc
 ```
 ![query-page](images/Date_Function_Format.png)
-#### Dune Query URL  
+##### Dune Query URL  
 https://dune.com/queries/1527740
 
-#### 语法说明
+##### 语法说明
   - DATE_TRUNC('datepart', timestamp)
       - 时间戳的截断函数
       - 根据datepart参数的不同会得到不同的效果
@@ -138,11 +138,66 @@ group by  stat_date --按照stat_date去分组，stat_date是用 'as'对date_tru
 order by stat_date --按照stat_date去排序
 ```
 ![query-page](images/group_by.png)
-#### Dune Query URL  
+##### Dune Query URL  
 https://dune.com/queries/1525668
 
-#### 语法说明
+##### 语法说明
 - 分组聚合(group by)  
 分组聚合的语法是group by。分组聚合顾名思义就是先分组后聚合，需要配合聚合函数一起使用。
 ![query-page](images/group_by_case.png)
 假设上边表格是一个家庭(3个人)2020年前2个月的生活开销明细，如果你只用简单的sum，那你只能得到总计的12900；如果你想的到右边2种统计数据，那就需要用到分组聚合group by（按照【人员】分组聚合或者按照【月份】分组聚合）
+
+### 4.联表查询*子查询
+**案例4**:我想从转出ETH的USD金额的角度去看孙哥的转出行为
+#### SQL
+```sql
+
+select
+     block_time
+     ,transactions_info.stat_minute  as stat_minute
+    ,from
+    ,to
+    ,hash
+    ,eth_amount --通过将value除以/power(10,18)来换算精度，18是以太坊的精度
+    ,price
+    ,eth_amount* price as usd_value
+from 
+(
+    select --Select后跟着需要查询的字段，多个字段用空格隔开
+        block_time
+        ,date_trunc('minute',block_time) as stat_minute --把block_time用date_trunc处理成分钟，方便作为主键去关联
+        ,from
+        ,to
+        ,hash
+        ,value /power(10,18) as eth_amount --通过将value除以/power(10,18)来换算精度，18是以太坊的精度
+    from ethereum.transactions --从 ethereum.transactions表中获取数据
+    where block_time > '2022-01-01'  --限制Transfer时间是在2022年1月1日之后
+    and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的钱包，这里用lower()将字符串里的字母变成小写格式(dune数据库里存的模式是小写，直接从以太坊浏览器粘贴可能大些混着小写)
+    and value /power(10,18) >1000 --限制ETH Transfer量大于1000
+    order by block_time --基于blocktime做升序排列，如果想降序排列需要在末尾加desc
+)transactions_info
+left join --讲transactions_info与price_info的数据关联，关联方式为 left join
+(
+    --prices.usd表里存的是分钟级别的价格数据
+    select
+        date_trunc('minute',minute) as stat_minute --把minute用date_trunc处理成分钟，方便作为主键去关联
+        ,price
+    from prices.usd
+    where blockchain = 'ethereum' --取以太坊上的价格数据
+    and symbol = 'WETH' --取WETH的数据
+)price_info
+on  transactions_info.stat_minute = price_info.stat_minute --left join关联的主键为stat_minute
+
+```
+![query-page](images/agg.png)
+#### Dune Query URL  
+https://dune.com/queries/1525555 
+
+#### 语法说明
+- 聚合函数
+  - count()：计数，统计有多少个；如果需要去重计数，括号内加distinct
+  - sum()：求和
+  - min()：求最小值
+  - max()：求最大值
+  - avg()：求平均
+
