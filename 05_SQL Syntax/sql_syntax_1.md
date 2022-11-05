@@ -114,10 +114,11 @@ order by block_time --基于blocktime做升序排列，如果想降序排列需�
 https://dune.com/queries/1527740
 
 #### 语法说明
-  - 时间戳的截断函数 DATE_TRUNC('datepart', timestamp)
-  - 根据datepart参数的不同会得到不同的效果
-    - minute:将输入时间戳截断至分钟
-    - hour:将输入时间戳截断至小时
-    - day:将输入时间戳截断至天
-    - week:将输入时间戳截断至某周的星期一
-    - year:将输入时间戳截断至一年的第一天
+  - DATE_TRUNC('datepart', timestamp)
+      - 时间戳的截断函数
+      - 根据datepart参数的不同会得到不同的效果
+        - minute:将输入时间戳截断至分钟
+        - hour:将输入时间戳截断至小时
+        - day:将输入时间戳截断至天
+        - week:将输入时间戳截断至某周的星期一
+        - year:将输入时间戳截断至一年的第一天
