@@ -61,3 +61,31 @@ https://dune.com/queries/1523799
 - 字符串中字母换算大小写
   - lower():字符串中的字母统一换成小写
   - upper():字符串中的字母统一换成大写
+
+### 2.聚合函数
+**案例1**:我想看看孙哥钱包(0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296)在2022年1月份以来的每一笔ETH的大额转出(>1000ETH)是在什么时候以及具体的转出数量  
+#### SQL
+```sql
+select 
+    sum( value /power(10,18) ) as value --对符合要求的数据的value字段求和
+    ,max( value /power(10,18) ) as max_value --求最大值
+    ,min( value /power(10,18) )  as min_value--求最小值
+    ,count( hash ) as tx_count --对符合要求的数据计数，统计有多少条
+    ,count( distinct to ) as tx_to_address_count --对符合要求的数据计数，统计有多少条(按照去向地址to去重)
+from ethereum.transactions --从 ethereum.transactions表中获取数据
+where block_time > '2022-01-01'  --限制Transfer时间是在2022年1月1日之后
+and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的钱包，这里用lower()将字符串里的字母变成小写格式(dune数据库里存的模式是小写，直接从以太坊浏览器粘贴可能大些混着小写)
+and value /power(10,18) > 1000 --限制ETH Transfer量大于1000
+```
+![query-page](images/agg.png)
+#### Dune Query URL  
+https://dune.com/queries/1525555 
+
+#### 语法说明
+- 聚合函数
+  - count()：计数，统计有多少个；如果需要去重计数，括号内加distinct
+  - sum()：求和
+  - min()：求最小值
+  - max()：求最大值
+  - avg()：求平均
+
