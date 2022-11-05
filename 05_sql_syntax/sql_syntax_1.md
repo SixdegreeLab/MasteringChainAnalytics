@@ -17,7 +17,7 @@
 你可以认为表就是一个一个的Excel 表，每一个Excel 表里存的不同的数据。以ethereum.transactions(以太坊上的transactions记录)为例
 ![query-page](images/raw_data.png)
 
-先说下表里用比较多的几个字段
+顺便说下表里用比较多的几个字段
 - **block_time**:交易被打包的时间  
 - **block_number**：交易被打包的区块高度  
 - **value**：转出了多少ETH(需要除以power(10,18)来换算精度)  
