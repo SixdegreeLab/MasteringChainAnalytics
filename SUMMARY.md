@@ -1,5 +1,5 @@
 * [简介](README.md)
-* [#0 成为链上数据分析师](00-introductions/readme.md)
+* [#0 成为链上数据分析师](00_introductions/readme.md)
 
 ## 入门教程
 
