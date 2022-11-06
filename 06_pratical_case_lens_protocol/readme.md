@@ -55,8 +55,7 @@ Lens上的用户行为可以简单概括为：
 
 通过查看[LensHub智能合约创建交易详情](https://polygonscan.com/tx/0xca69b18b7e2daf4695c6d614e263d6aa9bdee44bee91bee7e0e6e5e5e4262fca)，我们可以看到该智能合约部署与2022年5月16日。当我们查询`polygon.transactions`原始表这样的原始数据表时，通过设置日期时间过滤条件，可以极大地提高查询执行性能。
 
-### 总用户数
-
+### 总交易数量和总用户数量
 如前所述，最准确的查询用户数量的数据源是`polygon.transactions`原始表，我们可以使用如下的query来查询Lens当前的交易数量和总用户数量。我们直接查询发送给LensHub智能合约的全部交易记录，通过`distinct`关键字来统计独立用户地址数量。由于我们已知该智能合约的创建日期，所以用这个日期作为过滤条件来优化查询性能。
 
 ```sql
@@ -66,7 +65,6 @@ from polygon.transactions
 where `to` = '0xdb46d1dc155634fbc732f92e853b10b288ad5a1d'   -- LensHub
     and block_time >= '2022-05-16'  -- contract creation date
 ```
-
 
 创建一个新的查询，使用上面的SQL代码，运行查询得到结果后，保存Query。然后为其添加两个`Counter`类型到可视化图表，标题分别设置为“Lens Total Transactions”和“Lens Total Users”。
 
@@ -79,6 +77,60 @@ where `to` = '0xdb46d1dc155634fbc732f92e853b10b288ad5a1d'   -- LensHub
 ![image_02.png](img/image_02.png)
 
 我们新创建的数据看板的链接是：[Lens Protocol Ecosystem Analysis](https://dune.com/sixdegree/lens-protocol-ecosystem-analysis)
+
+### 按天统计的交易数量和独立用户数量
+
+要想分析Lens协议在活跃度方面的增长变化趋势，我们可以创建一个查询，按日期来统计每天的交易数量和活跃用户地址数量。通过在查询中添加`block_time`字段并使用`date_trunc()`函数将其转换为日期（不含时分秒数值部分），结合`group by`查询子句，我们就可以统计出每天的数据。查询代码如下所示：
+
+```sql
+select date_trunc('day', block_time) as block_date,
+    count(*) as transaction_count,
+    count(distinct `from`) as user_count
+from polygon.transactions
+where `to` = '0xdb46d1dc155634fbc732f92e853b10b288ad5a1d'   -- LensHub
+    and block_time >= '2022-05-16'  -- contract creation date
+group by 1
+order by 1
+```
+
+保存查询并为其添加两个`Bar Chart`类型的可视化图表，`Y column 1`对应的字段分别选择`transaction_count`和`user_count`，可视化图表的标题分别设置为“Lens Daily Transactions”和“Lens Daily Users”。将它们分别添加到数据看板中。效果如下图所示：
+
+![image_03.png](img/image_03.png)
+
+通常在按日期统计查询到时候，我们可以按日期将相关数据汇总到一起，计算其累计值并将其与每日数据添加到同一张可视化图表中，以便对整体的数据增长趋势有更直观的认识。通过使用`sum() over ()`窗口函数，可以很方便地实现这个需求。为了保持逻辑简单易懂，我们总是倾向于使用CTE来将复杂的查询逻辑分解为多步。将上面的查询修改为：
+
+```sql
+with daily_count as (
+    select date_trunc('day', block_time) as block_date,
+        count(*) as transaction_count,
+        count(distinct `from`) as user_count
+    from polygon.transactions
+    where `to` = '0xdb46d1dc155634fbc732f92e853b10b288ad5a1d'   -- LensHub
+        and block_time >= '2022-05-16'  -- contract creation date
+    group by 1
+    order by 1
+)
+
+select block_date,
+    transaction_count,
+    user_count,
+    sum(transaction_count) over (order by block_date) as accumulate_transaction_count,
+    sum(user_count) over (order by block_date) as accumulate_user_count
+from daily_count
+order by block_date
+```
+
+查询执行完毕后，我们可以调整之前添加的两个可视化图表。分别在`Y column 2`下选择`accumulate_transaction_count`和`accumulate_user_count`将它们作为第二个指标值添加到图表中。由于累计值跟每天的数值往往不在同一个数量级，默认的图表显示效果并不理想。我们可以通过选择“Enable right y-axis”选项，然后把新添加的第二列设置为使用右坐标轴，同时修改其“Chart Type”为“Area”（或者“Line”，“Scatter”），这样调整后，图表的显示效果就比较理想了。
+
+为了将每日交易数量与每日活跃用户数量做对比，我们可以再添加一个可视化图表，标题设置为“Lens Daily Transactions VS Users”，在Y轴方向分别选择transaction_count和user_count列。同样，因为两项数值不在同一个数量级，我们启用右侧坐标轴，将user_count设置为使用右坐标轴，图表类型选择“Line”。也将这个图表添加到数据看板。通过查看这个图表，我们可以看到，在2022年11月初的几天里，Lens的每日交易量出现了一个新的高峰，但是每日活跃用户数量的增长则没有那么明显。
+
+这里需要额外说明的是，因为同一个用户可能中不同的日期都有使用Lens，当我们汇总多天的数据到一起时，累计得到的用户数量并不代表实际的独立用户总数，而是会大于实际用户总数。如果需要统计每日新增的独立用户数量及其总数，我们可以先取得每个用户最早的交易记录，然后再用相同的方法按天汇总统计。具体这里不再展开说明，请大家自行尝试。另外如果你想按周、按月来统计，只需Fork这个查询，修改`date_trunc()`函数的第一个参数为“week”或者“month”即可实现。作为对比，我们Fork并修改了一个按月统计的查询，只将其中的“”加到了数据看板中。
+
+调整完成后，数据看板中的图表会自动更新为最新的显示结果，如下图所示。
+
+![image_04.png](img/image_04.png)
+
+以上两个查询在Dune上的参考链接：[https://dune.com/queries/1534604](https://dune.com/queries/1534604) ， [https://dune.com/queries/1534774](https://dune.com/queries/1534774)
 
 ## 个人资料创建分析
 
