@@ -174,6 +174,89 @@ order by block_date
 - [https://dune.com/queries/1534927](https://dune.com/queries/1534927)
 - [https://dune.com/queries/1534950](https://dune.com/queries/1534950)
 
+## 创作者个人资料域名分析
+
+Lens致力于打造一个社交图谱生态系统，每个创作者可以给自己的账号设置一个个性化的名称（Profile Handle Name），这也是通常大家说的Lens域名。与ENS等其他域名系统类似，我们会关注一些短域名、纯数字域名等的注册情况、不同字符长度的域名已注册数量等信息。在`createProfile`表中，字段`vars`以字符串格式保存了一个json对象，里面就包括了用户的个性化域名。在Dune V2中，我们可以直接使用`:`符号来访问json字符串中的元素的值，例如用`vars:handle`获取域名信息。
+
+使用下面的SQL，我们可以获取已注册Lens域名的详细信息：
+```sql
+select vars:to as user_address,
+    vars:handle as handle_name,
+    replace(vars:handle, '.lens', '') as short_handle_name,
+    call_block_time,
+    output_0 as profile_id,
+    call_tx_hash
+from lens_polygon.LensHub_call_createProfile
+where call_success = true   
+```
+
+为了统计不同长度、不同类型（纯数字、纯字母、混合）Lens域名的数量以及各类型下已注册域名的总数量，我们可以将上面的查询放到一个CTE中。使用CTE的好处是可以简化逻辑（你可以按顺序分别调试、测试每一个CTE）。同时，CTE一经定义，就可以在同一个查询的后续SQL脚本中多次使用，非常便捷。鉴于查询各类域名的已注册总数量和对应不同字符长度的已注册数量都基于上面的查询，我们可以在同一个查询中将它们放到一起。因为前述统计都需要区分域名类型，我们在这个查询中增加了一个字段`handle_type`来代表域名的类型。修改后的查询代码如下：
+
+```sql
+with profile_created as (
+    select vars:to as user_address,
+        vars:handle as handle_name,
+        replace(vars:handle, '.lens', '') as short_name,
+        (case when replace(vars:handle, '.lens', '') rlike '^[0-9]+$' then 'Pure Digits'
+            when replace(vars:handle, '.lens', '') rlike '^[a-z]+$' then 'Pure Letters'
+            else 'Mixed'
+        end) as handle_type,
+        call_block_time,
+        output_0 as profile_id,
+        call_tx_hash
+    from lens_polygon.LensHub_call_createProfile
+    where call_success = true    
+),
+
+profiles_summary as (
+    select (case when length(short_name) >= 20 then 20 else length(short_name) end) as name_length,
+        handle_type,
+        count(*) as name_count
+    from profile_created
+    group by 1, 2
+),
+
+profiles_total as (
+    select count(*) as total_profile_count,
+        sum(case when handle_type = 'Pure Digits' then 1 else 0 end) as pure_digit_profile_count,
+        sum(case when handle_type = 'Pure Letters' then 1 else 0 end) as pure_letter_profile_count
+    from profile_created
+)
+
+select cast(name_length as string) || ' Chars' as name_length_type,
+    handle_type,
+    name_count,
+    total_profile_count,
+    pure_digit_profile_count,
+    pure_letter_profile_count
+from profiles_summary
+join profiles_total on true
+order by handle_type, name_length
+```
+
+修改后的查询代码相对比较复杂，解读如下：
+1. CTE `profile_created`通过使用“:“符号来从保存于`vars`字段中的json字符串里面提取出Profile的域名信息和域名归属的用户地址。由于保存的域名包括了`.lens`的后缀，我们通过`replace()`方法将后缀部分清除并命名新的字段为`short_name`，方便后面计算域名的字符长度。进一步，我们通过一个CASE语句，结合正则表达式匹配操作符`rlike`来判断域名是否由纯数字或者纯字母组成，并赋予一个字符串名称值，命名此字段为`handle_type`。可参考[rlike operator](https://docs.databricks.com/sql/language-manual/functions/rlike.html)了解正则表达式匹配的更多信息。
+2. CTE `profiles_summary`基于`profile_created`执行汇总查询。我们首先使用`length()`函数计算出每一个域名的字符长度。因为存在少量特别长的域名，我们使用一个CASE语句，将长度大于20个字符的域名统一按20来对待。然后我们基于域名长度`name_length`和`handle_type`执行`group by`汇总统计，计算各种域名的数量。
+3. CTE `profiles_total`中，我们统计域名总数量、纯数字域名的数量和纯字母域名的数量。
+4. 最后，我们将`profiles_summary`和`profiles_total`这两个CTE关联到一起输出最终查询结果。由于`profiles_total`只有一行数据，我们直接使用`true`作为JOIN的条件即可。另外，因为`name_length`是数值类型，我们将其转换为字符串类型，并连接到另一个字符串来得到可读性更强的域名长度类型名称。我们将输出结果按域名类型和长度进行排序。
+
+执行查询并保存之后，我们为其添加下列可视化图表并分别添加到数据看板中：
+1. 添加两个Counter，分别输出纯数字域名的数量和纯字母域名的数量。因为之前已经有一个域名注册总数量的Counter，我们可以将这两个新的Counter图表跟它放置到同一行。
+2. 添加一个域名类型分布的扇形图（Pie Chart），Title设置为“Profiles Handle Name Type Distribution”，“X Column“选择`handle_type`字段，“Y Column 1”选择`name_count`字段。
+3. 添加一个域名长度分布的扇形图（Pie Chart），Title设置为“Profiles Handle Name Length Distribution”，“X Column“选择`name_length_type`字段，“Y Column 1”选择`name_count`字段。
+4. 添加一个域名长度分布的柱状图（Bar Chart），Title设置为“Profiles Handle Name Count By Length”，“X Column“选择`name_length_type`字段，“Y Column 1”选择`name_count`字段，“Group by”选择`handle_type`字段。同时取消勾选“Sort values”选项，再勾选“Enable stacking”选项。
+5. 添加一个域名长度分布的面积图（Area Chart），Title设置为“Profile Handle Name Count Percentage By Type”，“X Column“选择`name_length_type`字段，“Y Column 1”选择`name_count`字段，“Group by”选择`handle_type`字段。取消勾选“Sort values”选项，再勾选“Enable stacking”选项，另外再勾选“Normalize to percentage”选项。
+
+将上述可视化图表全部添加到数据看板中，调整显示顺序后，如下图所示：
+
+![image_06.png](img/image_06.png)
+
+
+域名搜索
+
+![image_07.png](img/image_07.png)
+
+
 
 
 ## 作业
