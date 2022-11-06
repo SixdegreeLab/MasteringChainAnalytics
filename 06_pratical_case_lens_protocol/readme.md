@@ -130,9 +130,49 @@ order by block_date
 
 ![image_04.png](img/image_04.png)
 
-以上两个查询在Dune上的参考链接：[https://dune.com/queries/1534604](https://dune.com/queries/1534604) ， [https://dune.com/queries/1534774](https://dune.com/queries/1534774)
+以上两个查询在Dune上的参考链接：
+- [https://dune.com/queries/1534604](https://dune.com/queries/1534604)
+- [https://dune.com/queries/1534774](https://dune.com/queries/1534774)
 
-## 个人资料创建分析
+## 创作者个人资料（Profile）数据分析
+
+Lens的创作者个人资料账号目前仅限于许可白名单内的用户来创建，创建个人资料的数据保存在`createProfile`表中。用下面的查询，我们可以计算出当前已经创建的个人资料的数量。
+
+```sql
+select count(*) as profile_count
+from lens_polygon.LensHub_call_createProfile
+where call_success = true   -- Only count success calls
+```
+
+创建一个Counter类型的可视化图表，Title设置为“Total Profiles”，将其添加到数据看板中。
+
+我们同样关心创作者个人资料随日期的变化和增长情况。用下面的查询可以统计出每日、每月的个人资料创建情况。
+
+```sql
+with daily_profile_count as (
+    select date_trunc('day', call_block_time) as block_date,
+        count(*) as profile_count
+    from lens_polygon.LensHub_call_createProfile
+    where call_success = true
+    group by 1
+    order by 1
+)
+
+select block_date,
+    profile_count,
+    sum(profile_count) over (order by block_date) as accumulate_profile_count
+from daily_profile_count
+order by block_date
+```
+
+用类似的方法创建并添加可视化图表到数据看板。显示效果如下图所示：
+
+![image_05.png](img/image_05.png)
+
+以上两个查询在Dune上的参考链接：
+- [https://dune.com/queries/1534486](https://dune.com/queries/1534486)
+- [https://dune.com/queries/1534927](https://dune.com/queries/1534927)
+- [https://dune.com/queries/1534950](https://dune.com/queries/1534950)
 
 
 
