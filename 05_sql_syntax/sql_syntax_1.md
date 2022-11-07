@@ -1,3 +1,4 @@
+# SQL基础(一)
 ## 基础概念
 **1、数据仓库是什么？**  
 说人话就是说就是出于数据统计的需要，把一些数据分门别类地存储起来,存储的载体是【数据表】。针对某一个或者一些主题的一系列【数据表】合在一起就是数据仓库。  
@@ -14,7 +15,8 @@
 **where**：限制条件是什么？ 
 
 **3、数据表长什么样？**    
-你可以认为表就是一个一个的Excel 表，每一个Excel 表里存的不同的数据。以ethereum.transactions(以太坊上的transactions记录)为例
+你可以认为表就是一个一个的Excel 表，每一个Excel 表里存的不同的数据。以ethereum.transactions(以太坊上的transactions记录)为例：
+
 ![query-page](images/raw_data.png)
 
 顺便说下表里用比较多的几个字段
@@ -43,9 +45,11 @@ and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的
 and value /power(10,18) >1000 --限制ETH Transfer量大于1000
 order by block_time --基于blocktime做升序排列，如果想降序排列需要在末尾加desc
 ```
+
 ![query-page](images/base.png)
+
 #### Dune Query URL  
-https://dune.com/queries/1523799 
+[https://dune.com/queries/1523799](https://dune.com/queries/1523799 )
 
 #### 语法说明
 - SELECT
@@ -79,9 +83,11 @@ where block_time > '2022-01-01'  --限制Transfer时间是在2022年1月1日之�
 and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的钱包，这里用lower()将字符串里的字母变成小写格式(dune数据库里存的模式是小写，直接从以太坊浏览器粘贴可能大些混着小写)
 and value /power(10,18) > 1000 --限制ETH Transfer量大于1000
 ```
+
 ![query-page](images/agg.png)
+
 #### Dune Query URL  
-https://dune.com/queries/1525555 
+[https://dune.com/queries/1525555](https://dune.com/queries/1525555)
 
 #### 语法说明
 - 聚合函数
@@ -112,9 +118,11 @@ and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的
 and value /power(10,18) >1000 --限制ETH Transfer量大于1000
 order by block_time --基于blocktime做升序排列，如果想降序排列需要在末尾加desc
 ```
+
 ![query-page](images/Date_Function_Format.png)
+
 ##### Dune Query URL  
-https://dune.com/queries/1527740
+[https://dune.com/queries/1527740](https://dune.com/queries/1527740)
 
 ##### 语法说明
   - DATE_TRUNC('datepart', timestamp)
@@ -139,14 +147,18 @@ and value /power(10,18) > 1000 --限制ETH Transfer量大于1000
 group by  stat_date --按照stat_date去分组，stat_date是用 'as'对date_trunc('day',block_time)取别名
 order by stat_date --按照stat_date去排序
 ```
+
 ![query-page](images/group_by.png)
+
 ##### Dune Query URL  
-https://dune.com/queries/1525668
+[https://dune.com/queries/1525668](https://dune.com/queries/1525668)
 
 ##### 语法说明
 - 分组聚合(group by)  
 分组聚合的语法是group by。分组聚合顾名思义就是先分组后聚合，需要配合聚合函数一起使用。
+
 ![query-page](images/group_by_case.png)
+
 假设上边表格是一个家庭(3个人)2020年前2个月的生活开销明细，如果你只用简单的sum，那你只能得到总计的12900；如果你想的到右边2种统计数据，那就需要用到分组聚合group by（按照【人员】分组聚合或者按照【月份】分组聚合）
 
 ### 4.联表查询·子查询
@@ -154,7 +166,6 @@ https://dune.com/queries/1525668
 #### 4.1 转出数据看到的都是ETH的量，我想看下每次转出价值多少USD
 ##### SQL
 ```sql
-
 select
      block_time
      ,transactions_info.stat_minute  as stat_minute
@@ -190,11 +201,12 @@ left join --讲transactions_info与price_info的数据关联，关联方式为 l
     and symbol = 'WETH' --取WETH的数据
 )price_info
 on  transactions_info.stat_minute = price_info.stat_minute --left join关联的主键为stat_minute
-
 ```
+
 ![query-page](images/left_join.png)
+
 ##### Dune Query URL  
-https://dune.com/queries/1528027
+[https://dune.com/queries/1528027](https://dune.com/queries/1528027)
 
 ##### 语法说明
   - 联表查询
@@ -214,7 +226,6 @@ https://dune.com/queries/1528027
 #### 4.2 我想把4.1的明细数据按照天去分组聚合，但是不想写嵌套太多层的sql
 ##### SQL
 ```sql
-
 with  transactions_info as --通过with as 建立子查询命名为transactions_info
 (
     select
@@ -261,13 +272,14 @@ select
 from transactions_info --从子查询形成的‘虚拟表’transactions_info中取需要的数据
 group by  date_trunc('day',block_time)
 order by  date_trunc('day',block_time)
-
 ```
+
 ![query-page](images/with_as.png)
+
 ##### Dune Query URL  
-https://dune.com/queries/1528564
+[https://dune.com/queries/1528564](https://dune.com/queries/1528564)
 
 ##### 语法说明
    - 子查询(with as )  
-    - 通过with as 可以构建一个子查询，把一段SQL的结果变成一个'虚拟表'，接下来的SQL中可以直接从这个'虚拟表'中取数据  
+    - 通过with as 可以构建一个子查询，把一段SQL的结果变成一个'虚拟表'（可类比为一个视图或者子查询），接下来的SQL中可以直接从这个'虚拟表'中取数据  
     - 通过with as 可以比较好地提高SQL的逻辑的可读性，也可以避免多重嵌套
