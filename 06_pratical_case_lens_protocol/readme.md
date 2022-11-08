@@ -1,4 +1,4 @@
-# 实践案例：制作Lens Protocol的数据看板
+# 实践案例：制作Lens Protocol的数据看板（一）
 
 为了让大家尽快上手开始数据分析，我们会将一些偏理论的内容放到教程的后续部分，前半部分则更多讲解一些可以结合起来实践的内容。本篇教程我们一起来为Lens Protocol项目制作一个基础的数据看板。
 
@@ -251,17 +251,113 @@ order by handle_type, name_length
 
 ![image_06.png](img/image_06.png)
 
+本查询在Dune上的参考链接：
+- [https://dune.com/queries/1535541](https://dune.com/queries/1535541)
 
-域名搜索
+## 已注册域名搜索
+
+除了对已注册Lens域名的分布情况的跟踪，用户也关注已注册域名的详细情况。为此，可以提供一个搜索功能，允许用户搜索已注册域名的详细列表。因为目前已经注册了约10万个Lens账号，我们在下面的查询中限制最多返回10000条搜索结果。
+
+首先，我们可以在查询中定义一个参数`{{name_contains}}`（Dune 使用两个花括号包围住参数名称，默认参数类型为字符串`Text`类型）。然后使用`like`关键词以及`%`通配符来搜索名称中包含特定字符的域名：
+
+```sql
+with profile_created as (
+    select vars:to as user_address,
+        vars:handle as handle_name,
+        replace(vars:handle, '.lens', '') as short_name,
+        call_block_time,
+        output_0 as profile_id,
+        call_tx_hash
+    from lens_polygon.LensHub_call_createProfile
+    where call_success = true    
+)
+
+select call_block_time,
+    profile_id,
+    handle_name,
+    short_name,
+    call_tx_hash
+from profile_created
+where short_name like '%{{name_contains}}%' -- 查询名称包含输入的字符串的域名
+order by call_block_time desc
+limit 1000
+```
+
+在查询执行之前，Dune 引擎会用输入的参数值替换SQL语句中的参数名称。当我们输入“john”时，`where short_name like '%{{name_contains}}%'`子句会被替换为`where short_name like '%john%'`，其含义就是搜索`short_name`包含字符串`john`的所有域名。注意虽然参数类型是字符串类型，但是参数替换时不会字段给我们添加前后的单引号。单引号需要我们直接输入到查询中，如果忘记输入了则会引起语法错误。
+
+如前所述，域名的长度也很关键，越短的域名越稀缺。除了搜索域名包含的字符，我们可以再添加一个域名长度过滤的参数`{{name_length}}`，将其参数类型修改为下拉列表类型，同时填入数字5-20的序列作为参数值列表，每行一个值。因为Lens域名目前最少5个字符，而且超过20个字符的域名很少，所以我们选择5到20作为区间。参数设置如下图所示。
+
+![image_08.png](img/image_08.png)
+
+添加了新的参数后，我们调整SQL语句的WHERE子句为如下所示。其含义为查询名称包含输入的关键字，同时域名字符长度等于选择的长度值的域名列表。注意，虽然我们的`name_length`参数的值全部是数字，但List类型参数的默认类型是字符串，所以我们使用`cast()`函数转换其类型为整数类型后再进行比较。
+
+```sql
+where short_name like '%{{name_contains}}%' -- 名称包含输入的字符串的域名
+    and length(short_name) = cast('{{name_length}}' as integer) -- 域名长度等于选择的长度值
+```
+
+同样，我们可以再添加一个域名字符串模式类型的参数`{{name_pattern}}`，用来过滤纯数字域名或纯字母域名。这里同样设置参数为List类型，列表包括三个选项：Any、Pure Digits、Pure Letters。SQL语句的WHERE子句相应修改为如下所示。跟之前的查询类似，我们使用一个CASE语句来判断当前查询域名的类型，如果查询纯数字或者纯字母域名，则使用相应的表达式，如果查询任意模式则使用` 1 = 1 `这样的总是返回真值的相等判断，相当于忽略这个过滤条件。
+
+```sql
+where short_name like '%{{name_contains}}%' -- 名称包含输入的字符串的域名
+    and length(short_name) = cast('{{name_length}}' as integer) -- 域名长度等于选择的长度值
+    and (case when '{{name_pattern}}' = 'Pure Digits' then short_name rlike '^[0-9]+$'
+            when '{{name_pattern}}' = 'Pure Letters' then short_name rlike '^[a-z]+$'
+            else 1 = 1
+        end)
+```
+
+因为我们在这几个搜索条件之间使用了`and`连接条件，相当于必须同时满足所有条件，这样的搜索有一定的局限性。我们对其做适当调整，name_length参数也再增加一个默认选项“0”。当用户未输入或者未选择某个过滤条件时，我们忽略它。这样搜索查询就变得非常灵活了。完整的SQL语句如下：
+
+```sql
+with profile_created as (
+    select vars:to as user_address,
+        vars:handle as handle_name,
+        replace(vars:handle, '.lens', '') as short_name,
+        call_block_time,
+        output_0 as profile_id,
+        call_tx_hash
+    from lens_polygon.LensHub_call_createProfile
+    where call_success = true    
+)
+
+select call_block_time,
+    profile_id,
+    handle_name,
+    short_name,
+    '<a href=https://polygonscan.com/tx/' || call_tx_hash || ' target=_blank>Polyscan</a>' as link,
+    call_tx_hash
+from profile_created
+where (case when '{{name_contains}}' <> 'keyword' then short_name like '%{{name_contains}}%' else 1 = 1 end)
+    and (case when cast('{{name_length}}' as integer) < 5 then 2 = 2
+            when cast('{{name_length}}' as integer) >= 20 then length(short_name) >= 20
+            else length(short_name) = cast('{{name_length}}' as integer)
+        end)
+    and (case when '{{name_pattern}}' = 'Pure Digits' then short_name rlike '^[0-9]+$'
+            when '{{name_pattern}}' = 'Pure Letters' then short_name rlike '^[a-z]+$'
+            else 3 = 3
+        end)
+order by call_block_time desc
+limit 1000
+```
+
+我们给这个查询增加一个表格（Table）类型的可视化图表，并将其添加到数据看板中。当添加代参数的查询到数据看板时，所有的参数也被自动添加到看板头部。我们可以进入编辑模式，拖拽参数到其希望出现的位置。将图表加入数据看板后的效果图如下所示。
 
 ![image_07.png](img/image_07.png)
 
+以上查询在Dune上的参考链接：
+- [https://dune.com/queries/1535903](https://dune.com/queries/1535903)
+- [https://dune.com/queries/1548540](https://dune.com/queries/1548540)
+- [https://dune.com/queries/1548574](https://dune.com/queries/1548574)
+- [https://dune.com/queries/1548614](https://dune.com/queries/1548614)
 
+## 总结
 
+至此，我们已经完成了对Lens协议的基本概况和创作者个人资料、域名信息的分析，也添加了一个域名搜索功能。前面“数据看板的主要分析内容”部分我们列出了更多可以分析的内容，在本篇教程的第二部分，我们将继续围绕创作者发布的出版物、关注、收藏、NFT等方面进行分析。你也可以自行探索创建新的查询。
 
 ## 作业
 
-TODO
+请结合教程内容，制作你自己的Lens 协议数据看板，可参考“数据看板的主要分析内容”部分提示的内容尝试新的查询分析。请大家积极动手实践，创建数据看板并分享到社区。我们将对作业完成情况和质量进行记录，之后追溯为大家提供一定的奖励，包括但不限于Dune社区身份，周边实物，API免费额度，POAP，各类合作的数据产品会员，区块链数据分析工作机会推荐，社区线下活动优先报名资格以及其他Sixdegree社区激励等。
 
 ## SixDegreeLab介绍
 
