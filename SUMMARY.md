@@ -8,3 +8,4 @@
 * [#3 创建第一个Dune数据看板](03_build_first_dashboard/readme.md)
 * [#4 熟悉数据表](04_data_tables/readme.md)
 * [#5 SQL基础(一)](05_sql_syntax/sql_syntax_1.md)
+* [#6 实践案例：制作Lens Protocol的数据看板（一）](06_pratical_case_lens_protocol/readme.md)
