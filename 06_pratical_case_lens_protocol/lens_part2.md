@@ -208,9 +208,97 @@ limit 100
 
 ## 评论数据分析
 
+### 评论最多的账号数据分析
+
+Lens的评论数据与发帖数据类似，按数据产生来源不同，分别保存在`LensHub_call_comment`和`LensHub_call_commentWithSig`表中。基于Lens协议目前的功能，用户必须已经创建了自己的Profile才能对其他人创作者对Post进行评论。在评论数据表中，是通过评论者的Profile ID来进行追踪的。同时，每个创作者的发帖，其编号是从1开始累加的。也就是说，不同创作者的发帖，其编号可能相同。我们需要将创作者的Profile ID 和其Publication ID关联起来这样才能得到唯一的编号。SQL如下：
+
+```sql
+    select call_block_time,
+        call_tx_hash,
+        output_0 as comment_id, -- 评论编号
+        vars:profileId as profile_id_from, -- 评论者的Profile ID
+        vars:contentURI as content_url, -- 评论内容链接
+        vars:pubIdPointed as publication_id_pointed, -- 被评论的Publication ID
+        vars:profileIdPointed as profile_id_pointed, -- 被评论的创作者的Profile ID
+        vars:profileIdPointed || '-' || vars:pubIdPointed as unique_publication_id  -- 组合生成唯一编号
+    from lens_polygon.LensHub_call_comment
+    where call_success = true
+    limit 10
+```
+
+我们同样通过定义额外的CTE来获取总的评论数据，从而可以在同一个查询中输出Counter图表，对比评论最多的1000个账号的评论数据和所有账号的评论数据。将查询结果可视化并加入到数据看板后的显示效果如下：
+
+![image_13.png](img/image_13.png)
+
+以上查询在Dune上的参考链接：
+- [https://dune.com/queries/1560028](https://dune.com/queries/1560028)
+
+### 评论最多的Publication统计
+
+每个评论都是针对一个具体的对象（Publication）（这里作者认为应该就是Post，如有理解错误敬请指正）。分析被评论最多的Publication就具有一定的价值。我们编写一个查询来统计前500个被评论最多的Publication，同时将其与所有评论数据进行对比。SQL如下：
+
+```sql
+with comment_data as (
+    -- get comment data from LensHub_call_comment and LensHub_call_commentWithSig tables
+)
+
+select profile_id_pointed,
+    publication_id_pointed,
+    unique_publication_id,
+    count(*) as comment_count
+from comment_data
+group by 1, 2, 3
+order by 4 desc
+limit 500
+```
+
+如法炮制，我们添加额外的CTE来获取全部评论的数据，并将上面统计的前500个评论最多的Publication的数据与全局数据进行对比。添加相应的可视化图表到数据看板，效果如下：
+
+![image_14.png](img/image_14.png)
+
+以上查询在Dune上的参考链接：
+- [https://dune.com/queries/1560578](https://dune.com/queries/1560578)
+
 ## 镜像数据分析
 
+镜像数据与评论数据高度相似，用户也必须先创建自己的Profile才能镜像其他人的Publication。我们分别编写两个查询，统计出镜像操作最多的前1000个账号数据和前500个被镜像最多的Publication数据。同样将它们跟整体镜像数据进行对比。加入数据看板后的效果如下图所示：
+
+![image_15.png](img/image_15.png)
+
+以上查询在Dune上的参考链接：
+- [https://dune.com/queries/1561229](https://dune.com/queries/1561229)
+- [https://dune.com/queries/1561558](https://dune.com/queries/1561558)
+
+
 ## 收藏数据分析
+
+Lens的收藏数据同样分别保存在`LensHub_call_collect`和`LensHub_call_collectWithSig`这两个表里。与评论或镜像数据有所不同的是，收藏一个Publication时并不要求收藏者拥有自己的Lens Profile。也就是任何地址（用户）都可以收藏其他Profile下的Publication。所以我们要通过收藏者的地址来跟踪具体的收藏操作。特别之处在于，在`LensHub_call_collect`表中并没有保存收藏者的地址数据，`LensHub_call_collectWithSig`表中则有这个数据。所以我们需要从`LensHub_call_collect`表关联到`transactions`表，获取当前操作收藏的用户地址。SQL示例如下：
+
+```sql
+select call_block_time,
+    t.`from` as collector,
+    c.profileId as profile_id,
+    c.pubId as publication_id,
+    c.profileId || '-' || c.pubId as unique_publication_id,
+    c.output_0 as collection_id
+from lens_polygon.LensHub_call_collect c
+inner join polygon.transactions t on c.call_tx_hash = t.hash -- 关联交易表获取用户地址
+where call_block_time >= '2022-05-18' -- Lens合约的发布日期，提升查询效率
+    and block_time >= '2022-05-18'
+    and c.call_success = true
+limit 10
+```
+
+由于交易表记录相当庞大，查询耗时将明显增加。一个经验法则是，能避免针对原始数据表（transactions, logs, traces）的join操作就尽量避免。
+
+收藏数据分析SQL的其他部分跟前面的例子基本相同，这里不再赘述。同样，我们也针对被收藏最多的Publication进行统计分析。相关可视化图片加入数据看板后显示效果如下图所示：
+
+![image_16.png](img/image_16.png)
+
+以上查询在Dune上的参考链接：
+- [https://dune.com/queries/1560847](https://dune.com/queries/1560847)
+- [https://dune.com/queries/1561009](https://dune.com/queries/1561009)
+
 
 ## 关注数据分析
 
