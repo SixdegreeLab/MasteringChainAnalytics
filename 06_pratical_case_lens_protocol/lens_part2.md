@@ -304,7 +304,7 @@ limit 10
 
 ### 关注最多的Profile数据
 
-Lens协议的关注数据仍然是分别保存在`LensHub_call_follow`和`LensHub_call_followWithSig`两个表里。任何地址（用户）都可以关注其他Profile。与收藏类似，`LensHub_call_follow`表里没有保存关注者的地址，所以我们也需要通过关联到`transactions`表来获取当前操作收藏的用户地址。另外，关注有一个特殊的地方，就是一个交易里面可以同时批量关注多个Profile。`LensHub_call_follow`表中，被关注的Profile数据保存在数组类型字段`profileIds`里，这个相对容易处理。而表`LensHub_call_followWithSig`中，则是JSON字符串格式里面的数组值。其中字段`vars`的一个实例如下（datas部分做了省略）：
+Lens协议的关注数据仍然是分别保存在`LensHub_call_follow`和`LensHub_call_followWithSig`两个表里。任何地址（用户）都可以关注其他Profile。与收藏类似，`LensHub_call_follow`表里没有保存关注者的地址，所以我们也需要通过关联到`transactions`表来获取当前操作收藏的用户地址。另外，关注有一个特殊的地方，就是一个交易里面可以同时批量关注多个Profile。`LensHub_call_follow`表中，被关注的Profile数据保存在数组类型字段`profileIds`里，这个相对容易处理。而表`LensHub_call_followWithSig`中，则是JSON字符串格式里面的数组值。其中字段`vars`的一个实例如下（部分内容做了省略）：
 
 ```json
 {"follower":"0xdacc5a4f232406067da52662d62fc75165f21b23","profileIds":[21884,25271,39784],"datas":["0x","0x","0x"],"sig":"..."}
@@ -319,7 +319,7 @@ where array_size(output_0) > 1
 limit 10
 ```
 
-我们通过结构体的映射，将其中的`follower`影视为一个字符串类型，将`profileIds`映射为长整型数组`array<long>`，同时忽略其他内容。这样我们就可以使用访问数组的方法来读取profileIds里面的元素值了。具体语法为使用`lateral view explode(profile_ids) as profile_id`将数组拆分为多行，关联到主查询，然后使用给定的别名`profile_id`来访问拆分得到的数组元素值。
+我们通过结构体的映射，将其中的`follower`影视为一个字符串类型，将`profileIds`映射为长整型数组`array<long>`，同时忽略其他内容。这样我们就可以使用`structname.element_name`的形式访问结构体中的元素，其中profileIds是一个数组。然后我们可以使用提取数组元素的方法来读取profileIds里面的单个数值。具体语法为使用`lateral view explode(profile_ids) as profile_id`将数组拆分为多行，关联到主查询，然后使用给定的别名`profile_id`来访问拆分得到的数组元素值。
 
 读取关注详情的完整SQL 代码如下：
 
@@ -327,9 +327,10 @@ limit 10
 with follow_data as (
     select follower, profile_id
     from (
-        select vars_struct.follower as follower, 
+        select vars_struct.follower as follower, -- read element from struct
             vars_struct.profileIds as profile_ids
         from (
+            -- belowe we map json string to a struct with data type
             select from_json(vars, 'struct<follower:string,profileIds:array<long>>') AS vars_struct
             from lens_polygon.LensHub_call_followWithSig
         )

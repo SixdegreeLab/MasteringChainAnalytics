@@ -9,3 +9,4 @@
 * [#4 熟悉数据表](04_data_tables/readme.md)
 * [#5 SQL基础(一)](05_sql_syntax/sql_syntax_1.md)
 * [#6 实践案例：制作Lens Protocol的数据看板（一）](06_pratical_case_lens_protocol/readme.md)
+* [#7 实践案例：制作Lens Protocol的数据看板（二）](06_pratical_case_lens_protocol/lens_part2.md)
