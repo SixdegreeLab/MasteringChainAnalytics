@@ -302,14 +302,194 @@ limit 10
 
 ## 关注数据分析
 
+### 关注最多的Profile数据
+
+Lens协议的关注数据仍然是分别保存在`LensHub_call_follow`和`LensHub_call_followWithSig`两个表里。任何地址（用户）都可以关注其他Profile。与收藏类似，`LensHub_call_follow`表里没有保存关注者的地址，所以我们也需要通过关联到`transactions`表来获取当前操作收藏的用户地址。另外，关注有一个特殊的地方，就是一个交易里面可以同时批量关注多个Profile。`LensHub_call_follow`表中，被关注的Profile数据保存在数组类型字段`profileIds`里，这个相对容易处理。而表`LensHub_call_followWithSig`中，则是JSON字符串格式里面的数组值。其中字段`vars`的一个实例如下（datas部分做了省略）：
+
+```json
+{"follower":"0xdacc5a4f232406067da52662d62fc75165f21b23","profileIds":[21884,25271,39784],"datas":["0x","0x","0x"],"sig":"..."}
+```
+
+要从JSON字符串中读取数组值并不容易，无法直接将字符串格式的数组值`[21884,25271,39784]`转换为数组，所以这里我们要借用`from_json()`方法，将JSON字符串映射为一个结构体（Struct），然后从结构体里面提取数组。示例代码如下：
+
+```sql
+select from_json(vars, 'struct<follower:string,profileIds:array<long>>') AS vars_struct
+from lens_polygon.LensHub_call_followWithSig
+where array_size(output_0) > 1
+limit 10
+```
+
+我们通过结构体的映射，将其中的`follower`影视为一个字符串类型，将`profileIds`映射为长整型数组`array<long>`，同时忽略其他内容。这样我们就可以使用访问数组的方法来读取profileIds里面的元素值了。具体语法为使用`lateral view explode(profile_ids) as profile_id`将数组拆分为多行，关联到主查询，然后使用给定的别名`profile_id`来访问拆分得到的数组元素值。
+
+读取关注详情的完整SQL 代码如下：
+
+```sql
+with follow_data as (
+    select follower, profile_id
+    from (
+        select vars_struct.follower as follower, 
+            vars_struct.profileIds as profile_ids
+        from (
+            select from_json(vars, 'struct<follower:string,profileIds:array<long>>') AS vars_struct
+            from lens_polygon.LensHub_call_followWithSig
+        )
+            
+        union all
+        
+        select t.`from` as follower, f.profileIds as profile_ids
+        from lens_polygon.LensHub_call_follow f
+        inner join polygon.transactions t on f.call_tx_hash = t.hash
+        where call_block_time >= '2022-05-18' -- Lens launch date
+            and block_time >= '2022-05-18'
+    ) f
+    lateral view explode(profile_ids) as profile_id
+)
+
+select * from follow_data
+limit 100
+```
+
+同样，我们也在上面的查询基础上添加获取全部关注数据的CTE定义，从而可以在取得最多关注的Profile列表时，将其与整体关注数量进行对比。查询结果可视化并加入数据看板后的效果如下：
+
+![image_17.png](img/image_17.png)
+
+以上查询在Dune上的参考链接：
+- [https://dune.com/queries/1554454](https://dune.com/queries/1554454)
+
+### 按关注数量范围统计Profile
+
+我们看到几乎绝大部分Profile都有被关注，我们可以用一个查询来对各Profile的关注量的分布情况做一个分析。SQL代码如下：
+
+```sql
+with follow_data as (
+    -- Get follow data from table LensHub_call_follow and LensHub_call_followWithSig
+),
+
+profile_follower as (
+    select profile_id,
+        count(follower) as follower_count
+    from follow_data
+    group by 1
+)
+
+select (case when follower_count >= 10000 then '10K+ Followers'
+            when follower_count >= 1000 then '1K+ Followers'
+            when follower_count >= 100 then '100+ Followers'
+            when follower_count >= 50 then '50+ Followers'
+            when follower_count >= 10 then '10+ Followers'
+            when follower_count >= 5 then '5+ Followers'
+            else '1 - 5 Followers'
+        end) as follower_count_type,
+    count(profile_id) as profile_count
+from profile_follower
+group by 1
+```
+
+将以上查询结果使用一个Pie chart饼图进行可视化。加入到数据看板后到显示效果如下图所示：
+
+![image_18.png](img/image_18.png)
+
+以上查询在Dune上的参考链接：
+- [https://dune.com/queries/1554888](https://dune.com/queries/1554888)
+
+### 每日新关注数量统计
+
+Lens用户每日的新关注数量也是观察整体活跃度变化的一个重要指标，我们编写一个查询来统计每天的发帖数量。这个查询中的`follow_data` CTE与之前的完全相同。查询处理方式也与前面讲过的每日发帖数量统计高度相似，这里不再赘述细节。给查询结果添加可视化图表并将其加入数据看板，显示效果如下：
+
+![image_19.png](img/image_19.png)
+
+以上查询在Dune上的参考链接：
+- [https://dune.com/queries/1555185](https://dune.com/queries/1555185)
+
 ## 创作者操作综合分析
 
+结合前述内容可以看出，创作者（拥有Profile的用户）可以发帖（Post）、评论（Comment）或者镜像（Mirror）其他创作者的数据，而普通用户（未创建Profile）则可以关注（Follow）创作者和收藏创作者发布的作品（Publication）。所以我们可以将创作者可以操作的数据合并到一起来进行综合分析。
+
+我们定义一个`action_data` CTE，在其内部使用嵌套定义CTE的方式将相关数据集中到一起，其中post_data、comment_data和mirror_data都分别跟前面相关查询里面的定义完全相同。我们使用union all将以上数据合并到一起，同时分布指定对应的动作类型，生成一个用于分类的字段`action_type`。然后我们只需按照分类字段进行汇总统计即可计算出每种操作类型的交易数量和相应的Profile数量。SQL示例如下：
+
+```sql
+with action_data as (
+    with post_data as (
+        -- get post data from relevant tables
+    ),
+    
+    comment_data as (
+        -- get comment data from relevant tables
+    ),
+    
+    mirror_data as (
+        -- get mirror data from relevant tables
+    )
+ 
+    select 'Post' as action_type, * from post_data
+    union all
+    select 'Mirror' as action_type, * from mirror_data
+    union all
+    select 'Comment' as action_type, * from comment_data
+)
+
+select action_type,
+    count(*) as transaction_count,
+    count(distinct profile_id) as profile_count
+from action_data
+group by 1
+```
+
+我们可以用相似的方法，新建一个按日期汇总每日各种操作数量的查询。示例代码如下：
+
+```
+with action_data as (
+    -- same as above query
+)
+
+select date_trunc('day', call_block_time) as block_date,
+    action_type,
+    count(*) as transaction_count
+from action_data
+group by 1, 2
+order by 1, 2
+```
+ 
+将以上查询结果可视化并加入数据看板，显示效果如下：
+
+![image_20.png](img/image_20.png)
+
+以上查询在Dune上的参考链接：
+- [https://dune.com/queries/1561822](https://dune.com/queries/1561822)
+- [https://dune.com/queries/1561898](https://dune.com/queries/1561898)
+
 ## 普通用户操作综合分析
+
+与创作者类似，我们可以将普通用户可执行的关注和收藏操作合并到一起进行分析。我们同样编写两个查询，分别统计总体的操作分布和按日期的操作数量。查询里面的`action_data`数据同样来源于前面介绍过的收藏查询和关注查询，其SQL示例如下：
+
+```sql
+with action_data as (
+    with follow_data as (
+        -- get follow data from relevant tables
+    ),
+    
+    collect_data as (
+        -- get collect data from relevant tables
+    )
+
+    select 'Follow' as action_type, * from follow_data
+    union all
+    select 'Collect' as action_type, * from collect_data
+)
+```
+
+除了数据来源不同，这两个查询与创作者操作综合分析基本相同。将查询结果可视化并加入数据看板，显示效果如下：
+
+![image_21.png](img/image_21.png)
+
+以上查询在Dune上的参考链接：
+- [https://dune.com/queries/1562000](https://dune.com/queries/1562000)
+- [https://dune.com/queries/1562178](https://dune.com/queries/1562178)
 
 
 ## 总结与作业
 
-现在，我们已经完成了对Lens协议的整体分析。不过，由于篇幅问题，仍然有很多值得分析的指标我们尚未涉及，包括NFT的相关数据分析、创作者的收益分析、Profile账号的转移情况分析等。
+非常好！我们已经完成了对Lens协议的整体分析。不过，由于篇幅问题，仍然有很多值得分析的指标我们尚未涉及，包括NFT的相关数据分析、创作者的收益分析、Profile账号的转移情况分析等。
 
 请结合教程内容，继续完善你自己的Lens协议数据看板，你可以Fork本教程的查询去修改，可以按自己的理解做任何进一步的扩展。请大家积极动手实践，创建数据看板并分享到社区。我们将对作业完成情况和质量进行记录，之后追溯为大家提供一定的奖励，包括但不限于Dune社区身份，周边实物，API免费额度，POAP，各类合作的数据产品会员，区块链数据分析工作机会推荐，社区线下活动优先报名资格以及其他Sixdegree社区激励等。
 
