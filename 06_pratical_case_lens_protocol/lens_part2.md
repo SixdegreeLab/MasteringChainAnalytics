@@ -1,11 +1,11 @@
 # 实践案例：制作Lens Protocol的数据看板（二）
 
-在上一篇教程中，我们给大家介绍了Lens协议，并为其制作了一个初步的看板，分析了包括总交易数量和总用户数量、按天统计的交易数量和独立用户数量、创作者个人资料（Profile）分析、Lens域名分析、已注册域名搜索等相关内容。让我们继续给这个数据看板添加新的查询和可视化图表。我们将分析以下内容：同一个地址创建多个Profile、关注数据、发帖数据、评论数据、收藏数据、镜像数据、创作者的操作综合情况、普通用户地址的操作综合情况。
+在本教程的第一部分中，我们给大家介绍了Lens协议，并为其制作了一个初步的看板，分析了包括总交易数量和总用户数量、按天统计的交易数量和独立用户数量、创作者个人资料（Profile）分析、Lens域名分析、已注册域名搜索等相关内容。让我们继续给这个数据看板添加新的查询和可视化图表。我们将分析并添加以下内容：同一个地址创建多个Profile、关注数据、发帖数据、评论数据、收藏数据、镜像数据、创作者的操作综合情况、普通用户地址的操作综合情况。
 
 
-## 分析同一个地址创建多个Profile
+## 同一个地址创建多个Profile分析
 
-Lens协议允许统一地址创建多个Profile。我们可以编写一个查询来统计创建了多个Profile的地址的数据分布概况。在下面的查询中，我们先用CTE `profile_created`取得所有创建的Profile的数据详情，然后使用`multiple_profiles_addresses`来统计每一个地址创建的账号数量。最后，我们使用CASE语句，按每个地址创建的Profile的数量对其进行归类，返回综合的统计数据。
+Lens协议允许一个地址创建多个Profile。我们可以编写一个查询来统计创建了多个Profile的地址的数据分布情况。在下面的查询中，我们先用CTE `profile_created`取得所有已创建的Profile的数据详情，然后使用`multiple_profiles_addresses`来统计每一个地址创建的Profile数量。最后，我们使用CASE语句，按每个地址创建的Profile的数量对其进行归类，返回综合的统计数据。
 
 ```sql
 with profile_created as (
@@ -37,7 +37,7 @@ from multiple_profiles_addresses
 group by 1
 ```
 
-做这类数据统计时，通常我们也需要得到一些Counter类型的统计值，比如创建过多个Profile的地址总数、这些地址一共创建了多少个Profile，这些Profile在所有已创建的Profile中的占比等等。查询这些数据时可以共用上面的查询代码，所以我们对其少做修改，添加了两个额外的CTE来统计这些Counter类型的数值。然后为这个查询添加可视化图表并分别加入到数据看板中。显示效果如下：
+做这类数据统计时，通常我们也需要得到一些Counter类型的统计值，比如创建过多个Profile的地址总数、这些地址一共创建了多少个Profile，这些Profile在所有已创建的Profile中的占比等等。查询这些数据时可以共用上面的CTE子查询代码，所以我们对其少做修改，添加了两个额外的CTE来统计这些Counter类型的数值。为这个查询添加可视化图表并分别加入到数据看板中，显示效果如下：
 
 ![image_09.png](img/image_09.png)
 
@@ -56,7 +56,7 @@ Lens的创作者有两种发帖（Post）的方式，一直是直接用自己的
 select call_block_time,
     call_tx_hash,
     output_0 as post_id,
-    vars:profileId as profile_id,
+    vars:profileId as profile_id, -- Access element in json string
     vars:contentURI as content_url,
     vars:collectModule as collection_module,
     vars:referenceModule as reference_module,
@@ -66,7 +66,7 @@ where call_success = true
 limit 10
 ```
 
-鉴于发帖的Profile数量很多，我们可以像前面分析“同一个地址创建多个Profile”那样，对不同发帖数量的Profile做一个分类统计，也可以关注头部用户，即发帖最多的那些账号的数据。这里我们对发帖最多的账号进行分析，同时将这部分账号的发帖数量和总体发帖数量的进行对照输出Counter图表。完整的SQL如下：
+鉴于发帖的Profile数量很多，我们可以像前面分析“同一个地址创建多个Profile”那样，对不同发帖数量的Profile做一个分类统计，还可以关注头部用户，即发帖最多的那些账号的数据。这里我们对发帖最多的账号进行分析，同时将这部分账号的发帖数量和总体发帖数量的进行对照，输出Counter图表。完整的SQL如下：
 
 ```sql
 with post_data as (
@@ -128,7 +128,7 @@ order by 2 desc
 
 ### 每日新发帖数量统计
 
-Lens用户每日的新发帖数量是观察整体活跃度变化的一个重要指标，我们编写一个查询来统计每天的发帖数量。这个查询中的`post_data` CTE与之前的完全相同，所以我们在下面的代码中省略它的详情。因为我们还希望将每天的发帖数量进行累加返回累计发帖数量，我们定义`post_daily_summary` CTE作为中间步骤，以让SQL代码简单易懂。对应的SQL如下：
+Lens用户每日的新发帖数量是观察整体活跃度变化趋势的一个重要指标，我们编写一个查询来统计每天的发帖数量。这个查询中的`post_data` CTE与之前的完全相同，所以我们在下面的代码中省略它的详情。因为我们还希望将每天的发帖数量进行累加返回累计发帖数量，我们定义`post_daily_summary` CTE作为中间步骤，以让SQL代码简单易懂。对应的SQL如下：
 
 ```sql
 with post_data as (
@@ -161,7 +161,7 @@ order by block_date
 
 ### 近30天发帖最活跃的Profile统计
 
-同样，我们可能关心最近一段时间内发帖最活跃的Profile的具体情况。为此我们只需要在前述`post_data` CTE中，分别添加日期过滤条件来筛选最近30天内的发帖，然后按日期统计即可。
+同样，我们可能关心最近一段时间内发帖最活跃的Profile的情况。为此我们只需要在前述`post_data` CTE中，分别添加日期过滤条件来筛选最近30天内的发帖，然后按日期汇总统计即可。SQL如下：
 
 ```sql
 with post_data as (
@@ -198,7 +198,7 @@ order by 2 desc
 limit 100
 ```
 
-我们可以分别添加一个柱状图来显示这100个过去30天内发帖最多的账号的发帖数量，同时添加一个Table类型的图表来输出详情。相关图表加入数据看板后的显示效果如下：
+我们可以分别添加一个柱状图来显示过去30天内发帖最多的100个账号的发帖数量，同时添加一个Table类型的图表来输出详情。相关图表加入数据看板后的显示效果如下：
 
 ![image_12.png](img/image_12.png)
 
@@ -272,7 +272,7 @@ limit 500
 
 ## 收藏数据分析
 
-Lens的收藏数据同样分别保存在`LensHub_call_collect`和`LensHub_call_collectWithSig`这两个表里。与评论或镜像数据有所不同的是，收藏一个Publication时并不要求收藏者拥有自己的Lens Profile。也就是任何地址（用户）都可以收藏其他Profile下的Publication。所以我们要通过收藏者的地址来跟踪具体的收藏操作。特别之处在于，在`LensHub_call_collect`表中并没有保存收藏者的地址数据，`LensHub_call_collectWithSig`表中则有这个数据。所以我们需要从`LensHub_call_collect`表关联到`transactions`表，获取当前操作收藏的用户地址。SQL示例如下：
+Lens的收藏数据同样分别保存在`LensHub_call_collect`和`LensHub_call_collectWithSig`这两个表里。与评论或镜像数据有所不同的是，收藏一个Publication时并不要求收藏者拥有自己的Lens Profile。也就是说，任何地址（用户）都可以收藏其他Profile下的Publication。所以我们要通过收藏者的地址来跟踪具体的收藏操作。特别之处在于，在`LensHub_call_collect`表中并没有保存收藏者的地址数据，`LensHub_call_collectWithSig`表中则有这个数据。我们需要从`LensHub_call_collect`表关联到`transactions`表，获取当前操作收藏的用户地址。SQL示例如下：
 
 ```sql
 select call_block_time,
@@ -304,7 +304,7 @@ limit 10
 
 ### 关注最多的Profile数据
 
-Lens协议的关注数据仍然是分别保存在`LensHub_call_follow`和`LensHub_call_followWithSig`两个表里。任何地址（用户）都可以关注其他Profile。与收藏类似，`LensHub_call_follow`表里没有保存关注者的地址，所以我们也需要通过关联到`transactions`表来获取当前操作收藏的用户地址。另外，关注有一个特殊的地方，就是一个交易里面可以同时批量关注多个Profile。`LensHub_call_follow`表中，被关注的Profile数据保存在数组类型字段`profileIds`里，这个相对容易处理。而表`LensHub_call_followWithSig`中，则是JSON字符串格式里面的数组值。其中字段`vars`的一个实例如下（部分内容做了省略）：
+Lens协议的关注数据仍然是分别保存在`LensHub_call_follow`和`LensHub_call_followWithSig`两个表里。任何地址（用户）都可以关注其他Profile。与收藏类似，`LensHub_call_follow`表里没有保存关注者的地址，所以我们也需要通过关联到`transactions`表来获取当前操作收藏的用户地址。另外，关注还有一个特殊的地方，就是一个交易里面可以同时批量关注多个Profile。`LensHub_call_follow`表中，被关注的Profile数据保存在数组类型字段`profileIds`里，这个相对容易处理。而表`LensHub_call_followWithSig`中，则是JSON字符串格式里面的数组值。其中字段`vars`的一个实例如下（部分内容做了省略）：
 
 ```json
 {"follower":"0xdacc5a4f232406067da52662d62fc75165f21b23","profileIds":[21884,25271,39784],"datas":["0x","0x","0x"],"sig":"..."}
@@ -319,9 +319,9 @@ where array_size(output_0) > 1
 limit 10
 ```
 
-我们通过结构体的映射，将其中的`follower`影视为一个字符串类型，将`profileIds`映射为长整型数组`array<long>`，同时忽略其他内容。这样我们就可以使用`structname.element_name`的形式访问结构体中的元素，其中profileIds是一个数组。然后我们可以使用提取数组元素的方法来读取profileIds里面的单个数值。具体语法为使用`lateral view explode(profile_ids) as profile_id`将数组拆分为多行，关联到主查询，然后使用给定的别名`profile_id`来访问拆分得到的数组元素值。
+我们通过结构体的映射，将其中的`follower`影视为一个字符串类型，将`profileIds`映射为长整型数组`array<long>`，忽略json中的其他无关内容。这样我们就可以使用`struct_name.element_name`的形式访问结构体中的元素，其中profileIds是一个数组。然后我们可以使用提取数组元素的方法来读取profileIds里面的单个数值。具体语法为使用`lateral view explode(profile_ids) as profile_id`将数组拆分为多行，关联到主查询，然后使用给定的别名`profile_id`来访问拆分得到的数组元素值。关于`lateral view clause`的更多信息，可以参考[LATERAL VIEW Clause](https://spark.apache.org/docs/latest/sql-ref-syntax-qry-select-lateral-view.html)。
 
-读取关注详情的完整SQL 代码如下：
+读取关注详情的完整SQL代码如下：
 
 ```sql
 with follow_data as (
@@ -357,7 +357,7 @@ limit 100
 以上查询在Dune上的参考链接：
 - [https://dune.com/queries/1554454](https://dune.com/queries/1554454)
 
-### 按关注数量范围统计Profile
+### 按关注数量范围统计Profile分布
 
 我们看到几乎绝大部分Profile都有被关注，我们可以用一个查询来对各Profile的关注量的分布情况做一个分析。SQL代码如下：
 
@@ -393,9 +393,9 @@ group by 1
 以上查询在Dune上的参考链接：
 - [https://dune.com/queries/1554888](https://dune.com/queries/1554888)
 
-### 每日新关注数量统计
+### 每日新增关注数量统计
 
-Lens用户每日的新关注数量也是观察整体活跃度变化的一个重要指标，我们编写一个查询来统计每天的发帖数量。这个查询中的`follow_data` CTE与之前的完全相同。查询处理方式也与前面讲过的每日发帖数量统计高度相似，这里不再赘述细节。给查询结果添加可视化图表并将其加入数据看板，显示效果如下：
+Lens用户每日的新增关注数量也是观察整体活跃度变化的一个重要指标，我们编写一个查询来统计每天的发帖数量。这个查询中的`follow_data` CTE与之前的完全相同。查询处理方式也与前面讲过的每日发帖数量统计高度相似，这里不再详述细节。给查询结果添加可视化图表并将其加入数据看板，显示效果如下：
 
 ![image_19.png](img/image_19.png)
 
@@ -490,7 +490,7 @@ with action_data as (
 
 ## 总结与作业
 
-非常好！我们已经完成了对Lens协议的整体分析。不过，由于篇幅问题，仍然有很多值得分析的指标我们尚未涉及，包括NFT的相关数据分析、创作者的收益分析、Profile账号的转移情况分析等。
+非常好！我们已经完成了对Lens协议的整体分析。不过，由于篇幅问题，仍然有很多值得分析的指标我们尚未涉及，包括但不限于：三种NFT的相关数据分析、创作者的收益分析、Profile账号的转移情况分析等。这部分留给大家去继续探索。
 
 请结合教程内容，继续完善你自己的Lens协议数据看板，你可以Fork本教程的查询去修改，可以按自己的理解做任何进一步的扩展。请大家积极动手实践，创建数据看板并分享到社区。我们将对作业完成情况和质量进行记录，之后追溯为大家提供一定的奖励，包括但不限于Dune社区身份，周边实物，API免费额度，POAP，各类合作的数据产品会员，区块链数据分析工作机会推荐，社区线下活动优先报名资格以及其他Sixdegree社区激励等。
 
