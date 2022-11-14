@@ -41,7 +41,7 @@ where symbol = 'WETH'
     and blockchain = 'ethereum'
 ```
 
-读取`prices.usd_latest`表的查询更加简洁。但是因为它实际上是`prices.usd`表的一个视图（参考源代码：https://github.com/duneanalytics/spellbook/blob/main/models/prices/prices_usd_latest.sql），相比来说查询执行的效率略低。
+读取`prices.usd_latest`表的查询更加简洁。但是因为它实际上是`prices.usd`表的一个视图（参考源代码：[prices_usd_latest](https://github.com/duneanalytics/spellbook/blob/main/models/prices/prices_usd_latest.sql)），相比来说查询执行的效率略低。
 
 
 ### 查询多个ERC20代币的最新价格
@@ -171,52 +171,68 @@ order by x.block_date
 
 另外，如果代币相关的交易记录已经集成到`dex.trades`表中，你也可以使用该表的数据来计算价格。将`amount_usd`与`token_bought_amount`或者`token_sold_amount`相除，得到对应代币的USD价格。
 
-### 如何提交你需要跟踪价格的Token？
+### 计算原生代币（ETH）的价格
 
+以Ethereum为例，其原生代币ETH并不属于ERC20代币，所以`prices.usd`表里并没有ETH本身的价格信息。但是，WETH 代币（Wrapped ETH）与ETH是等值的，所以我们可以直接使用WETH的价格数据。
 
-## 查询ERC20代币的持有者和总供应量
+## 从事件日志记录计算价格
 
-持有人数
+提示：本小节的内容相对比较复杂，如果觉得有难度，可以直接跳过。
 
-TOP 持有者
+一种比较特殊的情况是当分析一个新的DeFi项目或者一个Dune新近支持的区块链的时候。此时还没有相应的`prices.usd`数据，对应项目的智能合约还没有被提交解析完成，交易记录也没有被集成到`dex.trades`这样的魔法表中。此时，我们唯一能访问的就是`transactions`和`logs`这样的原始数据表。此时，我们可以先找到几个交易记录，分析在区块链上显示的事件日志的详细，确定事件的`data`值里面包含的数据类型和相对位置，再据此手动解析数据用于换算价格。
 
-持有金额分布
+比如，我们需要计算Optimism链上$OP代币的价格，并且假定此时满足前述所有情况，必须从交易事件日志原始表来计算价格。我们先根据项目方提供的线索（合约地址、案例哈希等）找到一个兑换交易记录：[https://optimistic.etherscan.io/tx/0x1df6dda6a4cffdbc9e477e6682b982ca096ea747019e1c0dacf4aceac3fc532f](https://optimistic.etherscan.io/tx/0x1df6dda6a4cffdbc9e477e6682b982ca096ea747019e1c0dacf4aceac3fc532f)。这是一个兑换交易，其中最后一个`logs`日志的`topic1`值“0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822”对应“Swap(address,uint256,uint256,uint256,uint256,address)”方法。这个可以通过查询`decoding.evm_signatures`表来进一步验证（这是因为Optimism是EVM兼容的区块链，其使用的相关函数与Ethereum相同）。
 
+区块链浏览器上的日志部分截图如下：
 
-## 查询原生代币的价格（ETH）
+![image_01.png](img/image_01.png)
 
-## 查询原生代币的持有者（ETH）
+evm_signatures签名书籍查询的截图如下：
 
-## 查询NFT的价格
+![image_02.png](img/image_02.png)
 
-最新价格
+上图查询`evm_signatures`时我们做了一下处理以让相关各列数据从上到下显示。对应的SQL为：
+```sql
+select 'ID:' as name, id as value
+from decoding.evm_signatures
+where id = '0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822'
+union all
+select 'Signature:' as name, signature as value
+from decoding.evm_signatures
+where id = '0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822'
+union all
+select 'ABI:' as name, abi as value
+from decoding.evm_signatures
+where id = '0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822'
+```
 
-地板价
+结合上述相关信息，我们就可以通过解析事件日志里面的Swap记录，换算出价格。在下面的查询中，我们取最新1000条交易记录来计算平均价格。因为交换是双向的，可能从`token0` 兑换为 `token1`或者与之相反，我们使用一个case语句相应取出不同的值用来计算交易的价格。另外，我们没有再进一步取得USDC的价格来换算，毕竟其本身是稳定币，价格波动较小。需要更精确的数据时，可以参考前面的例子通过USDC的价格信息换算。
 
-。。。
+```sql
+with op_price as (
+    select '0x4200000000000000000000000000000000000042' as token_address,
+        'OP' as token_symbol,
+        18 as decimals,
+        avg((case when amount0_in > 0 then amount1_out else amount1_in end) /  (case when amount0_in > 0 then amount0_in else amount0_out end)) as price
+    from (
+        select tx_hash,
+            bytea2numeric_v2(substring(data, 3, 64)) / 1e18 as amount0_in,
+            bytea2numeric_v2(substring(data, 3 + 64, 64)) / 1e6  as amount1_in,
+            bytea2numeric_v2(substring(data, 3 + 64 * 2, 64)) / 1e18  as amount0_out,
+            bytea2numeric_v2(substring(data, 3 + 64 * 3, 64)) / 1e6  as amount1_out
+        from optimism.logs
+        where block_time >= now() - interval '2 days'
+            and contract_address = '0x47029bc8f5cbe3b464004e87ef9c9419a48018cd' -- OP - USDC Pair
+            and topic1 = '0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822'   -- Swap
+        order by block_time desc
+        limit 1000
+    )
+)
 
-交易量
+select * from op_price
+```
 
-## 查询NFT的持有者
-
-
--- 以下放入第二部分
-
-## 从事件日志原始表解析数据
-
-## 从交易数据原始表解析数据
-
-## 读取数组数据
-
-## 读取JSON字符串数据
-
-## 使用CTE自定义数据列表
-
-## 清除异常值
-
-least greatest
-
-
+这里是一个实际使用的案例：[https://dune.com/queries/1130354](https://dune.com/queries/1130354)
 
 ## SixDegreeLab介绍
 
