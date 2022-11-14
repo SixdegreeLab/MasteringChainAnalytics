@@ -74,32 +74,102 @@ where row_num = 1
 
 因为我们要同时读取多个代币的最新价格，就不能简单地使用`limit`子句限制结果数量来得到需要的结果。因为我们实际需要返回的是每个不同的代币分别按`minute`字段降序排序后取第一条记录。上面的查询中，我们使用了`row_number() over (partition by symbol order by minute desc) as row_num`来生成一个新的列，这个列的值按照`symbol`分组并按`minute`字段降序排序来生成，即每个不同的代币都会生成自己的1，2，3，4...这样的行号序列值。我们将其放到一个子查询中，外层查询中筛选`where row_num = 1`的记录，就是每个代币最新的记录。这种方法看起来稍显复杂，但是实际应用中经常需要用到类似的查询，通过`row_number()`函数生成新的列然后用于过滤数据。
 
-
-
-多个
-
-https://dune.com/queries/1180382
-
-平均价格
-
-https://dune.com/queries/1042456
-
-使用 latest 表
-
 ### 查询单个ERC20代币的每日平均价格
 
-单个
+当我们需要查询某个ERC20代币每一天的平均价格时，只能使用`prices.usd`表来实现。通过设置要查询价格的日期范围（或者不加日期范围取全部日期的数据），按天汇总，使用`avg()`函数求得平均值，就可以得到按天的价格数据。SQL如下：
 
+```sql
+select date_trunc('day', minute) as block_date,
+    avg(price) as price
+from prices.usd
+where symbol = 'WETH'
+    and blockchain = 'ethereum'
+    and minute >= '2022-01-01'
+group by 1
+order by 1
+```
 
-多个
+如果我们同时还需要返回其他字段，可以把它们加入SELECT列表并同时加入到GROUP BY里面。这是因为，当使用`group by`子句时，SELECT列表中出现的字段如果不是汇总函数就必须同时出现在GROUP BY子句中。SQL修改后如下：
+
+```sql
+select date_trunc('day', minute) as block_date,
+    symbol,
+    decimals,
+    contract_address,
+    avg(price) as price
+from prices.usd
+where symbol = 'WETH'
+    and blockchain = 'ethereum'
+    and minute >= '2022-01-01'
+group by 1, 2, 3, 4
+order by 1
+```
+
+### 查询多个ERC20代币的每日平均价格
+
+类似地，我们可以同时查询一组ERC20代币每一天的平均价格，只需将要查询的代币的符号放入`in ()`条件子句里面即可。SQL如下：
+
+```sql
+select date_trunc('day', minute) as block_date,
+    symbol,
+    decimals,
+    contract_address,
+    avg(price) as price
+from prices.usd
+where symbol in ('WETH', 'WBTC', 'USDC')
+    and blockchain = 'ethereum'
+    and minute >= '2022-10-01'
+group by 1, 2, 3, 4
+order by 2, 1   -- Order by symbol first
+```
 
 ## 从DeFi交易记录计算价格
 
-dex.trades
+Dune上的价格数据表`prices.usd`是通过spellbook来维护的，里面并没有包括所有支持的区块链上面的所有代币的价格信息。特别是当某个新的ERC20代币新发行上市，在DEX交易所进行流通（比如XEN），此时Dune的价格表并没有这个代币的数据。此时，我们可以读取DeFi项目中的交易数据，比如Uniswap中的Swap数据，将对应代币与USDC（或者WETH）之间的交换价格计算出来，再通过USDC或WETH的价格数据换算得到美元价格。示例查询如下：
 
-## 从事件日志记录计算价格
-https://dune.com/queries/1130354
+```sql
+with xen_price_in_usdc as (
+    select date_trunc('hour', evt_block_time) as block_date,
+        'XEN' as symbol,
+        '0x06450dee7fd2fb8e39061434babcfc05599a6fb8' as contract_address, -- XEN
+        18 as decimals,
+        avg(amount1 / amount0) / pow(10, (6-18)) as price   --USDC: 6 decimals, XEN: 18 decimals
+    from (
+        select contract_address,
+            abs(amount0) as amount0,
+            abs(amount1) as amount1,
+            evt_tx_hash,
+            evt_block_time
+        from uniswap_v3_ethereum.Pair_evt_Swap
+        where contract_address = '0x353bb62ed786cdf7624bd4049859182f3c1e9e5d'   -- XEN-USDC 1.00% Pair
+            and evt_block_time > '2022-10-07'
+            and evt_block_time > now() - interval '30 days'
+    ) s
+    group by 1, 2, 3, 4
+),
 
+usdc_price as (
+    select date_trunc('hour', minute) as block_date,
+        avg(price) as price
+    from prices.usd
+    where contract_address = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'   -- USDC
+        and minute > '2022-10-07'
+        and minute > now() - interval '30 days'
+    group by 1
+)
+
+select x.block_date,
+    x.price * u.price as price_usd
+from xen_price_in_usdc x
+inner join usdc_price u on x.block_date = u.block_date
+order by x.block_date
+```
+
+上面这个查询是我们在XEN Crypto项目的数据看板中的一个实际应用，参考链接如下：
+数据看板：[XEN Crypto Overview](https://dune.com/sixdegree/xen-crypto-overview)
+查询：[XEN - price trend](https://dune.com/queries/1382200)
+
+另外，如果代币相关的交易记录已经集成到`dex.trades`表中，你也可以使用该表的数据来计算价格。将`amount_usd`与`token_bought_amount`或者`token_sold_amount`相除，得到对应代币的USD价格。
 
 ### 如何提交你需要跟踪价格的Token？
 
@@ -145,22 +215,6 @@ TOP 持有者
 ## 清除异常值
 
 least greatest
-
-
-
-在Dune平台的Query编辑页面，我们可以通过左边栏来选择或搜索需要的数据表。这部分界面如下图所示：
-
-![image_01.png](img/image_01.png)
-
-
-图片中间的文本框可以用于搜索对应的数据模式(Schema)或数据表。比如，输入`erc721`将筛选出名称包含这个字符串的所有魔法表和已解析项目表。图片中上方的红框部分用于选择要使用的数据集，途中显示的“Dune Engine V2 (Spark SQL)”就是我们通常说的“V2 引擎”、“V2 Engine”或者“V2”，其他的则统称为“V1”。Dune V2 引擎基于Spark SQL（Databricks Spark），V1则是Postgresql，两种数据库引擎在SQL语法、支持的数据类型等方面有一些比较明显的区别。比如，在V1中，地址、交易哈希值这些是以`bytea`类型保存的，而在V2中，不存在`bytea`数据类型，地址、交易哈希值这些都是以小写字符串形势保存的。再如，V1中字符串对应的类型是`text`且不区分大小写，而在V2中字符串类型是`string`并且要区分大小写。
-
-上图中下方的红框圈出的是前面所述Dune V2 引擎目前支持的几大类数据集。点击粗体分类标签文字即可进入下一级浏览该类数据集中的各种数据模式以及各模式下的数据表名称。点击分类标签进入下一级后，你还可以看到一个默认选项为“All Chains”的下拉列表，可以用来筛选你需要的区块链下的数据模式和数据表。当进入到数据表层级时，点击表名可以展开查看表中的字段列表。点击表名右边的“》”图标可以将表名（格式为`schema_name.table_name`插入到查询编辑器中光标所在位置。分级浏览的同时你也可以输入关键字在当前浏览的层级进一步搜索过滤。不同类型的数据表有不同的层次深度，下图为已解析数据表的浏览示例。
-
-![image_03.png](img/image_03.png)
-
-## 原始数据表
-
 
 
 
