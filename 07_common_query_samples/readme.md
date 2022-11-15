@@ -169,11 +169,94 @@ order by x.block_date
 数据看板：[XEN Crypto Overview](https://dune.com/sixdegree/xen-crypto-overview)
 查询：[XEN - price trend](https://dune.com/queries/1382200)
 
-另外，如果代币相关的交易记录已经集成到`dex.trades`表中，你也可以使用该表的数据来计算价格。将`amount_usd`与`token_bought_amount`或者`token_sold_amount`相除，得到对应代币的USD价格。
+## 从DeFi交易数据表计算价格
+
+如果相应的DeFi交易数据已经集成到了`dex.trades`表中，那么使用该表来计算价格会更加简单。我们可以将`amount_usd`与`token_bought_amount`或者`token_sold_amount`相除，得到对应代币的USD价格。以Uniswap V3 下的 USDC-WETH 0.30% 为例，计算WETH最新价格的SQL如下：
+
+```sql
+with trade_detail as (
+    select block_time,
+        tx_hash,
+        amount_usd,
+        token_bought_amount,
+        token_bought_symbol,
+        token_sold_amount,
+        token_sold_symbol
+    from dex.trades
+    where project_contract_address = '0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8'
+        and block_date >= now() - interval '3 days'
+    order by block_time desc
+    limit 1000
+)
+
+select avg(
+    case when token_bought_symbol = 'WETH' then amount_usd / token_bought_amount
+        else amount_usd / token_sold_amount
+    end
+    ) as price
+from trade_detail
+```
 
 ### 计算原生代币（ETH）的价格
 
 以Ethereum为例，其原生代币ETH并不属于ERC20代币，所以`prices.usd`表里并没有ETH本身的价格信息。但是，WETH 代币（Wrapped ETH）与ETH是等值的，所以我们可以直接使用WETH的价格数据。
+
+## 巧用其他区块链的价格数据
+
+当`prices.usd`中找不到我们要分析的区块链的代币价格数据时，还有一个可以变通的技巧。例如，Avalanche-C 链也提供USDC、WETH、WBTC、AAVE等代币的交易，但是它们相对于Ethereum链分别有不同的代币地址。假如`prices.usd`未提供Avalache-C链的价格数据时（目前应该已经支持了），我们可以自定义一个CTE，将不同链上的代币地址映射起来，然后进行查询获取价格。
+
+```sql
+with token_mapping_to_ethereum(aave_token_address, ethereum_token_address, token_symbol) as (
+    values
+    ('0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9', '0xdac17f958d2ee523a2206206994597c13d831ec7', 'USDT'),
+    ('0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f', '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', 'WBTC'),
+    ('0xd22a58f79e9481d1a88e00c343885a588b34b68b', '0xdb25f211ab05b1c97d595516f45794528a807ad8', 'EURS'),
+    ('0xff970a61a04b1ca14834a43f5de4533ebddb5cc8', '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 'USDC'),
+    ('0xf97f4df75117a78c1a5a0dbb814af92458539fb4', '0x514910771af9ca656af840dff83e8264ecf986ca', 'LINK'),
+    ('0x82af49447d8a07e3bd95bd0d56f35241523fbab1', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', 'WETH'),
+    ('0xda10009cbd5d07dd0cecc66161fc93d7c9000da1', '0x6b175474e89094c44da98b954eedeac495271d0f', 'DAI'),
+    ('0xba5ddd1f9d7f570dc94a51479a000e3bce967196', '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9', 'AAVE')
+),
+
+latest_token_price as (
+    select date_trunc('hour', minute) as price_date,
+        contract_address,
+        symbol,
+        decimals,
+        avg(price) as price
+    from prices.usd
+    where contract_address in (
+        select ethereum_token_address
+        from token_mapping_to_ethereum
+    )
+    and minute > now() - interval '1 day'
+    group by 1, 2, 3, 4
+),
+
+latest_token_price_row_num as (
+    select  price_date,
+        contract_address,
+        symbol,
+        decimals,
+        price,
+        row_number() over (partition by contract_address order by price_date desc) as row_num
+    from latest_token_price
+),
+
+current_token_price as (
+    select contract_address,
+        symbol,
+        decimals,
+        price
+    from latest_token_price_row_num
+    where row_num = 1
+)
+
+select * from current_token_price
+```
+
+这是我们在线的示例查询：[https://dune.com/queries/1042456](https://dune.com/queries/1042456)
+
 
 ## 从事件日志记录计算价格
 
@@ -213,7 +296,11 @@ with op_price as (
     select '0x4200000000000000000000000000000000000042' as token_address,
         'OP' as token_symbol,
         18 as decimals,
-        avg((case when amount0_in > 0 then amount1_out else amount1_in end) /  (case when amount0_in > 0 then amount0_in else amount0_out end)) as price
+        avg(
+            (case when amount0_in > 0 then amount1_out else amount1_inend) 
+            / 
+            (case when amount0_in > 0 then amount0_in else amount0_out end)
+        ) as price
     from (
         select tx_hash,
             bytea2numeric_v2(substring(data, 3, 64)) / 1e18 as amount0_in,
