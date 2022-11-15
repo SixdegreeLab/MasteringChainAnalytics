@@ -268,7 +268,7 @@ select * from current_token_price
 
 ![image_01.png](img/image_01.png)
 
-evm_signatures签名书籍查询的截图如下：
+evm_signatures签名数据查询的截图如下：
 
 ![image_02.png](img/image_02.png)
 
