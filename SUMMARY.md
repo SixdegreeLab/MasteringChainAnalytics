@@ -10,3 +10,7 @@
 * [#5 SQL基础(一)](05_sql_syntax/sql_syntax_1.md)
 * [#6 实践案例：制作Lens Protocol的数据看板（一）](06_pratical_case_lens_protocol/readme.md)
 * [#7 实践案例：制作Lens Protocol的数据看板（二）](06_pratical_case_lens_protocol/lens_part2.md)
+
+## 中级教程
+
+* [#8 常见查询一：ERC20代币价格查询](07_common_query_samples/readme.md)
