@@ -1,10 +1,8 @@
-# 数据分析中的常见查询（一）
+# 常见查询一：ERC20代币价格查询
 
 在日常的数据分析中，我们经常会接到一些常见的需求，比如跟踪某个ERC20代币的价格变化、查询某个地址持有的各种ERC20代币余额等。在Dune平台的帮助文档里面，[一些有用的数据看板](https://dune.com/docs/reference/wizard-tools/helpful-dashboards/)和[实用查询](https://dune.com/docs/reference/wizard-tools/utility-queries/)部分分别给出了一些实例，大家可以参考。本篇教程中我们结合自己日常遇到的一些典型需求，整理一些查询案例给大家。
 
-## 查询ERC20代币的价格
-
-### 查询单个ERC20代币的最新价格
+## 查询单个ERC20代币的最新价格
 
 很多区块链项目都涉及ERC20代币，DeFi类的项目允许用户交换他们持有的ERC20代币，其他一些项目通过发行ERC20代币来募集资金或者通过分配计划、空投等方式回馈投资人、早期用户和项目方团队等。像[CoinGecko](https://www.coingecko.com/)这样的网站有提供各种ERC20代币的价格信息。Dune也将各区块链上常见的ERC20代币的价格信息整理到了`prices.usd`表和`prices.usd_latest`表中，方便数据分析师使用。[prices.usd](https://dune.com/docs/reference/tables/prices/)表记录了各种ERC20代币的每分钟价格信息。我们在分析ERC20代币相关的项目时，可以结合价格数据，将各种不同代币的金额转换为以美元表示的金额，就能进行汇总、对比等操作。
 
@@ -44,7 +42,7 @@ where symbol = 'WETH'
 读取`prices.usd_latest`表的查询更加简洁。但是因为它实际上是`prices.usd`表的一个视图（参考源代码：[prices_usd_latest](https://github.com/duneanalytics/spellbook/blob/main/models/prices/prices_usd_latest.sql)），相比来说查询执行的效率略低。
 
 
-### 查询多个ERC20代币的最新价格
+## 查询多个ERC20代币的最新价格
 
 当我们需要同时读取多个Token的最新价格时，`prices.usd_latest`表的便利性就体现出来了。这里我们以同时查询WETH、WBTC和USDC的最新价格为例。
 
@@ -74,7 +72,7 @@ where row_num = 1
 
 因为我们要同时读取多个代币的最新价格，就不能简单地使用`limit`子句限制结果数量来得到需要的结果。因为我们实际需要返回的是每个不同的代币分别按`minute`字段降序排序后取第一条记录。上面的查询中，我们使用了`row_number() over (partition by symbol order by minute desc) as row_num`来生成一个新的列，这个列的值按照`symbol`分组并按`minute`字段降序排序来生成，即每个不同的代币都会生成自己的1，2，3，4...这样的行号序列值。我们将其放到一个子查询中，外层查询中筛选`where row_num = 1`的记录，就是每个代币最新的记录。这种方法看起来稍显复杂，但是实际应用中经常需要用到类似的查询，通过`row_number()`函数生成新的列然后用于过滤数据。
 
-### 查询单个ERC20代币的每日平均价格
+## 查询单个ERC20代币的每日平均价格
 
 当我们需要查询某个ERC20代币每一天的平均价格时，只能使用`prices.usd`表来实现。通过设置要查询价格的日期范围（或者不加日期范围取全部日期的数据），按天汇总，使用`avg()`函数求得平均值，就可以得到按天的价格数据。SQL如下：
 
@@ -105,7 +103,7 @@ group by 1, 2, 3, 4
 order by 1
 ```
 
-### 查询多个ERC20代币的每日平均价格
+## 查询多个ERC20代币的每日平均价格
 
 类似地，我们可以同时查询一组ERC20代币每一天的平均价格，只需将要查询的代币的符号放入`in ()`条件子句里面即可。SQL如下：
 
@@ -123,9 +121,9 @@ group by 1, 2, 3, 4
 order by 2, 1   -- Order by symbol first
 ```
 
-## 从DeFi交易记录计算价格
+## 从DeFi兑换记录计算价格
 
-Dune上的价格数据表`prices.usd`是通过spellbook来维护的，里面并没有包括所有支持的区块链上面的所有代币的价格信息。特别是当某个新的ERC20代币新发行上市，在DEX交易所进行流通（比如XEN），此时Dune的价格表并没有这个代币的数据。此时，我们可以读取DeFi项目中的交易数据，比如Uniswap中的Swap数据，将对应代币与USDC（或者WETH）之间的交换价格计算出来，再通过USDC或WETH的价格数据换算得到美元价格。示例查询如下：
+Dune上的价格数据表`prices.usd`是通过spellbook来维护的，里面并没有包括所有支持的区块链上面的所有代币的价格信息。特别是当某个新的ERC20代币新发行上市，在DEX交易所进行流通（比如XEN），此时Dune的价格表并没有这个代币的数据。此时，我们可以读取DeFi项目中的兑换数据，比如Uniswap中的Swap数据，将对应代币与USDC（或者WETH）之间的兑换价格计算出来，再通过USDC或WETH的价格数据换算得到美元价格。示例查询如下：
 
 ```sql
 with xen_price_in_usdc as (
@@ -166,10 +164,10 @@ order by x.block_date
 ```
 
 上面这个查询是我们在XEN Crypto项目的数据看板中的一个实际应用，参考链接如下：
-数据看板：[XEN Crypto Overview](https://dune.com/sixdegree/xen-crypto-overview)
-查询：[XEN - price trend](https://dune.com/queries/1382200)
+- 数据看板：[XEN Crypto Overview](https://dune.com/sixdegree/xen-crypto-overview)
+- 查询：[XEN - price trend](https://dune.com/queries/1382200)
 
-## 从DeFi交易数据表计算价格
+## 从DeFi交易魔法表计算价格
 
 如果相应的DeFi交易数据已经集成到了`dex.trades`表中，那么使用该表来计算价格会更加简单。我们可以将`amount_usd`与`token_bought_amount`或者`token_sold_amount`相除，得到对应代币的USD价格。以Uniswap V3 下的 USDC-WETH 0.30% 为例，计算WETH最新价格的SQL如下：
 
@@ -197,11 +195,11 @@ select avg(
 from trade_detail
 ```
 
-### 计算原生代币（ETH）的价格
+## 计算原生代币（ETH）的价格
 
 以Ethereum为例，其原生代币ETH并不属于ERC20代币，所以`prices.usd`表里并没有ETH本身的价格信息。但是，WETH 代币（Wrapped ETH）与ETH是等值的，所以我们可以直接使用WETH的价格数据。
 
-## 巧用其他区块链的价格数据
+## 借用其他区块链的价格数据
 
 当`prices.usd`中找不到我们要分析的区块链的代币价格数据时，还有一个可以变通的技巧。例如，Avalanche-C 链也提供USDC、WETH、WBTC、AAVE等代币的交易，但是它们相对于Ethereum链分别有不同的代币地址。假如`prices.usd`未提供Avalache-C链的价格数据时（目前应该已经支持了），我们可以自定义一个CTE，将不同链上的代币地址映射起来，然后进行查询获取价格。
 
