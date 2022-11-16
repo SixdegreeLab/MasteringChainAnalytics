@@ -177,9 +177,9 @@ order by 2 desc
 
 参考查询示例：[https://dune.com/queries/1621478](https://dune.com/queries/1621478)
 
-**按最大最小金额取等分区间统计分布情况：** todo log10()
+**按对数分区区间统计分布情况：**
 
-如果我们需要了解持有某个ERC20代币的所有用户地址的账户余额的分布情况，有一个很好用的函数`cume_dist()`可以帮助我们达到目的。函数`cume_dist() over (partition by field_name_1 order by field_name_2)`按照`field_name`排序并计算当前值相对于分区中所有值的位置，返回一个介于0和1.0之间的值。我们可以将这个值乘以100然后取整，折算为百分比代表不同的区间（桶，bucket）中，然后我们就可以基于这个值来绘制直方图。有时，我们也用“区间(bin)“来表示跟”桶(bucket)“类似的概念。Fork并调整查询代码如下：
+另一种更合理的做法，是按一定的规则将数据合理划分为相应的分区区间，然后统计归属于每一个区间的持有者地址数量。对于像代币余额这种金额差别巨大的情况（余额少的账户不到1个代币，余额多的可能有上亿个代币），使用对数来做分区是一个相对可行的方案。如果分析的是某一个时间段内的价格、成交金额等相对变化不是特别剧烈的情况，使用等分方法也可行，具体就是计算最大值和最小值之差，将其均分为N等份，每个区间在此基础上递增相应的值。这里我们使用`log2()`求对数的方法来演示。
 
 ```sql
 with transfer_detail as (
@@ -188,52 +188,39 @@ with transfer_detail as (
 
 address_balance as (
     select address,
-        sum(amount) as balance_amount
+        floor(log2(sum(amount / 1e18))) as log_balance_amount,
+        sum(amount / 1e18) as balance_amount
     from transfer_detail
     group by address
-),
-
-balance_bucket as (
-    select address,
-        balance_amount,
-        ntile(50) over (order by balance_amount asc) as bucket
-    from address_balance
+    having balance_amount >= pow(10, -4)
 )
 
-select bucket,
-    count(address) as holder_count
-    avg(balance_amount) as average_balance_amount
-from balance_bucket
-group by bucket
-order by bucket
+select (case when log_balance_amount <= 0 then 0 else pow(2, log_balance_amount) * 1.0 end) as min_balance_amount,
+    count(*) as holder_count
+from address_balance
+group by 1
+order by 1
 ```
 
-我们使用`ntile(50) over (order by balance_amount asc)`将所有持有者按照持有金额多少分别放入到50个Bucket中，每一个Bucket区间代表2%的持有者。你也可以根据需要使用其他如10，20，100这样的数值来设置区间的个数。但是很明显，设置像33，78这样的数量是没有实际意义的。在上面的SQL中，我们还顺便计算了每一个区间的平均持有数量。将查询结果可视化生成一个直方图，如下所示：
+我们使用`floor(log2(sum(amount / 1e18)))`将所有持有者持有的余额求对数并向下取整，得到一个整数值。同时也计算正常的余额值并且用`having balance_amount >= pow(10, -4)`过滤掉余额小于0.0001的那些账户。在最后输出结果的查询中，我们使用一个CASE语句，将`log_balance_amount <= 0`的值当作0对待，表示账户余额介于0-2之间。对于其他值，则使用`pow()`函数还原为正常的金额值。这样我们就实现了按对数分区统计不同金额区间的地址数量。将查询结果可视化生成一个直方图，如下所示：
 
-![image_04.png](img/image_04.png)
+![image_06.png](img/image_06.png)
 
-参考查询示例：[https://dune.com/queries/1620917](https://dune.com/queries/1620917)
-
-
-
+参考查询示例：
+- 按对数分区统计分布：[https://dune.com/queries/1622137](https://dune.com/queries/1622137)
+- 按等分方法统计分布：[https://dune.com/queries/1300399](https://dune.com/queries/1300399)
 
 ## 查询多个ERC20代币
 
-对于
-
-
-
-
-持有人数
-
-TOP 持有者
-
-持有金额分布
-
-
-## 查询原生代币的价格（ETH）
+todo
 
 ## 查询原生代币的持有者（ETH）
+
+ETH 属于Ethereum区块链的原生代币，不是ERC20代币，所以不能用ERC20代币的方式来计算余额和持有者等信息。只能合约可以在调用支持转账的方法时同时进行ETH转账，甚至在创建（部署）新的智能合约时，或者智能合约进行自我销毁时，也可能发生ETH的转账。Ethereum区块链的燃料费也是用ETH来支付的。所有这些ETH转移的信息全部记录在`ethereum.traces`表中，而在`ethereum.transactions`表中则只有那些直接转账交易的信息。因此，计算ETH的余额或者持有者时，我们必须使用`traces`表。除了数据源不同，实现方式跟计算ERC20代币余额是相似的。这里有一个我之前创建的跟踪ETH账户余额的数据看板，里面的相关查询演示了具体的实现。
+
+参考数据看板：[ETH Whales Tracking](https://dune.com/springzhang/eth-whales-top-1000-eth-holders)
+
+
 
 ## 查询NFT的价格
 
@@ -261,8 +248,6 @@ TOP 持有者
 ## 使用CTE自定义数据列表
 
 ## 清除异常值
-
-least greatest
 
 
 
