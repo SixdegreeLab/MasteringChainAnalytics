@@ -22,7 +22,7 @@ select * from (
         evt_tx_hash,
         contract_address,
         `to` as address,
-        value as amount
+        value::decimal(38, 0) as amount
     from erc20_ethereum.evt_Transfer
     where contract_address = '0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9'
 
@@ -32,14 +32,16 @@ select * from (
         evt_tx_hash,
         contract_address,
         `from` as address,
-        -1 * value as amount
+        -1 * value::decimal(38, 0) as amount
     from erc20_ethereum.evt_Transfer
     where contract_address = '0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9'
 )
 limit 10    -- for performance
 ```
 
-在上面的查询中，我们使用`union all`将每个账户地址中转入的和转出的FTT Token合并到一起，并且只取了10条样本数据。这里合并到一起的是明细转账数据，我们需要计算的账户余额是汇总数据，可以在上述查询基础上，将其放入一个CTE定义中，然后针对CTE执行汇总统计。考虑到很多代币的持有人地址数量可能很多（几万甚至更多），我们通常关注的是总持有人数、总流通量和持有量最多的那部分地址，我们可以将按地址汇总的查询也放入一个CTE中，方便在此基础上根据需要做进一步的统计。这里我们首先统计持有者总数，查询时排除那些当前代币余额为0的地址。新的SQL如下：
+在上面的查询中，我们使用`union all`将每个账户地址中转入的和转出的FTT Token合并到一起，并且只取了10条样本数据。注意我们使用`value::decimal(38, 0)`对`value`字段对值进行了强制转换，因为现在这个字段是以字符串形式保存的，不做转换会在计算时遇到一些问题。这里的数字38是目前Dune的底层数据库支持的最大整数位数，0表示不含小数位。
+
+这里合并到一起的是明细转账数据，我们需要计算的账户余额是汇总数据，可以在上述查询基础上，将其放入一个CTE定义中，然后针对CTE执行汇总统计。考虑到很多代币的持有人地址数量可能很多（几万甚至更多），我们通常关注的是总持有人数、总流通量和持有量最多的那部分地址，我们可以将按地址汇总的查询也放入一个CTE中，方便在此基础上根据需要做进一步的统计。这里我们首先统计持有者总数，查询时排除那些当前代币余额为0的地址。新的SQL如下：
 
 ```sql
 with transfer_detail as (
@@ -47,7 +49,7 @@ with transfer_detail as (
         evt_tx_hash,
         contract_address,
         `to` as address,
-        value as amount
+        value::decimal(38, 0) as amount
     from erc20_ethereum.evt_Transfer
     where contract_address = '0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9'
     
@@ -57,7 +59,7 @@ with transfer_detail as (
         evt_tx_hash,
         contract_address,
         `from` as address,
-        -1 * value as amount
+        -1 * value::decimal(38, 0) as amount
     from erc20_ethereum.evt_Transfer
     where contract_address = '0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9'
 ),
@@ -93,7 +95,7 @@ with transfer_detail as (
         evt_tx_hash,
         contract_address,
         `to` as address,
-        value as amount
+        value::decimal(38, 0) as amount
     from erc20_ethereum.evt_Transfer
     where contract_address = '{{token_contract_address}}'
     
@@ -103,7 +105,7 @@ with transfer_detail as (
         evt_tx_hash,
         contract_address,
         `from` as address,
-        -1 * value as amount
+        -1 * value::decimal(38, 0) as amount
     from erc20_ethereum.evt_Transfer
     where contract_address = '{{token_contract_address}}'
 ),
@@ -218,7 +220,7 @@ order by 1
 with transfer_detail as (
     select evt_block_time,
         `to` as address,
-        value,
+        value::decimal(38, 0),
         evt_tx_hash
     from ftt_ethereum.FTT_Token_evt_Transfer
     
@@ -226,7 +228,7 @@ with transfer_detail as (
     
     select evt_block_time,
         `from` as address,
-        -1 * value as value,
+        -1 * value::decimal(38, 0) as value,
         evt_tx_hash
     from ftt_ethereum.FTT_Token_evt_Transfer
 ),
