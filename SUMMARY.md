@@ -13,4 +13,5 @@
 
 ## 中级教程
 
-* [#8 常见查询一：ERC20代币价格查询](07_common_query_samples/readme.md)
+* [#8 常见查询一：ERC20代币价格](07_common_query_samples/readme.md)
+* [#9 常见查询二：代币的持有者、总供应量、账户余额](07_common_query_samples/common_queries_part2.md)
