@@ -295,7 +295,7 @@ with op_price as (
         'OP' as token_symbol,
         18 as decimals,
         avg(
-            (case when amount0_in > 0 then amount1_out else amount1_inend) 
+            (case when amount0_in > 0 then amount1_out else amount1_in end) 
             / 
             (case when amount0_in > 0 then amount0_in else amount0_out end)
         ) as price
