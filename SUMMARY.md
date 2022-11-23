@@ -7,11 +7,12 @@
 * [#2 数据分析新手上路](02_get_started/readme.md)
 * [#3 创建第一个Dune数据看板](03_build_first_dashboard/readme.md)
 * [#4 熟悉数据表](04_data_tables/readme.md)
-* [#5 SQL基础(一)](05_sql_syntax/sql_syntax_1.md)
+* [#5 SQL基础（一）](05_sql_syntax/sql_syntax_1.md)
 * [#6 实践案例：制作Lens Protocol的数据看板（一）](06_pratical_case_lens_protocol/readme.md)
 * [#7 实践案例：制作Lens Protocol的数据看板（二）](06_pratical_case_lens_protocol/lens_part2.md)
+* [#8 SQL基础（二）](05_sql_syntax/sql_syntax_2.md)
 
 ## 中级教程
 
-* [#8 常见查询一：ERC20代币价格](07_common_query_samples/readme.md)
-* [#9 常见查询二：代币的持有者、总供应量、账户余额](07_common_query_samples/common_queries_part2.md)
+* [#9 常见查询一：ERC20代币价格](07_common_query_samples/readme.md)
+* [#10 常见查询二：代币的持有者、总供应量、账户余额](07_common_query_samples/common_queries_part2.md)
