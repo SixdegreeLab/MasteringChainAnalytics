@@ -52,19 +52,277 @@ select now() - interval '2 hours' -- 2个小时之前
 
 更多日期时间相关函数的说明，请参考[日期、时间和间隔函数](https://docs.databricks.com/sql/language-manual/sql-ref-functions-builtin.html#date-timestamp-and-interval-functions)
 
-## 条件函数(case when,if)
+## 条件表达式Case、If
 
-## 字符串处理(普通函数，正则)
+当我们需要应用条件逻辑的时候，可以应用`case`语句。CASE语句的常用语法格式为`CASE {WHEN cond1 THEN res1} [...] [ELSE def] END`，它可以用多个不同的条件评估一个表达式，并返回第一个评估结果为真值（True）的条件后面的值，如果全部条件都不满足，则返回`else`后面的值。其中的`else`部分还可以省略，此时返回NULL。
 
-## 窗口函数(LEAD() | LAG() | RANK() | ROW_NUMBER())
+我们在“Lens实践案例：创作者个人资料域名分析”部分就多次用到了CASE语句。其中部分代码摘录如下：
 
-## 聚合函数：collect_set 跟 collect_list
+```sql
+profiles_summary as (
+    select (
+            case
+                when length(short_name) >= 20 then 20 -- 域名长度大于20时，视为20对待
+                else length(short_name) -- 域名长度小于20，直接使用其长度值
+            end) as name_length, -- 将case语句评估返回的结果命名为一个新的字段
+        handle_type,
+        count(*) as name_count
+    from profile_created
+    group by 1, 2
+),
+
+profiles_total as (
+    select count(*) as total_profile_count,
+        sum(case
+                when handle_type = 'Pure Digits' then 1 -- 类型值等于给定值，返回1
+                else 0  -- 类型值不等于给定值，返回 0
+            end
+        ) as pure_digit_profile_count,
+        sum(case 
+                when handle_type = 'Pure Letters' then 1  -- 类型值等于给定值，返回1
+                else 0  -- 类型值不等于给定值，返回 0
+            end
+        ) as pure_letter_profile_count
+    from profile_created
+)
+```
+
+可以看到，通过CASE语句，我们可以根据实际的需要对数据进行灵活的转换，方便后续的统计汇总。
+
+上述示例查询的相关链接：
+- 查询：[https://dune.com/queries/1535541](https://dune.com/queries/1535541)
+- 说明：[Lens创作者个人资料域名分析](https://sixdegreelab.gitbook.io/mastering-chain-analytics/ru-men-jiao-cheng/06_pratical_case_lens_protocol)
+
+函数`if(cond, expr1, expr2)`或者`iff(cond, expr1, expr2)`互为同义词，可以交替使用，它们的作用时根据条件值评估的真假，返回两个表达式中的其中一个值。如果条件评估结果为真值，则返回第一个表达式，如果评估为假值，则返回第二个表达式。
+
+```sql
+select if(1 < 2, 'a', 'b') -- 条件评估结果为真，返回第一个表达式
+    ,iff('x' > 'z', 'x > z', 'x <= z') -- 跟if()功能相同
+    ,if('a' = 'A', 'case-insensitive', 'case-sensitive') -- 字符串值区分大小写
+ ```
+
+## 字符串处理的常用函数
+
+1. Lower() 函数
+
+Dune V2引擎中，交易哈希值（hash）、用户地址、智能合约地址这些全部以小写字符格式保存。但是在字符串比较的时候，是区分大小写的。字符`a`和`A`是不同的，地址`0xbf16ef186e715668aa29cef57e2fd7f9d48adfe6`和`0XBF16EF186E715668AA29CEF57E2FD7F9D48ADFE6`比较是“不相等”的。所以我们需要将地址手动转换为全部小写再比较，或者使用`lower()`函数转换后比较。
+
+```sql
+select 'a' = 'A' -- 字符大小写不同，返回false
+    ,'B' = 'B'  -- 字符大小写相同，返回true
+    ,'0xbf16ef186e715668aa29cef57e2fd7f9d48adfe6' = '0XBF16EF186E715668AA29CEF57E2FD7F9D48ADFE6' -- 大小写不同，返回false
+    ,lower('0xbf16ef186e715668aa29cef57e2fd7f9d48adfe6') = lower('0XBF16EF186E715668AA29CEF57E2FD7F9D48ADFE6') -- 转换为小写后比较，返回true
+```
+
+2. Substring() 函数
+
+当有时我们因为某些特殊的原因不得不使用原始数据表`transactions`或`logs`并解析其中的`data`数据时，需要先从其中提取部分字符串，然后进行针对性的转换处理，此时就需要使用Sbustring 函数。Substring函数的语法格式为`substring(expr, pos [, len])`或者`substring(expr FROM pos [FOR len] ] )`，表示在表达式`expr`中，从位置`pos`开始，截取`len`个字符并返回。如果省略参数`len`，则一直截取到字符串末尾。
+
+3. Concat() 函数和 || 操作符
+
+函数`concat(expr1, expr2 [, ...] )`将多个表达式串接到一起，常用来链接字符串。操作符`||`的功能和Concat函数相同。
+
+```sql
+select concat('a', ' ', 'b', ' c') -- 连接多个字符串
+    , 'a' || ' ' || 'b' || ' c' -- 与concat()功能相同
+```
+
+4. bytea2numeric_v2() 函数
+
+函数`bytea2numeric_v2(hex_string)`是Dune团队自定义的一个函数，其作用是将16进制格式存贮的数值转换为10进制的值。在`logs`这样的原始数据表里，数值是首先转换为16进制，然后每64个字符一组（不足64位的前面填充`0`补足位数），前后连接到一起，最前面再添加`0x`两个字符，最后存入`data`字段。当我们需要从`logs.data`数据解析这些具体的数值时，就需要反向做解析处理：从第3个字符开始，使用Substring()函数分别截取对应位置的64个字符，如果其存贮的是数值，则使用bytea2numeric_v2()函数转换为10进制值。
+
+5. Right() 函数
+函数`right(str, len)`从字符串`str`中返回右边开始计数的`len`个字符。如前所述，在`logs`这样的原始数据表里数据是按64个字符一组连接到一起后放入`data`里面的，对于合约地址或用户地址，其长度是40个字符，在保存时就会在左边填充`0`来补足64位长度。解析提取地址的时候，我们就需要提取右边的40个字符，再加上`0x`前缀将其还原为正确的地址格式。
+
+下面是一个使用上述函数的一个综合例子，这个例子从`logs`表解析跨链到Arbitrum的记录：
+
+```sql
+select date_trunc('day', block_time) as block_date, --截取日期
+    concat('0x', right(substring(data, 3 + 64 * 2, 64), 40)) as address, -- 提取data中的第3部分转换为用户地址，从第3个字符开始，每64位为一组
+    concat('0x', right(substring(data, 3 + 64 * 3, 64), 40)) as token, -- 提取data中的第4部分转换为用户地址
+    substring(data, 3 + 64 * 4, 64) as hex_amount, -- 提取data中的第5部分
+    bytea2numeric_v2(substring(data, 3 + 64 * 4, 64)) as amount, -- 提取data中的第5部分，转换为10进制数值
+    tx_hash
+from ethereum.logs
+where contract_address = '0x5427fefa711eff984124bfbb1ab6fbf5e3da1820'   -- Celer Network: cBridge V2 
+    and topic1 = '0x89d8051e597ab4178a863a5190407b98abfeff406aa8db90c59af76612e58f01'  -- Send
+    and substring(data, 3 + 64 * 5, 64) = '000000000000000000000000000000000000000000000000000000000000a4b1'   -- 42161，直接判断16进制值
+    and substring(data, 3 + 64 * 3, 64) = '000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' -- WETH，直接判断16进制值
+    and block_time >= now() - interval '7 days'
+limit 10
+```
+
+上述示例查询的相关链接：
+- [https://dune.com/queries/1647016](https://dune.com/queries/1647016)
+- [字符串和二进制函数](https://docs.databricks.com/sql/language-manual/sql-ref-functions-builtin.html#string-and-binary-functions)
+
+## 窗口函数
+
+多行数据的组合成为窗口（Window）。对窗口中的一组行进行操作并根据该组行计算每一行的返回值的函数叫窗口函数。窗口函数对于处理任务很有用，例如计算移动平均值、计算累积统计量或在给定当前行的相对位置的情况下访问行的值。窗口函数的常用语法格式：
+
+```sql
+function OVER window_spec
+```
+
+其中，`function`可以是排名窗口函数、分析窗口函数或者聚合函数。`over`是固定必须使用的关键字。`window_spec`部分又有两种可能的变化：`partition by partition_feild order by order_field`或者`order by order_field`，分别表示先分区再排序和不分区直接排序。除了把所有行当作同一个分组的情况外，分组函数必须配合 `order by`来使用。
+
+1. LEAD()、 LAG() 函数
+
+Lead()函数从分区内的后续行返回指定表达式的值。其语法为`lead(expr [, offset [, default] ] )`。Lag()函数从从分区中的前序行返回指定表达式的值。当我们需要将结果集中某一列的值，跟上一行或者下一行的相同列的值进行比较（当然也可以间隔多行取值）时，这两个函数就非常有用。
+
+我们之前的教程中介绍过一个查询，用于统计Uniswap V3 近30天每日新增资金池数量。其SQL为：
+
+```sql
+with pool_details as (
+    select date_trunc('day', evt_block_time) as block_date, evt_tx_hash, pool
+    from uniswap_v3_ethereum.Factory_evt_PoolCreated
+    where evt_block_time >= now() - interval '29 days'
+)
+
+select block_date, count(pool) as pool_count
+from pool_details
+group by 1
+order by 1
+```
+
+如果我们在目前的条形图基础上还希望添加一条曲线来显示每天新建资金池数量的变化情况，就可以使用Lag()函数来计算出每天相较于前一天的变化值，然后将其可视化。为了保持逻辑清晰，我们增加了一个CTE，修改后的SQL如下：
+
+```sql
+with pool_details as (
+    select date_trunc('day', evt_block_time) as block_date, evt_tx_hash, pool
+    from uniswap_v3_ethereum.Factory_evt_PoolCreated
+    where evt_block_time >= now() - interval '29 days'
+),
+
+pool_summary as (
+    select block_date,
+        count(pool) as pool_count
+    from pool_details
+    group by 1
+    order by 1
+)
+
+select block_date,
+    pool_count,
+    lag(pool_count, 1) over (order by block_date) as pool_count_previous, -- 使用Lag()函数获取前一天的值
+    pool_count - (lag(pool_count, 1) over (order by block_date)) as pool_count_diff -- 相减得到变化值
+from pool_summary
+order by block_date
+```
+
+将`pool_count_diff`添加到可视化图表（使用右侧坐标轴，图形类型选择Line），效果如下图：
+
+![part_2_01.png](images/part_2_01.png)
+
+当我们需要向“前”对比不同行的数据时，就可以使用Lead()函数。比如，我们之前在Lens实例中介绍过发布帖子最多的创作者账号查询，我们将其做一些调整，返回发帖最多的50个账号，同时对比这👟账号发帖数量的差异（第一名和第二名之差、第二名和第三名之差，等等）。关键部分查询代码如下：
+
+```sql
+with post_data as (
+    -- 获取原始发帖详细数据，请参考完整SQL链接
+),
+
+top_post_profiles as (
+    select profile_id,
+        count(*) as post_count
+    from post_data
+    group by 1
+    order by 2 desc
+    limit 50
+)
+
+select row_number() over (order by post_count desc) as rank_id, -- 生成连续行号，用来表示排名
+    profile_id,
+    post_count,
+    lead(post_count, 1) over (order by post_count desc) as post_count_next, -- 获取下一行的发帖数据
+    post_count - (lead(post_count, 1) over (order by post_count desc)) as post_count_diff -- 计算当前行和下一行的发帖数量差
+from top_post_profiles
+order by post_count desc
+```
+
+查询结果如下图所示，其中可以看到有些账号之间的发帖数量差异很小：
+
+![part_2_02.png](images/part_2_02.png)
+
+完整的SQL参考链接：
+- [https://dune.com/queries/1647422](https://dune.com/queries/1647422)
+
+2. Row_Number() 函数
+
+Row_Number() 是一个排名类型的窗口函数，用于按照指定的排序方式生成不同的行号，从1开始连续编号。在上一个例子中，我们已经使用了`row_number() over (order by post_count desc) as rank_id`来生成行号用来表示排名，这里不再举例。如果结合`partition by`分区字句，Row_Number()将在每一个分区内部从1开始编号。利用这个特性，我们可以用来实现一些高级筛选。例如，我们有一组Token地址，需要计算并返回他们最近1小时内的平均价格。考虑到Dune的数据会存在一到几分钟的延迟，如果按当前系统日期的“小时”数值筛选，并不一定总是能返回需要的价格数据。相对更安全的方法是扩大取值的时间范围，然后从中筛选出每个Token最近的那条记录。这样即使出现数据有几个小时的延迟的特殊情况，我们的查询仍然可以工作良好。此时我们可以使用Row_Number()函数结合`partition by`来按分区生成行号再根据行号筛选出需要的数据。
+
+```sql
+with latest_token_price as (
+    select date_trunc('hour', minute) as price_date, -- 按小时分组计算
+        contract_address,
+        symbol,
+        decimals,
+        avg(price) as price -- 计算平均价格
+    from prices.usd
+    where contract_address in (
+        '0xdac17f958d2ee523a2206206994597c13d831ec7',
+        '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
+        '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+        '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+        '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9'
+    )
+    and minute > now() - interval '1 day' -- 取最后一天内的数据，确保即使数据有延迟也工作良好
+    group by 1, 2, 3, 4
+),
+
+latest_token_price_row_num as (
+    select  price_date,
+        contract_address,
+        symbol,
+        decimals,
+        price,
+        row_number() over (partition by contract_address order by price_date desc) as row_num -- 按分区单独生成行号
+    from latest_token_price
+)
+
+select contract_address,
+    symbol,
+    decimals,
+    price
+from latest_token_price_row_num
+where row_num = 1 -- 按行号筛选出每个token最新的平均价格
+```
+
+以上查询结果如下图所示：
+
+![part_2_03.png](images/part_2_03.png)
+
+完整的SQL参考链接：
+- [https://dune.com/queries/1647482](https://dune.com/queries/1647482)
 
 
+窗口函数的更多完整资料：
+- [分析窗函数](https://docs.databricks.com/sql/language-manual/sql-ref-functions-builtin.html#analytic-window-functions)
+- [排名窗口函数](https://docs.databricks.com/sql/language-manual/sql-ref-functions-builtin.html#ranking-window-functions)
 
 
-#### Dune Query URL  
-[https://dune.com/queries/1525555](https://dune.com/queries/1525555)
+## Collect_List() 和 Collect_Set() 函数
 
+如果你想将查询结果集中每一行数据的某一列合并到一起，可以使用Collect_List()函数。如果只需要唯一值，可以使用Collect_Set() 函数。如果希望将多列数据都合并到一起（想象将查询结果导出为CSV的情形），你可以考虑用前面介绍的字符串连接的方式将多列数据合并为一列，然后再应用Collect_List()函数。这里举一个简单的例子：
 
+```sql
+select collect_list(contract_address) from
+(
+    select contract_address 
+    from ethereum.logs
+    where block_time >= current_date
+    limit 10
+) t
+```
 
+## 总结
+
+每一种数据库都有几十个甚至上百个内置的函数，而我们这里介绍的只是其中一小部分常用的函数。如果你想要成为熟练的数据分析师，我们强烈建议阅读并了解这里的每一个内置函数的用法：
+[Databricks 内置函数](https://docs.databricks.com/sql/language-manual/sql-ref-functions-builtin.html)。
+
+## SixDegreeLab介绍
+
+SixDegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)）是专业的链上数据团队，我们的使命是为用户提供准确的链上数据图表、分析以及洞见，并致力于普及链上数据分析。通过建立社区、编写教程等方式，培养链上数据分析师，输出有价值的分析内容，推动社区构建区块链的数据层，为未来广阔的区块链数据应用培养人才。
+
+欢迎访问[SixDegreeLab的Dune主页](https://dune.com/sixdegree)。
+
+因水平所限，不足之处在所难免。如有发现任何错误，敬请指正。
