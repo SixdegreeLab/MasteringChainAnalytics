@@ -1,4 +1,4 @@
-# 常见查询三：杂项
+# 常见查询三：自定义数据、数字序列、数组、JSON等
 
 在常见查询的前面两个部分，我们分别介绍了ERC20代币的价格查询、持有者、持有余额等常见的一些查询方法。在这一部分，我们再介绍一些其他方面的常用查询。
 
@@ -308,7 +308,7 @@ from (
 以上查询的示例链接：
 - [https://dune.com/queries/1562662](https://dune.com/queries/1562662)
 - [https://dune.com/queries/941978](https://dune.com/queries/941978)
-- - [https://dune.com/queries/1554454](https://dune.com/queries/1554454)
+- [https://dune.com/queries/1554454](https://dune.com/queries/1554454)
 
 
 ## SixDegreeLab介绍
