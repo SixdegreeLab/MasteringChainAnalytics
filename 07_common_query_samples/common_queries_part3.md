@@ -50,6 +50,8 @@ select * from token_plan
 - [https://dune.com/queries/781862](https://dune.com/queries/781862)
 - [https://dune.com/queries/1650640](https://dune.com/queries/1650640)
 
+由于前面提到的局限性，数据行太多时可能无法执行成功，而且你需要在每一个查询中复制同样的CTE代码，相对来说很不方便。对于数据量大、需要多次、长期使用等情况，还是应该考虑通过提交spellbook PR来生成魔法表。
+
 ## 从事件日志原始表解析数据
 
 之前在讲解计算ERC20代币价格时，我们介绍过从事件日志原始表（logs）解析计算价格的例子。这里再举例说明一下其他需要直接从logs解析数据的情况。当遇到智能合约未被Dune解析，或者因为解析时使用的ABI数据不完整导致没有生成对应事件的解析表的情况，我们就可能需要直接从事件日志表解析查询数据。以Lens 协议为例，我们发现在Lens的智能合约源代码中（[Lens Core](https://github.com/lens-protocol/core)），几乎每个操作都有发生生成事件日志，但是Dune解析后的数据表里面仅有少数几个Event相关的表。进一步的研究发现时因为解析时使用的ABI缺少了这些事件的定义。我们当然可以重新生成或者找Lens团队获取完整的ABI，提交给Dune去再次解析。不过这里的重点是如何从未解析的日志里面提取数据。
@@ -82,16 +84,231 @@ limit 10
 - [https://dune.com/queries/1652759](https://dune.com/queries/1652759)
 - [Keccak-256 Tool](https://emn178.github.io/online-tools/keccak_256.html)
 
+## 使用数字序列简化查询
 
-## 读取数组数据
+研究NFT项目时，我们可能需要分析某个时间段内某个NFT项目等所有交易的价格分布情况，也就是看下每一个价格区间内有多少笔交易记录。通常我们会设置最大成交价格和最小成交价格（通过输入或者从成交数据中查询并对异常值做适当处理），然后将这个范围内的价格划分为N个区间，再统计每个区间内的交易数量。下面是逻辑简单但是比较繁琐的查询示例：
+
+```sql
+with contract_transfer as (
+    select * from nft.trades where
+    nft_contract_address = lower('0xe361f10965542ee57D39043C9c3972B77841F581')
+    and "to" !='\x0000000000000000000000000000000000000000'
+),
+transfer_rn as (
+    select row_number() over (partition by token_id order by block_time desc) as rn, * from contract_transfer
+),
+latest_transfer as (
+    select * from transfer_rn where rn = 1 
+),
+
+min_max as (
+    select ({{max_price}}-{{min_price}})/20.0 as bin
+),
+
+bucket_trade as (
+    select *,
+    case 
+      when amount_original between {{min_price}}+0*bin and {{min_price}}+1*bin then 1*bin
+      when amount_original between {{min_price}}+1*bin and {{min_price}}+2*bin then 2*bin
+      when amount_original between {{min_price}}+2*bin and {{min_price}}+3*bin then 3*bin
+      when amount_original between {{min_price}}+3*bin and {{min_price}}+4*bin then 4*bin
+      when amount_original between {{min_price}}+4*bin and {{min_price}}+5*bin then 5*bin
+      when amount_original between {{min_price}}+5*bin and {{min_price}}+6*bin then 6*bin
+      when amount_original between {{min_price}}+6*bin and {{min_price}}+7*bin then 7*bin
+      when amount_original between {{min_price}}+7*bin and {{min_price}}+8*bin then 8*bin
+      when amount_original between {{min_price}}+8*bin and {{min_price}}+9*bin then 9*bin
+      when amount_original between {{min_price}}+9*bin and {{min_price}}+10*bin then 10*bin
+      when amount_original between {{min_price}}+10*bin and {{min_price}}+11*bin then 11*bin
+      when amount_original between {{min_price}}+11*bin and {{min_price}}+12*bin then 12*bin
+      when amount_original between {{min_price}}+12*bin and {{min_price}}+13*bin then 13*bin
+      when amount_original between {{min_price}}+13*bin and {{min_price}}+14*bin then 14*bin
+      when amount_original between {{min_price}}+14*bin and {{min_price}}+15*bin then 15*bin
+      when amount_original between {{min_price}}+15*bin and {{min_price}}+16*bin then 16*bin
+      when amount_original between {{min_price}}+16*bin and {{min_price}}+17*bin then 17*bin
+      when amount_original between {{min_price}}+17*bin and {{min_price}}+18*bin then 18*bin
+      when amount_original between {{min_price}}+18*bin and {{min_price}}+19*bin then 19*bin
+      when amount_original between {{min_price}}+19*bin and {{min_price}}+20*bin then 20*bin
+      ELSE 21*bin
+    end as gap
+  from latest_transfer,min_max
+ )
+ 
+select gap, count(*) as num from bucket_trade group by gap order by gap 
+```
+
+这个例子中，我们定义了两个参数`min_price`和`max_price`，将他们的差值等分为20份作为分组价格区间，然后使用了一个冗长的CASE语句来统计每个区间内的交易数量。想象一下如果需要分成50组的情况。有没有更简单的方法呢？答案是有。先看代码：
+
+```sql
+with contract_transfer as (
+    select * from nft.trades where
+    nft_contract_address = lower('0xe361f10965542ee57D39043C9c3972B77841F581')
+    and "to" !='\x0000000000000000000000000000000000000000'
+),
+transfer_rn as (
+    select row_number() over (partition by token_id order by block_time desc) as rn, * from contract_transfer
+),
+latest_transfer as (
+    select * from transfer_rn where rn = 1 
+),
+
+min_max as (
+    select ({{max_price}}-{{min_price}})/20.0 as bin
+),
+
+-- 生成一个1到20数字的单列表
+num_series as (
+    select explode(sequence(1, 20)) as num
+),
+
+-- 生成分组价格区间的开始和结束价格
+bin_gap as (
+    select (num - 1) * bin as gap,
+        (num - 1) * bin as price_lower,
+        num * bin as price_upper
+    from num_series
+    join min_max on true
+    
+    union all
+    
+    -- 补充一个额外的区间覆盖其他数据
+    select num * bin as gap,
+        num * bin as price_lower,
+        num * 1e4 * bin as price_upper
+    from num_series
+    join min_max on true
+    where num = 20
+),
+
+bucket_trade as (
+    select t.*,
+        b.gap
+      from latest_transfer t
+      join bin_gap b on t.amount_original >= b.price_lower and t.amount_original < b.price_upper
+ )
+
+select gap, count(*) as num from bucket_trade group by gap order by gap
+```
+
+在CTE`num_series`中，我们使用`explode(sequence(1, 20))`来生成了一个从1到20点数字序列并且转换为20行，每行一个数字。然后在`bin_gap`中，我们通过JOIN两个CTE计算得到了每一个区间的低点价格值和高点价格值。使用`union all`集合添加了一个额外的高点价格值足够大的区间来覆盖其他交易记录。接下来`bucket_trade`就可以简化为只需要简单关联`bin_gap`并比较价格落入对应区间即可。整体上逻辑得到了简化而显得更加清晰易懂。
+
+以上查询的示例链接：
+- [https://dune.com/queries/1054461](https://dune.com/queries/1054461)
+- [https://dune.com/queries/1654001](https://dune.com/queries/1654001)
+
+## 读取数组Array和结构Struct字段中的数据
+
+有的智能合约发出的事件日志使用数组类型的参数，此时Dune解析后生成的数据表也是使用数组来存贮的。Solana区块链的原始交易数据表更是大量使用了数组来存贮数据。也有些数据是保存在结构类型的，或者我们在提取数据时需要借用结构类型（下文有例子）。我们一起来看下如何访问保存着数组字段和结构字段中的数据。
+
+```sql
+select tokens, deltas, evt_tx_hash
+from balancer_v2_arbitrum.Vault_evt_PoolBalanceChanged
+where evt_tx_hash = '0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c'
+```
+
+上面查询返回的前两个字段都是数组类型（我处理了一下，显示如下图）：
+
+![image_10.png](img/image_10.png)
+
+我们可以使用`lateral view explode(tokens) t as token`来将`tokens`数组字段拆分为多行：
+
+```sql
+select evt_tx_hash, deltas, token   -- 返回拆分后的字段
+from balancer_v2_arbitrum.Vault_evt_PoolBalanceChanged
+lateral view explode(tokens) as token   -- 拆分为多行，新字段命名为 token
+where evt_tx_hash = '0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c'
+```
+
+同样我们可以对`deltas`字段进行拆分。但是因为每一个`lateral view`都会将拆分得到的值分别附加到查询原来的结果集，如果同时对这两个字段执行操作，我们就会得到一个类似笛卡尔乘积的错误结果集。查询代码和输出结果如下图所示：
+
+```sql
+select evt_tx_hash, token, delta
+from balancer_v2_arbitrum.Vault_evt_PoolBalanceChanged
+lateral view explode(tokens) as token
+lateral view explode(deltas) as delta
+where evt_tx_hash = '0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c'
+```
+
+![image_11.png](img/image_11.png)
+
+要避免重复，我们可以使用另一个方法`posexplode()`。这个方法在拆分数组元素时会同时输出对应的索引位置。通过添加索引位置必须匹配的过滤条件，我们可以得到正确的结果集：
+
+```sql
+select evt_tx_hash, token, delta
+from balancer_v2_arbitrum.Vault_evt_PoolBalanceChanged
+lateral view posexplode(tokens) as pos1, token -- 拆分时同时取得索引位置
+lateral view posexplode(deltas) as pos2, delta -- 拆分时同时取得索引位置
+where evt_tx_hash = '0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c'
+    and pos1 = pos2 -- 只返回索引位置相同的记录
+```
+
+结果如下图所示：
+
+![image_12.png](img/image_12.png)
+
+上面这种方式，当遇到需要同时从更多个数组字段提取相关数据时，会更加复杂，也容易引入错误。另外一个可行的方式是使用`array_zip()`函数将多个数组字段合并到一起，生成一个新数组，数组的每一个元素是一个Struct结构，其中的每个元素对应原始数组中的一个值。然后我们可以使用`struct_name.field_name`的语法来访问结构中的变量。上面的查询可以修改为（输出字段略有不同，方便对比）：
+
+```sql
+select evt_tx_hash, item, idx1, 
+    item.tokens as token, 
+    item.deltas as delta,
+    tokens, deltas
+from (
+    select evt_tx_hash,
+        tokens, deltas, 
+        arrays_zip(tokens, deltas) as arr
+    from balancer_v2_arbitrum.Vault_evt_PoolBalanceChanged
+    where evt_tx_hash = '0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c'
+)
+lateral view posexplode(arr) AS idx1, item
+```
+
+以上查询的示例链接：
+- [https://dune.com/queries/1654079](https://dune.com/queries/1654079)
+- [https://dune.com/queries/1387460](https://dune.com/queries/1387460)
+
 
 ## 读取JSON字符串数据
 
+有的智能合约的解析表里，包含多个参数值的对象被序列化为json字符串格式保存，比如我们之前介绍过Lens的创建Profile事件。我们可以使用`:`来直接读取json字符串中的变量。例如：
 
-## 清除异常值
+```sql
+select vars:to as user_address, -- 读取json字符串中的用户地址
+    vars:handle as handle_name, -- 读取json字符串中的用户昵称
+    call_block_time,
+    output_0 as profile_id,
+    call_tx_hash
+from lens_polygon.LensHub_call_createProfile
+where call_success = true   
+```
 
-least greatest
+另外一种方式是使用`get_json_object()`函数来提取对应数据。举例如下：
 
+```sql
+select block_time, 
+    tx_hash,
+    get_json_object(txData, '$.receivingChainTxManagerAddress') as receivingChainTxManagerAddress2,
+    get_json_object(txData, '$.sendingAssetId') as sendingAssetId2,
+    get_json_object(txData, '$.receivingChainId') as receivingChainId2,
+    get_json_object(txData, '$.amount') as amount2
+from (
+    SELECT date_trunc('minute', t.evt_block_time) as block_time,
+        date_trunc('day', t.evt_block_time) as block_date,
+        t.user as address,
+        get_json_object(t.args, '$.txData') as txData,
+        t.args,
+	    t.evt_tx_hash as tx_hash
+    FROM xpollinate_ethereum.TransactionManager_evt_TransactionFulfilled t
+    where t.evt_block_time >= '2022-11-01'
+    limit 10
+) 
+```
+
+读取json字符串有一个特殊的情况不太好处理，就是如果里面的值包括了数组，无法直接转换为数组。这个我们在之前的“实践案例：制作Lens Protocol的数据看板（二）”教程的“关注数据分析”部分有介绍过例子，大家可以参考。
+
+以上查询的示例链接：
+- [https://dune.com/queries/1562662](https://dune.com/queries/1562662)
+- [https://dune.com/queries/941978](https://dune.com/queries/941978)
+- - [https://dune.com/queries/1554454](https://dune.com/queries/1554454)
 
 
 ## SixDegreeLab介绍
