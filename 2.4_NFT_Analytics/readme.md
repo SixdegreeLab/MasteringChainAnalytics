@@ -310,7 +310,9 @@ uint256 constant receivedItemsHash_ptr = 0x60;
 
 
 ## NFT综合看板
-我们制作了一个可以输入NFT合约地址，查看项目各种信息的看板：https://dune.com/sixdegree/nft-collections-metrics-custom-dashboard ，大家可以通过此看板的query了解更多查询用法
+我们制作了一个可以输入NFT合约地址，查看项目各种信息的看板，大家可以通过此看板的query了解更多查询用法:
+
+https://dune.com/sixdegree/nft-collections-metrics-custom-dashboard 
 
 ![](./assets/nft-all-in-one.png)
 
