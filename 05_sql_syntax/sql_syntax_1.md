@@ -1,4 +1,5 @@
-# SQL基础(一)
+# SQL基础（一）
+
 ## 基础概念
 **1、数据仓库是什么？**  
 说人话就是说就是出于数据统计的需要，把一些数据分门别类地存储起来,存储的载体是【数据表】。针对某一个或者一些主题的一系列【数据表】合在一起就是数据仓库。  
@@ -33,7 +34,7 @@
 **案例1**:我想看看孙哥钱包(0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296)在2022年1月份以来的每一笔ETH的大额转出(>1000ETH)是在什么时候以及具体的转出数量  
 #### SQL
 ```sql
-select --Select后跟着需要查询的字段，多个字段用空格隔开
+select --Select后跟着需要查询的字段，多个字段用英文逗号分隔
     block_time 
     ,from
     ,to
@@ -216,7 +217,9 @@ on  transactions_info.stat_minute = price_info.stat_minute --left join关联的�
     - 联表方式(join,left join ,right join ,cross join,full join)
     - 关联条件(on)
   - 用得最多的联表方式是join 跟left join，以这2个为例子去解释下具体的用法
+
  ![query-page](images/left_join_case.png)  
+
       - join:把两个表按照关联条件(on)关联在一起，取交集   
         - Table A 跟 Table B通过姓名关联，其中交集是小红和小明，因为join是取交集，因此最终结果里姓名就只有小明和小红  
         - 两表中所有符合要求的数据都需要关联，因为Table B中小明有2条记录，所以关联的结果中小明也有两条数据  
