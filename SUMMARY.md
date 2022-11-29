@@ -17,3 +17,4 @@
 * [#9 常见查询一：ERC20代币价格](07_common_query_samples/readme.md)
 * [#10 常见查询二：代币的持有者、总供应量、账户余额](07_common_query_samples/common_queries_part2.md)
 * [#11 常见查询三：自定义数据、数字序列、数组、JSON等](07_common_query_samples/common_queries_part3.md)
+* [#12 NFT数据分析](08_nft_analysis/readme.md)
