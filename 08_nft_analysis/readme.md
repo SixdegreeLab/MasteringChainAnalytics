@@ -185,7 +185,7 @@ where  currency_symbol IN ('ETH', 'WETH') AND number_of_items = 1 -- 这里可�
 
 参考链接：https://dune.com/queries/1660139
 
-**成交量：**总成交额度，总交易笔数等，24小时/7天/1月成交额度（可以通过时间来筛选）
+**成交量、总成交额度、总交易笔数等、24小时/7天/1月成交额度** 
   
 ```sql
 with total_volume as(
