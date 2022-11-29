@@ -75,7 +75,7 @@ interface ERC721 {
 }
 ```
 
-对于数据分析，上述函数中最重要的是Transfer这个event事件，在每笔交易时都会触发该事件并记录到链上，除了Transfer，还有Mint事件，一般用在项目发售时期用来铸造一个新的NFT。
+对于数据分析，上述函数中最重要的是Transfer这个event事件，在每笔交易时都会触发该事件并记录到链上，除了Transfer，还有Mint事件，一般用在项目发售时期用来铸造一个新的NFT。Dune的魔法表提供了ERC721，ERC1155类型的Transfer表，如`erc721_ethereum.evt_Transfer`，`erc1155_ethereum.evt_Transfer`等（不同区块链下名称不同），我们可以从中查询某个合约或者某个EOA地址的相关NFT传输事件。
 
 在Transfer事件中，主要有三个参数发送方地址`from`, 接收方地址`to`和NFT的编号`tokenId`。交易的情况下，from和to都是一个正常的地址，如果是铸造mint那么from地址则全是0，如果是销毁burn则to的地址全是0，Dune上的nft.mint表和nft.burn表也是通过解析该event事件，得到最终的交易信息。
 ![](assets/nft-transfer-etherscan.png)
@@ -156,167 +156,177 @@ uint256 constant receivedItemsHash_ptr = 0x60;
 
 一般来说，一个NFT的项目通常会关注以下基本指标：
 
-- **成交价格走势**
+**成交价格走势**
   
-  需要将所有交易市场的交易金额都查询出来，用散点图表达所有成交，同时可以通过时间范围选择不同的范围，比如最近24h，最近7天，最近1月等等。需要注意的是，对于一些成交价格过高的交易，需要把这些过滤掉，不然在散点图上就会挤压其它成交价格，无法凸显大多数的成交价格。
-  
-  ![](assets/history-price.png)
-  
-  参考链接：https://dune.com/queries/1660237
+需要将所有交易市场的交易金额都查询出来，用散点图表达所有成交，同时可以通过时间范围选择不同的范围，比如最近24h，最近7天，最近1月等等。需要注意的是，对于一些成交价格过高的交易，需要把这些过滤掉，不然在散点图上就会挤压其它成交价格，无法凸显大多数的成交价格。
 
-- **地板价**
-  
-  因为我们只能获得链上已经成交的数据，无法获得交易市场的挂单数据，所以一般会用最近10笔交易中的最小成交金额来作为地板价，与挂单价格相差不大，除非特别冷门的项目
-  
-  ```sql
-  -- 按时间排序，找出该合约最近的10笔交易
-  with lastest_trades as (
-      select * from nft.trades 
-      WHERE nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544' -- azuki NFT的合约地址
-      order by block_time desc limit 10
-      -- block_time > now() - interval '24 h' --你也可以按时间排序
-  )
-  SELECT
-      min(amount_original) as floor_price --直接获取最小值
-      -- percentile_cont(.05) within GROUP (order by amount_original) as floor_price --这么做是取最低和最高价之间5%分位数，防止一些过低的价格交易影响
-  FROM lastest_trades
-  where  currency_symbol IN ('ETH', 'WETH') AND number_of_items = 1 -- 这里可以按不同的链，不同的交易token进行过滤
-  ```
-  
-  参考链接：https://dune.com/queries/1660139
+![](assets/history-price.png)
 
-- 成交量：总成交额度，总交易笔数等，24小时/7天/1月成交额度（可以通过时间来筛选）
-  
-  ```sql
-  with total_volume as(
-      SELECT
-          sum(amount_original) as `Total Trade Volume(ETH)`, --总成交量ETH
-          sum(amount_usd) as `Total Trade Volume(USD)`,      --总成交量USD
-          count(amount_original) as `Total Trade Tx`         --总交易笔数
-      FROM nft.trades
-      WHERE nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
-          -- AND currency_symbol IN ('ETH', 'WETH') 
-  ),
-  total_fee as (
-      select 
-          sum(royalty_fee_amount) as `Total Royalty Fee(ETH)`,      --总版权税ETH
-          sum(royalty_fee_amount_usd) as `Total Royalty Fee(USD)`,  --总版权税USD
-          sum(platform_fee_amount) as `Total Platform Fee(ETH)`,    --总平台抽成ETH
-          sum(platform_fee_amount_usd) as `Total Platform Fee(USD)` --总平台抽成USD
-      from nft.fees 
-      WHERE nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
-      -- AND royalty_fee_currency_symbol IN ('ETH', 'WETH') 
-  )
-  select * from total_volume, total_fee
-  ```
-  
-  ```
-  参考链接：https://dune.com/queries/1660292
-  ```
+参考链接：https://dune.com/queries/1660237
 
-- 每日/每月/每周成交量
-  ```sql
-      with hourly_trade_summary as (
-        select date_trunc('day', block_time) as block_date, 
-            sum(number_of_items) as items_traded,
-            sum(amount_raw) / 1e18 as amount_raw_traded,
-            sum(amount_usd) as amount_usd_traded
-        from opensea.trades
-        where nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
-        -- and block_time > now() - interval '90 days'
-        group by 1
-        order by 1
-    )
+**地板价**
+  
+因为我们只能获得链上已经成交的数据，无法获得交易市场的挂单数据，所以一般会用最近10笔交易中的最小成交金额来作为地板价，与挂单价格相差不大，除非特别冷门的项目
+
+```sql
+-- 按时间排序，找出该合约最近的10笔交易
+with lastest_trades as (
+    select * from nft.trades 
+    WHERE nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544' -- azuki NFT的合约地址
+    order by block_time desc limit 10
+    -- block_time > now() - interval '24 h' --你也可以按时间排序
+)
+SELECT
+    min(amount_original) as floor_price --直接获取最小值
+    -- percentile_cont(.05) within GROUP (order by amount_original) as floor_price --这么做是取最低和最高价之间5%分位数，防止一些过低的价格交易影响
+FROM lastest_trades
+where  currency_symbol IN ('ETH', 'WETH') AND number_of_items = 1 -- 这里可以按不同的链，不同的交易token进行过滤
+```
+
+参考链接：https://dune.com/queries/1660139
+
+**成交量：**总成交额度，总交易笔数等，24小时/7天/1月成交额度（可以通过时间来筛选）
+  
+```sql
+with total_volume as(
+    SELECT
+        sum(amount_original) as `Total Trade Volume(ETH)`, --总成交量ETH
+        sum(amount_usd) as `Total Trade Volume(USD)`,      --总成交量USD
+        count(amount_original) as `Total Trade Tx`         --总交易笔数
+    FROM nft.trades
+    WHERE nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
+        -- AND currency_symbol IN ('ETH', 'WETH') 
+),
+total_fee as (
+    select 
+        sum(royalty_fee_amount) as `Total Royalty Fee(ETH)`,      --总版权税ETH
+        sum(royalty_fee_amount_usd) as `Total Royalty Fee(USD)`,  --总版权税USD
+        sum(platform_fee_amount) as `Total Platform Fee(ETH)`,    --总平台抽成ETH
+        sum(platform_fee_amount_usd) as `Total Platform Fee(USD)` --总平台抽成USD
+    from nft.fees 
+    WHERE nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
+    -- AND royalty_fee_currency_symbol IN ('ETH', 'WETH') 
+)
+select * from total_volume, total_fee
+```
+
+参考链接：https://dune.com/queries/1660292
+  
+**每日/每月/每周成交量**
+
+```sql
+    with hourly_trade_summary as (
+    select date_trunc('day', block_time) as block_date, 
+        sum(number_of_items) as items_traded,
+        sum(amount_raw) / 1e18 as amount_raw_traded,
+        sum(amount_usd) as amount_usd_traded
+    from opensea.trades
+    where nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
+    -- and block_time > now() - interval '90 days'
+    group by 1
+    order by 1
+)
+
+select block_date, 
+    items_traded,
+    amount_raw_traded,
+    amount_usd_traded,
+    sum(items_traded) over (order by block_date asc) as accumulate_items_traded,
+    sum(amount_raw_traded) over (order by block_date asc) as accumulate_amount_raw_traded,
+    sum(amount_usd_traded) over (order by block_date asc) as accumulate_amount_usd_traded
+from hourly_trade_summary
+order by block_date
+```
+
+![](./assets/daily-trade-volune.png)
+
+参考链接：https://dune.com/queries/1664420
+
+
+**当前持有人数，总token数量，holder的分布等**
+```sql
+with nft_trade_details as ( --获取交易的买入卖出方详细信息表，卖出方是负数，买入方是
+    select seller as trader,
+        -1 * number_of_items as hold_item_count
+    from nft.trades
+    where nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
+
+    union all
     
-    select block_date, 
-        items_traded,
-        amount_raw_traded,
-        amount_usd_traded,
-        sum(items_traded) over (order by block_date asc) as accumulate_items_traded,
-        sum(amount_raw_traded) over (order by block_date asc) as accumulate_amount_raw_traded,
-        sum(amount_usd_traded) over (order by block_date asc) as accumulate_amount_usd_traded
-    from hourly_trade_summary
-    order by block_date
-    
-  ```
-  ![](./assets/daily-trade-volune.png)
-  参考链接：https://dune.com/queries/1664420
+    select buyer as trader,
+        number_of_items as hold_item_count
+    from nft.trades
+    where nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
+),
+
+nft_traders as (
+    select trader,
+    sum(hold_item_count) as hold_item_count
+    from nft_trade_details
+    group by trader
+    having sum(hold_item_count) > 0
+    order by 2 desc
+),
+
+nft_traders_summary as (
+    select (case when hold_item_count >= 100 then 'Hold >= 100 NFT'
+                when hold_item_count >= 20 and hold_item_count < 100 then 'Hold 20 - 100'
+                when hold_item_count >= 10 and hold_item_count < 20 then 'Hold 10 - 20'
+                when hold_item_count >= 3 and hold_item_count < 10 then 'Hold 3 - 10'
+                else 'Hold 1 or 2 NFT'
+            end) as hold_count_type,
+        count(*) as holders_count
+    from nft_traders
+    group by 1
+    order by 2 desc
+),
+
+total_traders_count as (
+    select count(*) as total_holders_count,
+        max(hold_item_count) as max_hold_item_count
+    from nft_traders
+),
+
+total_summary as (
+    select 
+        0 as total_nft_count,   --TODO
+        count(*) as transaction_count,
+        sum(number_of_items) as number_of_items_traded,
+        sum(amount_raw) / 1e18 as eth_amount_traded,
+        sum(amount_usd) as usd_amount_traded
+    from opensea.trades
+    where nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
+)
+
+select *
+from nft_traders_summary
+join total_traders_count on true
+join total_summary on true
+```
+
+参考链接：https://dune.com/queries/1300500/2228120
 
 
-- 当前持有人数，总token数量，holder的分布等
-  ```sql
-  with nft_trade_details as ( --获取交易的买入卖出方详细信息表，卖出方是负数，买入方是
-      select seller as trader,
-          -1 * number_of_items as hold_item_count
-      from nft.trades
-      where nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
+## NFT综合看板示例
 
-      union all
-      
-      select buyer as trader,
-          number_of_items as hold_item_count
-      from nft.trades
-      where nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
-  ),
-
-  nft_traders as (
-      select trader,
-      sum(hold_item_count) as hold_item_count
-      from nft_trade_details
-      group by trader
-      having sum(hold_item_count) > 0
-      order by 2 desc
-  ),
-
-  nft_traders_summary as (
-      select (case when hold_item_count >= 100 then 'Hold >= 100 NFT'
-                  when hold_item_count >= 20 and hold_item_count < 100 then 'Hold 20 - 100'
-                  when hold_item_count >= 10 and hold_item_count < 20 then 'Hold 10 - 20'
-                  when hold_item_count >= 3 and hold_item_count < 10 then 'Hold 3 - 10'
-                  else 'Hold 1 or 2 NFT'
-              end) as hold_count_type,
-          count(*) as holders_count
-      from nft_traders
-      group by 1
-      order by 2 desc
-  ),
-
-  total_traders_count as (
-      select count(*) as total_holders_count,
-          max(hold_item_count) as max_hold_item_count
-      from nft_traders
-  ),
-
-  total_summary as (
-      select 
-          0 as total_nft_count,   --TODO
-          count(*) as transaction_count,
-          sum(number_of_items) as number_of_items_traded,
-          sum(amount_raw) / 1e18 as eth_amount_traded,
-          sum(amount_usd) as usd_amount_traded
-      from opensea.trades
-      where nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
-  )
-
-  select *
-  from nft_traders_summary
-  join total_traders_count on true
-  join total_summary on true
-
-
-  ```
-
-  参考链接：https://dune.com/queries/1300500/2228120
-
-
-## NFT综合看板
 我们制作了一个可以输入NFT合约地址，查看项目各种信息的看板，大家可以通过此看板的query了解更多查询用法:
 
 https://dune.com/sixdegree/nft-collections-metrics-custom-dashboard 
 
 ![](./assets/nft-all-in-one.png)
 
+
 ## 参考
 
 - https://mirror.xyz/0x07599B7E947A4F6240F826F41768F76149F490D5/CHcwsp_d0AINEalFq_0FcqkLeEyeeGpYDDtw82TyMes
 - https://github.com/cryptochou/seaport-analysis
+- https://dune.com/sixdegree/soulda-nft-soulda16club
+- https://dune.com/sixdegree/digidaigaku-nft-by-limit-break
+
+## SixDegreeLab介绍
+
+SixDegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)）是专业的链上数据团队，我们的使命是为用户提供准确的链上数据图表、分析以及洞见，并致力于普及链上数据分析。通过建立社区、编写教程等方式，培养链上数据分析师，输出有价值的分析内容，推动社区构建区块链的数据层，为未来广阔的区块链数据应用培养人才。
+
+欢迎访问[SixDegreeLab的Dune主页](https://dune.com/sixdegree)。
+
+因水平所限，不足之处在所难免。如有发现任何错误，敬请指正。
