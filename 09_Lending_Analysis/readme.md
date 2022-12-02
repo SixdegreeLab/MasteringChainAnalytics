@@ -4,10 +4,15 @@
 去中心化金融（DeFi）是区块链的金融创新。通过各协议之间的可组合性、互操作性，DeFi乐高就此诞生。2020年6月，DeFi借贷协议Compound开启流动性挖矿，不仅拉开了DeFi Summer的序幕，也给DeFi借贷赛道注入新活力、新思路、新用户，借贷业务成为DeFi的三大核心之一。
 
 ### 借贷协议的意义
-借贷协议是DeFi的银行。传统银行中，用户可以向银行存款收取利息，也可以向银行借款，最后连本带利一起归还。类似的，在DeFi的借贷协议中用户可以向协议存钱、借钱，不同的是没有了中心化的托管机构，而是用户和借贷协议的智能合约直接交互，靠代码的运行确保一切有条不紊地进行。CeFi中的借贷，贷款担保方式分为信用、保证以及抵押贷款。尽管银行的风险偏好较低，抵押贷款在各类贷款中占比仍是最高的，但是得益于大数据信用体系建设，信用借贷越来越普遍，不过需要大量的审查、资质证明等。而DeFi中的借贷是匿名的，无需信任的，从模式上讲基本都处于抵押贷款方式，普遍采用的方式是超额抵押。也就是说，我抵押200块的资产，可以从你这借走不足200块的资金，这样你就无需担心我借钱跑路，可以放心地借钱给我了。这种以币借币，甚至越借越少的行为看似非常愚蠢，但是实际上它是存在切实需求的：
+借贷协议是DeFi的银行。传统银行中，用户可以向银行存款收取利息，也可以向银行借款，最后连本带利一起归还。类似的，在DeFi的借贷协议中用户可以向协议存钱、借钱，不同的是没有了中心化的托管机构，而是用户和借贷协议的智能合约直接交互，靠代码的运行确保一切有条不紊地进行。CeFi中的借贷，贷款担保方式分为信用、保证以及抵押贷款。尽管银行的风险偏好较低，抵押贷款在各类贷款中占比仍是最高的，但是得益于大数据信用体系建设，信用借贷越来越普遍，不过需要大量的审查、资质证明等。
+![](images/1.png)
+
+而DeFi中的借贷是匿名的，无需信任的，从模式上讲基本都处于抵押贷款方式，普遍采用的方式是超额抵押。也就是说，我抵押200块的资产，可以从你这借走不足200块的资金，这样你就无需担心我借钱跑路，可以放心地借钱给我了。这种以币借币，甚至越借越少的行为看似非常愚蠢，但是实际上它是存在切实需求的：
 1. 交易活动的需求：包括套利、杠杆、做市等交易活动
 例如做市商需要借资金来满足大量的交易；在DEX上买币只能做多，但是通过借币可以做空；通过抵押资产加杠杆，甚至可以通过循环贷不断增加杠杆（抵押ETH借USDC买ETH再抵押再借再买…）
+
 2. 获得被动收入：闲置资金/屯币党在屯币的过程中可以通过借出资产获得额外收益
+
 3. 代币激励：除了流动性挖矿，头部 DeFi 协议推出基于其原生代币的质押服务，代币持有者可质押获得更多原生代币。代币激励是面对借贷协议所有参与者的，借方可以通过交互获得代币奖励，通过交易获得的代币，偿还一部分债务。
 
 相比传统房车类型抵押贷款，需要人力验证资产所有人，还款违约还需要人力及时间进行资产拍卖。DeFi中的当铺模式只需要在抵押率过低停止抵押，对资产清算即可结束贷款合同。
@@ -45,7 +50,96 @@
 ## 重点关注指标
 搞明白链上借贷协议的业务逻辑之后，就可以着手分析了，接下来我将列出一些常用于评估借贷协议的一些指标。
 
-`锁仓量TVL`
+`1.总锁仓量 TVL（Total Value Locked）`
+
+即有多少金额锁定在借贷协议的智能合约中，TVL代表了协议的流动性。从[defillama](https://defillama.com/protocols/lending)数据来看，整体借贷市场TVL超过$10 B，前五的TVL总和约为$9.5 B，其中AAVE独占$3.9 B。
+![](images/tvl.png)
+
+我们以Arbitrum上的AAVE V3为例，做[TVL](https://dune.com/queries/1042816/1798270)的查询：从log表中选择发往AAVE V3合约的交易，log表里有更多的操作信息，方便我们进一步处理。按行为（action_type）区分`存入`和`提取`这两个动作，存入为正提款为负，相加之后就是在合约内锁定的代币。用`concat`函数拼接'0x'和topic中的字符得到转账token的地址和转账人的地址，用`bytea2numeric_v2`函数得到转账token对应的数量（非usd计价金额）。
+```sql
+with aave_v3_transactions as (
+    select 'Supply' as action_type,
+        block_time,
+        concat('0x', right(topic2, 40)) as token_address, --拼接得到token地址
+        concat('0x', right(topic3, 40)) as user_address,
+        bytea2numeric_v2(substring(data, 3 + 64, 64)) as raw_amount, --从第3个字符开始，使用Substring()函数分别截取对应位置的64个字符，使用bytea2numeric_v2()函数转换为10进制值
+        tx_hash
+    from arbitrum.logs
+    where contract_address = '0x794a61358d6845594f94dc1db02a252b5b4814ad'   -- Aave: Pool V3
+        and topic1 = '0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61' -- Supply
+        and block_time > '2022-03-16' -- First transaction date
+    
+    union all
+    
+    select 'Withdraw' as action_type, --withdraw处理类似
+        block_time,
+        concat('0x', right(topic2, 40)) as token_address,
+        concat('0x', right(topic3, 40)) as user_address,
+        (-1) * bytea2numeric_v2(substring(data, 3, 64)) as raw_amount, --在数值前面加负号
+        tx_hash
+    from arbitrum.logs
+    where contract_address = '0x794a61358d6845594f94dc1db02a252b5b4814ad'   -- Aave: Pool V3
+        and topic1 = '0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7' -- Withdraw
+        and block_time > '2022-03-16' -- First transaction date
+),
+
+aave_v3_transactions_daily as (
+    select date_trunc('day', block_time) as block_date,
+        token_address,
+        sum(raw_amount) as raw_amount_summary
+    from aave_v3_transactions
+    group by 1, 2
+    order by 1, 2
+),
+```
+到此我们得到了锁定在智能合约中的token数量，要得到美元计价的TVL，我们还需要将token和其价格匹配：
+```sql
+token_mapping_to_ethereum(aave_token_address, ethereum_token_address, token_symbol) as (
+    values
+    ('0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9', '0xdac17f958d2ee523a2206206994597c13d831ec7', 'USDT'),
+    ('0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f', '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', 'WBTC'),
+    ('0xd22a58f79e9481d1a88e00c343885a588b34b68b', '0xdb25f211ab05b1c97d595516f45794528a807ad8', 'EURS'),
+    ('0xff970a61a04b1ca14834a43f5de4533ebddb5cc8', '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 'USDC'),
+    ('0xf97f4df75117a78c1a5a0dbb814af92458539fb4', '0x514910771af9ca656af840dff83e8264ecf986ca', 'LINK'),
+    ('0x82af49447d8a07e3bd95bd0d56f35241523fbab1', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', 'WETH'),
+    ('0xda10009cbd5d07dd0cecc66161fc93d7c9000da1', '0x6b175474e89094c44da98b954eedeac495271d0f', 'DAI'),
+    ('0xba5ddd1f9d7f570dc94a51479a000e3bce967196', '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9', 'AAVE')
+),
+
+latest_token_price as (
+    select date_trunc('hour', minute) as price_date,
+        contract_address,
+        symbol,
+        decimals,
+        avg(price) as price
+    from prices.usd
+    where contract_address in (
+        select ethereum_token_address
+        from token_mapping_to_ethereum
+    )
+    and minute > now() - interval '1 day'
+    group by 1, 2, 3, 4
+),
+
+latest_token_price_row_num as (
+    select  price_date,
+        contract_address,
+        symbol,
+        decimals,
+        price,
+        row_number() over (partition by contract_address order by price_date desc) as row_num
+    from latest_token_price
+),
+
+current_token_price as (
+    select contract_address,
+        symbol,
+        decimals,
+        price
+    from latest_token_price_row_num
+    where row_num = 1
+),
+```
 
 ## 常用表说明
 
