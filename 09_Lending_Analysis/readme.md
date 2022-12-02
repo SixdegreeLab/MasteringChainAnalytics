@@ -242,6 +242,8 @@ https://dune.com/datanut/Compound-Maker-and-Aave-Deposits-Loans-LTV
 2. https://learnblockchain.cn/article/5036
 3. https://twitter.com/0xhiger/status/1595076528697905157
 4. https://www.blocktempo.com/why-do-defi-lending-protocols-generate-bad-debts/
+5. https://www.panewslab.com/zh/articledetails/k1ep9df5.html
+6. https://new.qq.com/rain/a/20201121A096UF00
 
 ## SixDegreeLab介绍
 
