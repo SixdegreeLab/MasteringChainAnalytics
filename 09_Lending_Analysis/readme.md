@@ -5,7 +5,7 @@
 
 ### 借贷协议的意义
 借贷协议是DeFi的银行。传统银行中，用户可以向银行存款收取利息，也可以向银行借款，最后连本带利一起归还。类似的，在DeFi的借贷协议中用户可以向协议存钱、借钱，不同的是没有了中心化的托管机构，而是用户和借贷协议的智能合约直接交互，靠代码的运行确保一切有条不紊地进行。CeFi中的借贷，贷款担保方式分为信用、保证以及抵押贷款。尽管银行的风险偏好较低，抵押贷款在各类贷款中占比仍是最高的，但是得益于大数据信用体系建设，信用借贷越来越普遍，不过需要大量的审查、资质证明等。
-![](images/bank.png)
+![](images/bank.jpeg)
 
 而DeFi中的借贷是匿名的，无需信任的，从模式上讲基本都处于抵押贷款方式，普遍采用的方式是超额抵押。也就是说，我抵押200块的资产，可以从你这借走不足200块的资金，这样你就无需担心我借钱跑路，可以放心地借钱给我了。这种以币借币，甚至越借越少的行为看似非常愚蠢，但是实际上它是存在切实需求的：
 1. 交易活动的需求：包括套利、杠杆、做市等交易活动
@@ -48,14 +48,17 @@
 
 
 ## 重点关注指标
-搞明白链上借贷协议的业务逻辑之后，就可以着手分析了，接下来我将列出一些常用于评估借贷协议的一些指标。
+搞明白链上借贷协议的业务逻辑之后，就可以着手分析了，接下来我将列出一些常用于评估借贷协议的一些指标。需要注意的是，在智能合约中资金的流动难以区分，虽然只有入、出两个方向，但是所代表的意义有所不同，需要结合智能合约、区块链浏览器来辅助判断。
 
-`1.总锁仓量 TVL（Total Value Locked）`
+### 1.总锁仓量 TVL（Total Value Locked）
 
 即有多少金额锁定在借贷协议的智能合约中，TVL代表了协议的流动性。从[defillama](https://defillama.com/protocols/lending)数据来看，整体借贷市场TVL超过$10 B，前五的TVL总和约为$9.5 B，其中AAVE独占$3.9 B。
 ![](images/tvl.png)
 
-我们以Arbitrum上的AAVE V3为例，做[TVL](https://dune.com/queries/1042816/1798270)的查询：从log表中选择发往AAVE V3合约的交易，log表里有更多的操作信息，方便我们进一步处理。按行为（action_type）区分`存入`和`提取`这两个动作，存入为正提款为负，相加之后就是在合约内锁定的代币。用`concat`函数拼接'0x'和topic中的字符得到转账token的地址和转账人的地址，用`bytea2numeric_v2`函数得到转账token对应的数量（非usd计价金额）。
+我们以Arbitrum上的AAVE V3为例，做[TVL](https://dune.com/queries/1042816/1798270)的查询，基本思路是：提供给合约的资金减去已被取走的资金，剩下的就是锁定资产。从log表中选择发往AAVE V3合约的交易，定义`存入`和`提取`这两个动作（action_type）。打开[Arbscan](https://arbiscan.io/address/0x794a61358d6845594f94dc1db02a252b5b4814ad)找到AAVE一笔[交易](https://arbiscan.io/tx/0x6b8069b62dc762e81b41651538d211f9a1a33009bcb41798e673d715867b2f29#eventlog)为例，打开log可以看到topic0 = '0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61' 对应智能合约中'Supply'的行为
+![](images/tvl2.png)
+
+类似的，topic0 = '0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7' 时对应'Withdraw'的行为（注，在Dune中topic1指的是etherscan中的topic0）。存入为正提款为负，相加之后就是在合约内锁定的代币。用`concat`函数拼接'0x'和topic中的字符得到转账token的地址和转账人的地址，用`bytea2numeric_v2`函数得到转账token对应的数量（非usd计价金额）。
 ```sql
 with aave_v3_transactions as (
     select 'Supply' as action_type,
@@ -92,6 +95,7 @@ aave_v3_transactions_daily as (
     order by 1, 2
 ),
 ```
+
 到此我们得到了锁定在智能合约中的token数量，要得到美元计价的TVL，我们还需要将token和其价格匹配，这里我们手动选取了一些主流的币种：
 ```sql
 token_mapping_to_ethereum(aave_token_address, ethereum_token_address, token_symbol) as (
@@ -140,6 +144,26 @@ current_token_price as (
     where row_num = 1
 ),
 ```
+用raw amount除以对应token的小数位（decimal）（例如ETH的decimal是18，USDT的是6），得到实际token有多少枚，再和对应价格相乘得到以usd为计价单位的金额，求和后得到总的TVL。
+```sql
+daily_liquidity_change as (
+    select d.block_date,
+        p.symbol,
+        d.token_address,
+        d.raw_amount_summary / power(10, coalesce(p.decimals, 0)) as original_amount,
+        d.raw_amount_summary / power(10, coalesce(p.decimals, 0)) * coalesce(p.price, 1) as usd_amount
+    from aave_v3_transactions_daily d
+    inner join token_mapping_to_ethereum m on d.token_address = m.aave_token_address
+    left join current_token_price p on m.ethereum_token_address = p.contract_address
+    order by 1, 2
+)
+
+select sum(usd_amount) / 1e6 as total_value_locked_usd
+from daily_liquidity_change
+```
+
+### 2.未尝贷款（Outstanding loan）
+即外借了多少钱还没还回来
 
 ## 常用表说明
 
