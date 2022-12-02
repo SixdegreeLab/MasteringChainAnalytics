@@ -18,11 +18,18 @@
 相比传统房车类型抵押贷款，需要人力验证资产所有人，还款违约还需要人力及时间进行资产拍卖。DeFi中的当铺模式只需要在抵押率过低停止抵押，对资产清算即可结束贷款合同。
 
 ### 借贷协议的运作模式
+在区块链上抵押借贷，能借多少代币、什么时候清算，都是由智能合约中的一系列参数设定好的。
+![](images/loan.png)
+Max LTV：最大贷款价值比，决定借款发生时债务/ 抵押品价值的最大比例。
+Liquidation threshold：清算门槛，是一个清算判定条件，债务/ 抵押品价值升至这个比例时发生清算。
+Liquidation penalty：强平罚款，当清算发生时，以该资产为抵押品需要扣除的罚金比例。
+比如，Aave V2中USDC 的Max LTV为87%，Liquidation threshold 为89%，Liquidation penalty 为4.5%，就代表每有1 USDC 的抵押品，最高可以借入0.87 美元其它代币，当借入的代币升值至0.89 美元时发生清算，顺利清算的情况下将被扣除4.5% 的罚金。
+
 加密资产的价格浮动往往会比较剧烈，借贷协议采用的超额抵押方式有助于避免资不抵债的情况发生，如下图所示：不同的抵押率对应不同的费率和质押要求。
 
 ![](images/2.png)
 
-但是当极端情况来临，借贷协议会发生什么呢？比如现在ETH价格是1000 usd，我通过质押1个ETH借出800 usdc，突然ETH价格暴跌，这时候借贷协议要如何避免坏账呢？答案是清算。
+但是抵押资产或者借出资产发生大幅波动时到达一定程度时，借贷协议为了避免坏账要执行清算。
 我们以AAVE为例，看借贷协议是如何进行清算的。
 首先介绍一个概念叫健康因子（Health Factor），健康因子和账户的抵押物、借款金额有关，表达资不抵债的可能性。如何计算健康因子？
 
@@ -43,6 +50,16 @@
 那么实际的不等式是：借出资产金额 <= 抵押金额 * LTV < 抵押金额 * 清算线。
 清算时，超出清算线的部分会拿去拍卖，清算者（liquidators）购买抵押物，拍卖获得的资金用于归还负债，多出部分就作为清算者的奖赏。
 清算过程依赖于预言机的喂价，目前AAVE取的是Chainlink。
+
+有意思的是，虽然超额抵押的思路看起来非常靠谱，借贷协议应该没有坏账风险，但是实际上是这样吗？最近Eisenberg从AAVE V2借币做空CRV的事件中，就产生了约170 万美元的坏账。最主要的原因可能是该巨鲸的头寸过大，市场上并没有足够多的流动性让清算人买入。从下图可以看到，该巨鲸在Aave 中存入了5794 万USDC，借入了8342 万CRV。
+
+![](images/crv1.jpg)
+
+而从CoinGecko 和区块链浏览器中可以看出，CRV 代币的流通量只有6.37 亿，巨鲸借出的CRV 数量高于所有外部帐户持有者。例如，截至11 月25 日，Aave 的合约中只有4212 万CRV，持币量第8 的Binance 14 地址中也只有2021 万CRV。
+
+![](images/crv2.png)
+
+在DEX 中，Uniswap V3 的相关交易对中流动性最高的ETH/CRV 交易对中，流动性共176 万美元，只有148 万CRV。因此，市场上并没有足够的流动性供清算人买入，完成清算。每一次清算后，剩余的资金会补充到抵押品中，使剩余债务的清算价格上升。但是在清算过程中，CRV 的价格继续上涨，最终导致Aave 产生坏帐。
 
 简单总结，大部分的借贷协议目前采用的方式是超额抵押，当价格波动时由健康因子监控是否需要清算，以及清算多少。这里我们只讲了最简单最基本的借贷业务，实际上各个协议之间也各有特色，如Compound是去中心化的点对点模式，资金池运用模式使池内资金达到了极高的利用值；AAVE首先提出了闪电贷，借款+操作+还款在一个区块内完成，原子性决定了这笔交易要么全部成功，要么全部失败；AAVE V3更提出了资产跨链流动的功能；而Euler，Kashi和Rari等借贷平台通过无许可的借贷池更好地满足长尾资产的需求。
 
@@ -163,7 +180,7 @@ from daily_liquidity_change
 ```
 
 ### 2.未尝贷款（Outstanding loan）
-即外借了多少钱还没还回来，与计算TVL时类似，参考区块链浏览器的数据，找出topic0（1）所对应的合约功能，用借出的减去已偿还的。
+即外借了多少钱还没还回来，与计算TVL时类似，参考区块链浏览器的数据，找出topic0（1）所对应的合约功能，用借出的减去已偿还的，参考：https://dune.com/queries/1037796/1798021。
 
 ```sql
  select 'Borrow' as action_type,
@@ -193,16 +210,36 @@ from daily_liquidity_change
 
 
 ### 3.资本效率（Utilization ratio）
+简单理解就是存入协议中的资金有多少被真正利用起来（借走）了，当前Arbitrum上AAVE V3的资本效率大约在30%，处于一个低杠杆水平，对比21年牛市时，资金利用率在40%-80%之间。有了前两段的基础，计算这部分并不困难，参考https://dune.com/queries/1037796/1798141。
 
-## 常用表说明
+![](images/ur.png)
+
+![](images/ur.jpg)
 
 
-## NFT综合看板示例
+### 4.详细分类
+包括合约锁定资产构成和用户行为分布，参考：https://dune.com/queries/1026402/1771390。
+![](images/4.1.png)
+AAVE在Arbitrum上资金池中占比前三的是WETH（37.6%）、USDC（29.5%）和WBTC（22.6%）。目前还处于熊市，用户对杠杆需求不强烈，整体以存款吃息为主。
+![](images/4.2.png)
 
+### 5.基础指标 
+一些基础的协议分析指标，如用户数，交易数，日均变化量情况，参考：https://dune.com/queries/1026141/1771147。
+![](images/dunedata.png)
+
+
+## 借贷的综合看板
+1. 我们自己做的Arbitrum上AAVE V3的综合dashboard
+https://dune.com/sixdegree/aave-on-arbitrum-overview
+![](images/dashboard.png)
+
+2. 将以太坊上三大经典借贷协议Maker，AAVE和Compound进行对比的dashboard
+https://dune.com/datanut/Compound-Maker-and-Aave-Deposits-Loans-LTV
 ## 参考
 1. https://foresightnews.pro/article/detail/17638
 2. https://learnblockchain.cn/article/5036
 3. https://twitter.com/0xhiger/status/1595076528697905157
+4. https://www.blocktempo.com/why-do-defi-lending-protocols-generate-bad-debts/
 
 ## SixDegreeLab介绍
 
