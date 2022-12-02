@@ -235,6 +235,8 @@ https://dune.com/sixdegree/aave-on-arbitrum-overview
 
 2. 将以太坊上三大经典借贷协议Maker，AAVE和Compound进行对比的dashboard
 https://dune.com/datanut/Compound-Maker-and-Aave-Deposits-Loans-LTV
+![](images/dashboard2.png)
+
 ## 参考
 1. https://foresightnews.pro/article/detail/17638
 2. https://learnblockchain.cn/article/5036
