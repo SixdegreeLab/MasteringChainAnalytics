@@ -56,8 +56,8 @@
 ![](images/tvl.png)
 
 我们以Arbitrum上的AAVE V3为例，做[TVL](https://dune.com/queries/1042816/1798270)的查询，基本思路是：提供给合约的资金减去已被取走的资金，剩下的就是锁定资产。从log表中选择发往AAVE V3合约的交易，定义`存入`和`提取`这两个动作（action_type）。打开[Arbscan](https://arbiscan.io/address/0x794a61358d6845594f94dc1db02a252b5b4814ad)找到AAVE一笔[交易](https://arbiscan.io/tx/0x6b8069b62dc762e81b41651538d211f9a1a33009bcb41798e673d715867b2f29#eventlog)为例，打开log可以看到topic0 = '0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61' 对应智能合约中'Supply'的行为
+![](images/arbscan1.png)
 ![](images/tvl2.png)
-
 类似的，topic0 = '0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7' 时对应'Withdraw'的行为（注，在Dune中topic1指的是etherscan中的topic0）。存入为正提款为负，相加之后就是在合约内锁定的代币。用`concat`函数拼接'0x'和topic中的字符得到转账token的地址和转账人的地址，用`bytea2numeric_v2`函数得到转账token对应的数量（非usd计价金额）。
 ```sql
 with aave_v3_transactions as (
