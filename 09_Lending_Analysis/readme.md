@@ -163,7 +163,36 @@ from daily_liquidity_change
 ```
 
 ### 2.未尝贷款（Outstanding loan）
-即外借了多少钱还没还回来
+即外借了多少钱还没还回来，与计算TVL时类似，参考区块链浏览器的数据，找出topic0（1）所对应的合约功能，用借出的减去已偿还的。
+
+```sql
+ select 'Borrow' as action_type,
+        block_time,
+        concat('0x', right(topic2, 40)) as token_address,
+        concat('0x', right(topic3, 40)) as user_address,
+        bytea2numeric_v2(substring(data, 3 + 64, 64)) as raw_amount,
+        tx_hash
+    from arbitrum.logs
+    where contract_address = '0x794a61358d6845594f94dc1db02a252b5b4814ad'   -- Aave: Pool V3
+        and topic1 = '0xb3d084820fb1a9decffb176436bd02558d15fac9b0ddfed8c465bc7359d7dce0' -- Borrow
+        and block_time > '2022-03-16' -- First transaction date
+    
+    union all
+    
+    select 'Repay' as action_type,
+        block_time,
+        concat('0x', right(topic2, 40)) as token_address,
+        concat('0x', right(topic3, 40)) as user_address,
+        (-1) * bytea2numeric_v2(substring(data, 3, 64)) as raw_amount,
+        tx_hash
+    from arbitrum.logs
+    where contract_address = '0x794a61358d6845594f94dc1db02a252b5b4814ad'   -- Aave: Pool V3
+        and topic1 = '0xa534c8dbe71f871f9f3530e97a74601fea17b426cae02e1c5aee42c96c784051' -- Repay
+        and block_time > '2022-03-16' -- First transaction date
+```
+
+
+### 3.资本效率（Utilization ratio）
 
 ## 常用表说明
 
