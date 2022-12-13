@@ -19,3 +19,4 @@
 * [#11 常见查询三：自定义数据、数字序列、数组、JSON等](07_common_query_samples/common_queries_part3.md)
 * [#12 NFT数据分析](08_nft_analysis/readme.md)
 * [#13 借贷协议数据分析](09_Lending_Analysis/readme.md)
+* [#14 DeFi数据分析](10_defi/readme.md)
