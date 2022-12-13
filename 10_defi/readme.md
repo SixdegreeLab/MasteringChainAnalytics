@@ -2,6 +2,8 @@
 
 DeFi指的是Decentralized Finance，即去中心化金融。DeFi应该算是目前区块链是活跃度最高的领域了，当我们需要将一种ERC20代币兑换为另一种时，就可以通过DeFi应用来完成兑换。DEX是指Decentralized Exchange，即去中心化交易所。Uniswap，PancakeSwap，CurveFi等都是很流行的DEX交易所。本篇教程中我们一起来探索一下DeFi项目的分析方法，我们使用Ethereum区块链上的数据来做案例。
 
+本教程的数据看板：[DeFi Analysis Tutorial](https://dune.com/sixdegree/defi-analysis-tutorial)
+
 ## DeFi魔法表
 
 鉴于DeFi应用在Crypto领域的重要程度，Dune社区为其建立了丰富的魔法表（Spells）。魔法表`dex.trades`聚合了来自Uniswap、pancakeswap、trader_joe、velodrome、sushiswap等近30个不同DEX应用的交易数据。通过`dex.trades`表的[定义](https://github.com/duneanalytics/spellbook/blob/main/models/dex/dex_trades.sql)我们可以看到其数据来源于其他魔法表，比如`uniswap.trades`、`sushiswap.trades`、`curvefi.trades`等。如果你只是需要分析具体的某个DEX的数据，那么推荐优先使用这些应用独有的trades魔法表，因为会有更好的查询执行性能。与此类似，对于像Uniswap这样已经先后发布过多个版本智能合约（包括同一个区块链上升级合约版本、或者在不同的区块链上部署智能合约）的DeFi项目，它的`uniswap.trades`表也是从其他魔法表聚合生成的。如果我们只是对其中的某个版本或者某个链的数据感兴趣，也可以使用对应的魔法表。比如，如果只想分析Ethereum上的Uniswap V3的交易数据，我们可以直接使用`uniswap_v3_ethereum.trades`表，想分析Optimism链上的CurveFi的交易数据，则可以使用`curvefi.trades`魔法表。
