@@ -1,4 +1,4 @@
-# Dune SQL 查询引擎
+# Dune SQL 查询引擎入门
 
 Dune 近期推出了其团队基于Trino（[https://trino.io/](https://trino.io/)）自研的查询引擎Dune SQL。虽然目前还是Alpha 版本，但是已经显示出强大的查询性能。Dune 团队在一篇博文（[Dune SQL](https://duneanalytics.notion.site/duneanalytics/Dune-SQL-4749cdd6506e418d9e7522a5775c7257)）中详细介绍了自研Dune SQL查询引擎的相关原因及其发展目标，简单说Dune SQL是Dune 未来的终极查询引擎。鉴于Dune SQL已经表现出了强劲的性能优势并且是Dune 未来的标准引擎，我们建议大家现在开始可以优先尝试使用Dune SQL引擎。本文介绍将Spark SQL编写的Query迁移到Dune SQL的一些主要修改、注意事项和细节。
 
