@@ -1,13 +1,13 @@
 # Dune SQL 查询引擎
 
-Dune 近期推出了其团队基于Trino（[https://trino.io/](https://trino.io/)）自研的查询引擎Dune SQL。虽然目前还是Alpha 版本，但是已经显示出强大的查询性能。Dune 团队在一篇博文（[Dune SQL](https://duneanalytics.notion.site/duneanalytics/Dune-SQL-4749cdd6506e418d9e7522a5775c7257)）中详细介绍了自研Dune SQL查询引擎的相关原因及其发展目标，简单说Dune SQL是Dune 未来的终极查询引擎。既然Dune SQL已经表现出了强劲的性能优势并且是Dune 未来的标准引擎，我们建议大家现在开始可以优先尝试使用Dune SQL引擎。本文介绍将Spark SQL编写的Query迁移到Dune SQL的一些主要修改、注意事项和细节。
+Dune 近期推出了其团队基于Trino（[https://trino.io/](https://trino.io/)）自研的查询引擎Dune SQL。虽然目前还是Alpha 版本，但是已经显示出强大的查询性能。Dune 团队在一篇博文（[Dune SQL](https://duneanalytics.notion.site/duneanalytics/Dune-SQL-4749cdd6506e418d9e7522a5775c7257)）中详细介绍了自研Dune SQL查询引擎的相关原因及其发展目标，简单说Dune SQL是Dune 未来的终极查询引擎。鉴于Dune SQL已经表现出了强劲的性能优势并且是Dune 未来的标准引擎，我们建议大家现在开始可以优先尝试使用Dune SQL引擎。本文介绍将Spark SQL编写的Query迁移到Dune SQL的一些主要修改、注意事项和细节。
 
 ## Dune SQL 与 Spark SQL 语法差异概览
 
-在尝试将Spark SQL编写的查询迁移到Dune SQL语法的过程中，印象深刻的语法差异有几个：
-- Dune SQL 使用双引号来引用包含特殊字符或者本身是关键字的字段名或表名（包括含有特殊字符的字段名），如` "from", "to" `。Spark SQL则使用反引号来引用带关键字或特殊字符的字段名或表名，如` \`from\`, \`to\` `。
-- Dune SQL的字符串类型和数值类型分别是`varchar`、`double`；Spark SQL中则分别是`string`、`decimal(38, 0)`。
-- Dune SQL 不支持隐式类型转换，Spark SQL支持。比如，Dune SQL中，不能将`'2022-10-01'`直接与 block_time 进行比较，需要用 `date('2022-10-01')`等函数显式转换为日期才能比较。不能直接将数值类型和字符串连接，要用`cast(number_value as varchar)`转换为字符串后才能连接。
+在开始尝试将Spark SQL编写的查询迁移到Dune SQL语法的过程中，印象深刻的语法差异有几个：
+- Dune SQL 使用双引号来引用包含特殊字符或者本身是关键字的字段名或表名，如` "from", "to" `。Spark SQL则使用反引号来引用带关键字或特殊字符的字段名或表名，如` \`from\` `, ` \`to\` `。
+- Dune SQL的字符串类型和常用数值类型分别是`varchar`、`double`；Spark SQL中则分别是`string`、`decimal(38, 0)`。
+- Dune SQL 不支持隐式类型转换，Spark SQL支持。比如，Dune SQL中，不能将`'2022-10-01'`直接与 block_time 进行比较，需要用 `date('2022-10-01')`等函数显式转换为日期后才能比较。不能直接将数值类型和字符串连接，要用`cast(number_value as varchar)`转换为字符串后才能连接。
 
 Dune 文档提供了一份比较详细的语法对照表表，链接是：[Syntax Comparison](https://dune.com/docs/reference/dune-v2/query-engine/#syntax-comparison)，大家可以参考。下图列出了部分差异对照：
 
@@ -233,7 +233,7 @@ select cast('2' as int) as val
 
 当我们遇到类似"Error: Line 47:1: column 1 in UNION query has incompatible types: integer, varchar(1) at line 47, position 1."这种错误时，就需要处理相应字段的类型兼容问题。
 
-### 转换为double类型解决数值范围溢出错误与整数除法问题
+### 转换为double类型解决数值范围溢出错误
 
 Dune SQL 支持整数类型 `int` 和 `bigint`，但是由于EVM等区块链不支持小数导致数值经常很大，比如当我们计算gas 费的时候，就可能遇到数值溢出的错误。下面的SQL，为了故意导致错误，我们将计算的gas fee乘以1000倍了：
 
@@ -272,7 +272,7 @@ where block_time >= date('2022-12-18') and block_time < date('2022-12-19')
 limit 10
 ```
 
-执行上面的SQL，gas_used_percentage的值将会是0或者1，被取整了，显然这不是我们想要的结果。将被除数gas_used显式转换为double类型，可以得到正确结果：
+执行上面的SQL，gas_used_percentage的值将会是0或者1，小数部分被舍弃取整，显然这不是我们想要的结果。将被除数gas_used显式转换为double类型，可以得到正确结果：
 
 ```sql
 select hash, gas_used, gas_limit,
@@ -280,6 +280,22 @@ select hash, gas_used, gas_limit,
 from ethereum.transactions 
 where block_time >= date('2022-12-18') and block_time < date('2022-12-19')
 limit 10
+```
+
+### 从Hex十六进制转换到十进制
+
+Dune SQL 使用 `bytea2numeric(string)` 将Hex类型字符串转换到十进制数值，字符串必须以`0x`前缀开始。Spark SQL使用`bytea2numeric_v2(string)`来转换，字符串不能包括`0x`前缀。不过请注意，目前这两个方法转换的结果不一致，可能存在bug。
+
+Spark SQL：
+
+```sql
+select bytea2numeric_v2('00000000000000000000000000000000000000000000005b5354f3463686164c') as amount_raw
+```
+
+Dune SQL：
+
+```sql
+select bytea2numeric('0x' || '00000000000000000000000000000000000000000000005b5354f3463686164c') as amount_raw
 ```
 
 ### 生成数值序列和日期序列
