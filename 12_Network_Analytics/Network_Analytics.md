@@ -35,7 +35,7 @@ SQL比较复杂，就不展开说了，大家感兴趣去URL里自己研究
   - transfer_eth_balance：双方转账ETH的总量
   - transfer_eth_count：双方转账ETH的总次数
 
-  ![image-20221214165849494]()
+  ![github-pic](https://github.com/Pro0xBi/MasteringChainAnalytics/blob/main/12_Network_Analytics/image/image-20221214165849494.png)
 
 - 通过SQL获得包含所有地址的列表以及相关标签：https://dune.com/queries/1752471
 
