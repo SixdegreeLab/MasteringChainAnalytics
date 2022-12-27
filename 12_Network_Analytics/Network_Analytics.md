@@ -44,7 +44,7 @@ SQL比较复杂，就不展开说了，大家感兴趣去URL里自己研究
   - account_type：是EOA普通地址还是交易所或者是一个智能合约
   - label：这个地址的有用的信息聚合成一个标签字段，用于后续在python中做可视化
 
-![image-20221214170049292]()
+  ![github-pic](https://github.com/Pro0xBi/MasteringChainAnalytics/blob/main/12_Network_Analytics/image/image-20221214170041781.png)
 
 #### 二、用pandas读取本地文件到Dataframe并通过Etherscan API补充Balnace列
 
