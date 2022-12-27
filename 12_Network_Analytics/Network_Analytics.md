@@ -293,4 +293,4 @@ print('end')
 
   可以看出与FTX"黑客"地址有关的所有地址中目前至少还有12个地址有超过10000个ETH，也就是说至少有12万ETH还没有被"黑客"抛售
 
-![image-20221214201810132]()
+  ![github-pic](https://github.com/Pro0xBi/MasteringChainAnalytics/blob/main/12_Network_Analytics/image/image-20221214201810132.png)
