@@ -48,7 +48,7 @@ SQL比较复杂，就不展开说了，大家感兴趣去URL里自己研究
 
 #### 二、用pandas读取本地文件到Dataframe并通过Etherscan API补充Balnace列
 
-- 通过pandas从本地读取在dune中获得的数据
+- 将dune的数据下载到本地(可以通过Dune的API或者通过直接复制粘贴)通过pandas从本地读取在dune中获得的数据
 
 ```python
 ## 路径改成自己本地的文件路径
