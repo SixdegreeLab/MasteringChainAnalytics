@@ -35,7 +35,7 @@ SQL比较复杂，就不展开说了，大家感兴趣去URL里自己研究
   - transfer_eth_balance：双方转账ETH的总量
   - transfer_eth_count：双方转账ETH的总次数
 
-  ![github-pic](https://github.com/Pro0xBi/MasteringChainAnalytics/blob/main/12_Network_Analytics/image/image-20221214165849494.png)
+  ![image-20221214165849494.png](image/image-20221214165849494.png)
 
 - 通过SQL获得包含所有地址的列表以及相关标签：https://dune.com/queries/1752471
 
@@ -44,7 +44,7 @@ SQL比较复杂，就不展开说了，大家感兴趣去URL里自己研究
   - account_type：是EOA普通地址还是交易所或者是一个智能合约
   - label：这个地址的有用的信息聚合成一个标签字段，用于后续在python中做可视化
 
-  ![github-pic](https://github.com/Pro0xBi/MasteringChainAnalytics/blob/main/12_Network_Analytics/image/image-20221214170041781.png)
+  ![image-20221214170041781.png](image/image-20221214170041781.png)
 
 #### 二、用pandas读取本地文件到Dataframe并通过Etherscan API补充Balnace列
 
@@ -293,4 +293,4 @@ print('end')
 
   可以看出与FTX"黑客"地址有关的所有地址中目前至少还有12个地址有超过10000个ETH，也就是说至少有12万ETH还没有被"黑客"抛售
 
-  ![github-pic](https://github.com/Pro0xBi/MasteringChainAnalytics/blob/main/12_Network_Analytics/image/image-20221214201810132.png)
+  ![image-20221214201810132.png](image/image-20221214201810132.png)
