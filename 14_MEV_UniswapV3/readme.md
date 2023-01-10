@@ -66,7 +66,7 @@ Frontrunning、Backrunning 和 Sandwich(ing)
 3. Flashboy 2.0 https://arxiv.org/pdf/1904.05234.pdf
 4. Post-Merge MEV: Modelling Validator Returns https://pintail.xyz/posts/post-merge-mev/
 5. https://dune.com/amdonatusprince/mev-sandwich-attacks-and-jit
-6. https://dune.com/amdonatusprince/mev-sandwich-attacks-and-jit
+6. https://dune.com/alexth/uniswap-v3-mev-activity
 
 ## SixDegreeLab介绍
 
