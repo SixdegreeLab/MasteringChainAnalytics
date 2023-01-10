@@ -23,7 +23,22 @@ MEV（miner-extractable value）的概念最早出现在2019年的Flashboy 2.0�
 在大致了解以太坊上产生MEV的基本原理后，我们来观察MEV究竟具体有哪些类型？
 
 ### 1. 套利
-套利是 MEV 最常见的形式。当同一资产在不同交易所的价格不同时，就存在套利机会。与在传统金融市场寻找套利机会的高频交易员类似，寻找者（Searcher，即挖掘MEV的人）部署机器人来发现去中心化交易所(DEX) 上的任何潜在套利机会。AMM机制天然地欢迎套利交易，因为成交价不再由挂单方决定，由池内交易决定，那么套利行为就等同于手动将一个DEX的交易对与其他DEX/CEX交易对价格进行同步，确保市场公平稳定，同时为协议贡献交易量、活跃度，所以这类MEV被认为是“好“的MEV。注意，只有发现别人套利并通过提高gas插队替换该笔交易时，套利才被视为MEV。
+套利是 MEV 最常见的形式。当同一资产在不同交易所的价格不同时，就存在套利机会。与在传统金融市场寻找套利机会的高频交易员类似，搜寻者（Searcher，即挖掘MEV的人）部署机器人来发现去中心化交易所(DEX) 上的任何潜在套利机会。AMM机制天然地欢迎套利交易，因为成交价不再由挂单方决定，由池内交易决定，那么套利行为就等同于手动将一个DEX的交易对与其他DEX/CEX交易对价格进行同步，确保市场公平稳定，同时为协议贡献交易量、活跃度，所以这类MEV被认为是“好“的MEV。注意，只有发现别人套利并通过提高gas插队替换该笔交易时，套利才被视为MEV。
+
+### 2.清算
+去中心化金融 (DeFi) 借贷平台要求用户在贷款前存入抵押品。自然地，用作抵押品的资产价格会随时间波动，如果资产跌破特定价格，则抵押品将被清算。通常，无论谁处理交易以将价格降至清算点以下，都会获得奖励。在向清算人支付清算奖励的情况下，清算人寻找接近清算的借款人首先提交清算借款人的交易。因此，对于矿工来说，这里存在 MEV 机会。
+
+首先，搜寻者注意到传入交易池中的清算交易，然后创建与初始清算交易相同的交易，从区块中删除初始交易，并插入他们自己的交易。因此，搜寻者现在是清算头寸并收取赏金的人。
+
+### 3. 三明治攻击
+Frontrunning、Backrunning 和 Sandwich(ing)
+例如，矿工在未确认的交易池中发现了一个大的买单。了解此信息后，矿工现在可以在此交易之前插入自己的买单，以在大买单推高价格之前锁定更好的价格。这描述了一个称为抢先交易的过程。
+
+相反，当矿工在发现大量买入后在买盘压力下卖出时，就会发生回跑。
+
+三明治交易需要矿工在移动市场价格的交易之前立即下达买单，并在交易之后立即下达卖单。因此，它通常是首选交易，因为通过并发买卖订单来管理风险。
+
+当涉及抢先交易、抢先交易或夹层交易时，矿工基本上利用他们的能力来订购交易，以便在他们知道将使价格有利于他们的交易的交易之前或之后安排他们自己的交易。抢先交易并不是矿工独有的，因为任何解析区块链数据的人都可以支付更高的费用，以便在他们希望抢先交易的订单之前插入交易。然而，矿工在确保这些交易顺利进行方面拥有最大的控制权，因为他们是订购交易的一方。
 
 那么MEV究竟能提取多少价值，或者说能获利多少呢？
 
@@ -36,19 +51,22 @@ MEV（miner-extractable value）的概念最早出现在2019年的Flashboy 2.0�
 
 之前很长一段时间，flashbots的社区表都停更在2022.9.15，在写这篇文章时我又检查了一下，发现从2023.01.09开始该表居然又开始更新了，那会方便我们做一些MEV的查询。以下举两个查询例子：
 
-
+参考query：https://dune.com/queries/1498537/2524835
 
 
 2. 将Labels的Spellbook表与DeFi的Spellbook表联合建立查询。以Uniswap为例说明：
 
 
-
+参考query：https://dune.com/queries/1493954/2518698
 ## 如何分析MEV
 
 ## 参考
 1. Understanding the Full Picture of MEV https://huobi-ventures.medium.com/understanding-the-full-picture-of-mev-4151160b7583
-2. Flashboy 2.0 https://arxiv.org/pdf/1904.05234.pdf
-3. Post-Merge MEV: Modelling Validator Returns https://pintail.xyz/posts/post-merge-mev/
+2. Foresight Ventures：描绘，分类，支配 MEV https://foresightnews.pro/article/detail/10011
+3. Flashboy 2.0 https://arxiv.org/pdf/1904.05234.pdf
+4. Post-Merge MEV: Modelling Validator Returns https://pintail.xyz/posts/post-merge-mev/
+5. https://dune.com/amdonatusprince/mev-sandwich-attacks-and-jit
+6. https://dune.com/amdonatusprince/mev-sandwich-attacks-and-jit
 
 ## SixDegreeLab介绍
 
