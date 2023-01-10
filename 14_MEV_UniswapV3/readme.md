@@ -10,23 +10,39 @@ MEV（miner-extractable value）的概念最早出现在2019年的Flashboy 2.0�
 
 2. 区块链内存池Mempool的设计。所有发送出去的交易都需要暂时进入内存池，而不是由矿工直接打包。内存池中充满了待处理的交易，并且是公开的，这意味着任何人都可以监控内存池中的每笔交易和调用的每个函数，这为攻击者提供了监视交易的条件。
 
-3. 根据 [Etherscan](https://etherscan.io/blocks) 数据，目前以太坊的平均出块时间为 12s。较长的出块时间出于节点同步的安全性考虑，也为攻击者提供了执行时间。
+3. 根据 [Etherscan](https://etherscan.io/blocks) 数据，在POS合并之后出出块时间固定为12 s，在POS合并之前是13.5 s左右。较长的出块时间出于节点同步的安全性考虑，也为攻击者提供了执行时间。
 
-这里有意思的问题是，Solana既没有mempool，出块速度又快，不应该没有MEV吗？实际上Solana也有超级节点产生MEV，在此先不做讨论，仅讨论以太坊上的MEV。
+总结来说，**MEV攻击者可以在公开的mempool中看到所有待执行的交易，有充足的时间去进行预演，看这笔交易是否能带来利润，如果确定有利可图，可以通过抬高gas费用来达到优先执行的效果，从而窃取别人的利益。**
 
-### MEV的分类
+这里有个意思的问题，Solana既没有mempool，出块速度又快，不应该没有MEV吗？实际上Solana也有MEV，在此先不做讨论，仅讨论以太坊上的MEV。
 
-### MEV现状
+那么谁是MEV的受益者呢？首先矿工/验证者躺赢，买家之间的竞争使卖家的收入最大化，区块空间市场也不例外；其次MEV攻击的发起者受益，这很显然。那么矿工/验证者可以自己下场做MEV吗？答案当然是可以的。最优的情况当然是矿工/验证者出块时恰好自己又发起了MEV交易。当然实际上这种几率实在够低，MEV的出现也有些看运气，运气好的验证者出的块可能正好包含大量MEV，运气差些的可能完全没有。根据[Post-Merge MEV: Modelling Validator Returns](https://pintail.xyz/posts/post-merge-mev/)文章中计算结果，有些验证者在一年中几乎没有收到 MEV，而有些验证者的年回报率则远远超过 100%。平均来说，MEV会为验证者平均多带来1.5% - 3%的年回报。算上区块奖励，验证者中位数年回报率大致在 6.1%到 7.6%（基于 MEV “淡季”和“旺季”的数据集）。
+
+
+## MEV的分类
+在了解完以太坊上MEV产生基本原理后，我们来观察MEV究竟具体有哪些类型？
+
+### 1. 套利
+套利是 MEV 最常见的形式。当同一资产在不同交易所的价格不同时，就存在套利机会。与在传统金融市场寻找套利机会的高频交易员类似，矿工部署机器人来发现去中心化交易所(DEX) 上的任何潜在套利交易。
+
+一旦套利者发现并利用了低效率，机器人就会在传入池中发现该交易，矿工将在区块中用他们自己的相同交易替换套利者的交易。因此，矿工获得了利润，而发现它的套利者的机会就消失了。
+
+请注意，只有当矿工将他人的交易与自己的交易交换以利用机会时，套利才被视为 MEV。
+
+## MEV现状
 我们可以通过一些直观的数据来观察MEV市场的现状
 
 
-### MEV的未来
+## MEV的未来
+
+## 用Dune做MEV的分析
 
 ## 如何分析MEV
 
 ## 参考
 1. Understanding the Full Picture of MEV https://huobi-ventures.medium.com/understanding-the-full-picture-of-mev-4151160b7583
 2. Flashboy 2.0 https://arxiv.org/pdf/1904.05234.pdf
+3. Post-Merge MEV: Modelling Validator Returns https://pintail.xyz/posts/post-merge-mev/
 
 ## SixDegreeLab介绍
 
