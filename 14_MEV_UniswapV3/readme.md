@@ -1,4 +1,4 @@
-# MEV研究——以Uniswap V3为例
+# MEV研究——以Uniswap为例
 
 ## 什么是MEV？
 
