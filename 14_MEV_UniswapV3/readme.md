@@ -36,6 +36,7 @@ MEV（miner-extractable value）的概念最早出现在2019年的Flashboy 2.0�
 
 ![mev_supchain.jpg](img/mev_supchain.jpg)
 
+
 ## MEV的分类
 MEV 机器人根据它们创建者的旨意进行着链上活动, 将交易包装好后送给不知情的矿工出块。从好的角度来看, 它们是保证市场稳定和 DApp 活跃度的重要角色; 从不好的角度来看, 它们以自己天生的优势 ( 可以监视整个Mempool), 对普通用户进行着不平等的剥削。
 
@@ -245,9 +246,11 @@ bot_data as (
 
 完整详细的SQL代码，请参考query：https://dune.com/queries/1500339/2527415
 
+
 ## 总结
 
 以上介绍了以太坊MEV的原理，分类，以及如以Uniswap为例如何用Dune做MEV查询的两种方法。[AndrewHong](https://twitter.com/andrewhong5297)在Dune的[十二天课程](https://www.youtube.com/watch?v=SMnzCw-NeFE)中也有一讲关于MEV的，感兴趣的朋友可以看看Duniversity校长的讲解，其中提到Dune的标签表源于Etherscan，其[覆盖率](https://dune.com/queries/1764004)也不一定足够，所以本文介绍的两种方法，最后的查询结果可能会略有出入。MEV是个复杂的课题，这里只是抛砖引玉，更多的方法需要大家自己探索。
+
 
 ## 参考
 1. Understanding the Full Picture of MEV https://huobi-ventures.medium.com/understanding-the-full-picture-of-mev-4151160b7583
