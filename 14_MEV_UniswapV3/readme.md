@@ -14,6 +14,8 @@ MEV（miner-extractable value）的概念最早出现在2019年的Flashboy 2.0�
 
 总结来说，**MEV攻击者可以在公开的mempool中看到所有待执行的交易，有充足的时间去进行预演，看这笔交易是否能带来利润，如果确定有利可图，可以通过抬高gas费用来达到优先执行的效果，从而窃取别人的利益。**
 
+![mev_process.jpg](img/mev_process.jpg)
+
 这里有个意思的问题，Solana既没有mempool，出块速度又快，不应该没有MEV吗？实际上Solana也有MEV，在此先不做讨论，仅讨论以太坊上的MEV。
 
 那么谁是MEV的受益者呢？首先矿工/验证者躺赢，买家之间的竞争使卖家的收入最大化，区块空间市场也不例外；其次MEV攻击的发起者受益，这很显然。那么矿工/验证者可以自己下场做MEV吗？答案当然是可以的。最优的情况当然是矿工/验证者出块时恰好自己又发起了MEV交易。当然实际上这种几率实在够低，MEV的出现也有些看运气，运气好的验证者出的块可能正好包含大量MEV，运气差些的可能完全没有。根据[Post-Merge MEV: Modelling Validator Returns](https://pintail.xyz/posts/post-merge-mev/)文章中计算结果，有些验证者在一年中几乎没有收到 MEV，而有些验证者的年回报率则远远超过 100%。平均来说，MEV会为验证者平均多带来1.5% - 3%的年回报。算上区块奖励，验证者中位数年回报率大致在6.1%到7.6%（基于 MEV “淡季”和“旺季”的数据集）。
@@ -39,7 +41,11 @@ DeFi借贷平台目前采用超额抵押借贷的模式。自然地，用作抵�
 ### 3. Frontrunning、Backrunning 和 Sandwich(ing)
 抢跑是MEV机器人支付稍高的gas fee来抢先在Mempool的某交易前执行交易, 比如以更低的价格 Swap 代币。回跑是机器人在一笔交易造成价格大幅错位之后尝试不同的套利, 清算, 或交易。
 
-三明治攻击是前两种攻击的结合, 对交易进行前后夹击，通常被称为夹子。例如 MEV 机器人在交易前放一个买单, 在交易后放一个卖单, 让用户的交易在更差的价格执行，只要交易滑点设置得不合理，就很容易遭受到三明治攻击，这类MEV显然是“坏”的
+![fr.png](img/fr.png)
+
+三明治攻击是前两种攻击的结合, 对交易进行前后夹击，通常被称为夹子。例如 MEV 机器人在交易前放一个买单, 在交易后放一个卖单, 让用户的交易在更差的价格执行，只要交易滑点设置得不合理，就很容易遭受到三明治攻击，这类MEV显然是“坏”的。
+
+![swa.png](img/swa.png)
 
 ### 4. Just-in-Time liquidity attack
 JIT流动性是一种特殊形式的流动性提供。在DEX中流动性提供者会分得交易手续费，JIT指的是在一笔较大的Swap发生前添加流动性以得到该笔交易手续费的分成，在交易结束后立即退出流动性。这听起来会有点奇怪，一直提供流动性不是一直能收到手续费吗？但是LP会带来无常损失，而瞬时的流动性提供所带来的无常损失几乎可以忽略不计。JIT攻击类似于三明治攻击，因为它们都涉及到受害者交易的前置和后置，但在JIT的情况下，攻击者增加和删除流动性，而不是购买和出售。这类MEV增加了DEX流动性，也未对交易者产生伤害，所以也是“好”的MEV。
@@ -51,7 +57,13 @@ JIT流动性是一种特殊形式的流动性提供。在DEX中流动性提供�
 
 ### 1. 利用来自Flashbots的`社区贡献表`。
  
-如下图所示，Dune的四类数据表中，社区贡献表是由外部组织提供的数据源，其中包括Flashbots提供的数据。[Flashbots](https://www.flashbots.net/)是一个MEV研究和开发组织，它的成立是为了减轻MEV对区块链造成的负外部性，目前超过百分之九十的以太坊验证者节点在运行Flashbots程序。关于Flashbots，感兴趣的朋友可以自行查看他们的[研究和文档](https://boost.flashbots.net/)，这里只需要知道他们是一个mev研究组织，提供mev相关的数据供用户在Dune上做查询和分析即可。
+如下图所示，Dune的四类数据表中，社区贡献表是由外部组织提供的数据源，其中包括Flashbots提供的数据。
+
+![dune_com.jpg](img/dune_com.jpg)
+
+![dune_fb.jpg](img/dune_fb.jpg)
+
+[Flashbots](https://www.flashbots.net/)是一个MEV研究和开发组织，它的成立是为了减轻MEV对区块链造成的负外部性，目前超过百分之九十的以太坊验证者节点在运行Flashbots程序。关于Flashbots，感兴趣的朋友可以自行查看他们的[研究和文档](https://boost.flashbots.net/)，这里只需要知道他们是一个mev研究组织，提供mev相关的数据供用户在Dune上做查询和分析即可。
 
 之前很长一段时间，flashbots的社区表都停更在2022.9.15，在写这篇文章时我又检查了一下，发现从2023.01.09开始该表居然又开始更新了，那会方便我们做一些MEV的查询，具体每个表包含的内容，各列数据对应的含义，都可以通过Dune的[文档查询](https://github.com/duneanalytics/docs/tree/master/zh/docs/reference/tables/v2/community/flashbots)。
 
@@ -88,7 +100,12 @@ WHERE block_timestamp > '2021-03-01 00:00'
 GROUP BY 2,1
 ORDER BY 2 DESC;
 ```
+
+![mev_sum.png](img/mev_sum.png)
+
 可以发现一flashbots的数据确实是最近才开始更新了，二套利的机会和竞争，都比清算的激烈多，支付给矿工的小费自然也多。
+
+![mevsumchat.png](img/mmevsumchat.png)
 
 参考query：https://dune.com/queries/625974/1167301
 
@@ -105,11 +122,14 @@ AND arbs.error is NULL
 GROUP BY 1
 ORDER BY 2 DESC
 ```
+
 选择MEV设计的项目名称，利润，过滤时间六个月内以提高查询效率，并按项目分类，按MEV利润排序就可以获得以下结果：
 
+![arb.png](img/arb.png)
 
 绘制饼图，可以发现六个月内，98%的套利利润来自于Uniswap的V2、V3，获利金额超$3.9 M。
 
+![arb_pie.png](img/arb_pie.png)
 
 参考query：https://dune.com/queries/1498537/2524835
 
