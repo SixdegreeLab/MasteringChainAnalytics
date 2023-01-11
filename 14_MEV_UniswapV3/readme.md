@@ -4,6 +4,10 @@
 
 MEV（miner-extractable value）的概念最早出现在2019年的Flashboy 2.0一文中，指的是矿工通过包含、重新排序、插入或忽略交易可以获得的额外利润。随着近两年区块链的发展和链上研究活动的推进，MEV现在已经延伸到最大可提取价值（maximal extractable value）。
 
+直观地通过数据来看，如下图所示，在过去30天中，通过套利获得的MEV利润达$1.44 M，这还是在熊市交易量较为低迷的阶段。之前FTX暴雷事件带来的市场震荡，正好是[MEV的“牛市”](https://twitter.com/lviswang/status/1591664260987641856?s=20&t=YPM1Qwt_-K8IJGHxxu2gnA)，剧烈的价格波动带来套利、清算机会的爆发，仅7天就产生有$5 M的套利收益。所以MEV其实一直常伴市场，普通用户可能被动卷入这黑暗森林的一角，所以至少我们应该大致了解MEV究竟是怎么回事。
+
+![ep_mev_ov.jpg](img/[ep_mev_ov.jpg)
+
 以太坊是链上活动最丰富、最活跃的主网，讨论以太坊上MEV诞生的几个前提：
 
 1. 以太坊的Gas机制本质上是拍卖机制，价高者得，且设计交易是串行的。即谁出的gas高，矿工/验证者会先打包哪个交易进块，以此达到收益最大化。这是以太坊为人诟病的gas昂贵、拥堵的原因之一，也为MEV的出现带来可能：一旦发现有利可图的交易，可以通过贿赂矿工（提高gas）的方法率先执行。
@@ -21,6 +25,7 @@ MEV（miner-extractable value）的概念最早出现在2019年的Flashboy 2.0�
 这里有个意思的问题，Solana既没有mempool，出块速度又快，不应该没有MEV吗？实际上Solana也有MEV，在此先不做讨论，仅讨论以太坊上的MEV。
 
 那么谁是MEV的受益者呢？首先矿工/验证者躺赢，买家之间的竞争使卖家的收入最大化，区块空间市场也不例外；其次MEV攻击的发起者受益，这很显然。那么矿工/验证者可以自己下场做MEV吗？答案当然是可以的。最优的情况当然是矿工/验证者出块时恰好自己又发起了MEV交易。当然实际上这种几率实在够低，MEV的出现也有些看运气，运气好的验证者出的块可能正好包含大量MEV，运气差些的可能完全没有。根据[Post-Merge MEV: Modelling Validator Returns](https://pintail.xyz/posts/post-merge-mev/)文章中计算结果，有些验证者在一年中几乎没有收到 MEV，而有些验证者的年回报率则远远超过 100%。平均来说，MEV会为验证者平均多带来1.5% - 3%的年回报。算上区块奖励，验证者中位数年回报率大致在6.1%到7.6%（基于 MEV “淡季”和“旺季”的数据集）。
+
 
 ## MEV的提取过程
 在 MEV 提取过程中，科学家会计算利润和套利路径，并把执行逻辑都写成合约代码，使用机器人来完成调用。这时如果没有人发现并执行同一套利路径，那么只需要向矿工缴纳正常的 GAS 费用；如果有别人发现并执行同一套利路径，那么就必须支付比别人更高的 GAS 以确保自己的交易优先完成。
@@ -52,10 +57,14 @@ DeFi借贷平台目前采用超额抵押借贷的模式。自然地，用作抵�
 ![swa.png](img/swa.png)
 
 ### 4. Just-in-Time liquidity attack
-JIT流动性是一种特殊形式的流动性提供。在DEX中流动性提供者会分得交易手续费，JIT指的是在一笔较大的Swap发生前添加流动性以得到该笔交易手续费的分成，在交易结束后立即退出流动性。这听起来会有点奇怪，一直提供流动性不是一直能收到手续费吗？但是LP会带来无常损失，而瞬时的流动性提供所带来的无常损失几乎可以忽略不计。JIT攻击类似于三明治攻击，因为它们都涉及到受害者交易的前置和后置，但在JIT的情况下，攻击者增加和删除流动性，而不是购买和出售。这类MEV增加了DEX流动性，也未对交易者产生伤害，所以也是“好”的MEV。
-
+JIT流动性是一种特殊形式的流动性提供。在DEX中流动性提供者会分得交易手续费，JIT指的是在一笔较大的Swap发生前添加流动性以得到该笔交易手续费的分成，在交易结束后立即退出流动性。这听起来会有点奇怪，一直提供流动性不是一直能收到手续费吗？个人观点是做LP会带来无常损失，而瞬时的流动性提供所带来的无常损失几乎可以忽略不计。JIT攻击类似于三明治攻击，因为它们都涉及到受害者交易的前置和后置，但在JIT的情况下，攻击者增加和删除流动性，而不是购买和出售。这类MEV增加了DEX流动性，也未对交易者产生伤害，所以也是“好”的MEV。
 
 ![JIT.png](img/JIT.png)
+
+JIT流动性实际上在DEX交易中占比非常少，虽然听起来很厉害，但是根据[Just-in-time Liquidity on the Uniswap Protocol](https://uniswap.org/blog/jit-liquidity)报告，在Uniswap中，JIT流动性占比实际上一直小于1%，所以算是一种影响不大的MEV。
+
+![JITv.png](img/JITv.png)
+
 
 ## 用Dune做MEV的分析
 
@@ -177,7 +186,7 @@ daily_data as (
  
 具体内容可以参考query：https://dune.com/queries/1493954/2518698
 
-## 如何分析MEV
+Dune官方的[十二天课程](https://www.youtube.com/watch?v=SMnzCw-NeFE)中也有一讲关于MEV的，感兴趣的朋友也可以看该课程。
 
 ## 参考
 1. Understanding the Full Picture of MEV https://huobi-ventures.medium.com/understanding-the-full-picture-of-mev-4151160b7583
@@ -186,6 +195,7 @@ daily_data as (
 4. Post-Merge MEV: Modelling Validator Returns https://pintail.xyz/posts/post-merge-mev/
 5. https://dune.com/amdonatusprince/mev-sandwich-attacks-and-jit
 6. https://dune.com/alexth/uniswap-v3-mev-activity
+7. Just-in-time Liquidity on the Uniswap Protocol https://uniswap.org/blog/jit-liquidity
 
 ## SixDegreeLab介绍
 
