@@ -4,9 +4,9 @@
 
 MEV（miner-extractable value）的概念最早出现在2019年的Flashboy 2.0一文中，指的是矿工通过包含、重新排序、插入或忽略交易可以获得的额外利润。随着近两年区块链的发展和链上研究活动的推进，MEV现在已经延伸到最大可提取价值（maximal extractable value）。
 
-直观地通过数据来看，如下图所示，在过去30天中，通过套利获得的MEV利润达$1.44 M，这还是在熊市交易量较为低迷的阶段。之前FTX暴雷事件带来的市场震荡，正好是[MEV的“牛市”](https://twitter.com/lviswang/status/1591664260987641856?s=20&t=YPM1Qwt_-K8IJGHxxu2gnA)，剧烈的价格波动带来套利、清算机会的爆发，仅7天就产生有$5 M的套利收益。所以MEV其实一直常伴市场，普通用户可能被动卷入这黑暗森林的一角，所以至少我们应该大致了解MEV究竟是怎么回事。
+直观地通过数据来看，如下图所示，在过去30天中，通过套利获得的MEV利润达$1.44 M，这还是在熊市交易量较为低迷的阶段。之前FTX暴雷事件带来的市场震荡，正好是[MEV的“牛市”](https://twitter.com/lviswang/status/1591664260987641856?s=20&t=YPM1Qwt_-K8IJGHxxu2gnA)，剧烈的价格波动带来套利、清算机会的爆发，仅7天就产生有$5 M的套利收益。所以MEV其实一直常伴市场，普通用户可能不想却无法避免地被动卷入这黑暗森林的一角，所以至少我们应该大致了解MEV究竟是怎么回事。
 
-![ep_mev_ov.jpg](img/[ep_mev_ov.jpg)
+![ep_mev_ov.jpg](img/ep_mev_ov.jpg)
 
 以太坊是链上活动最丰富、最活跃的主网，讨论以太坊上MEV诞生的几个前提：
 
@@ -24,7 +24,9 @@ MEV（miner-extractable value）的概念最早出现在2019年的Flashboy 2.0�
 
 这里有个意思的问题，Solana既没有mempool，出块速度又快，不应该没有MEV吗？实际上Solana也有MEV，在此先不做讨论，仅讨论以太坊上的MEV。
 
-那么谁是MEV的受益者呢？首先矿工/验证者躺赢，买家之间的竞争使卖家的收入最大化，区块空间市场也不例外；其次MEV攻击的发起者受益，这很显然。那么矿工/验证者可以自己下场做MEV吗？答案当然是可以的。最优的情况当然是矿工/验证者出块时恰好自己又发起了MEV交易。当然实际上这种几率实在够低，MEV的出现也有些看运气，运气好的验证者出的块可能正好包含大量MEV，运气差些的可能完全没有。根据[Post-Merge MEV: Modelling Validator Returns](https://pintail.xyz/posts/post-merge-mev/)文章中计算结果，有些验证者在一年中几乎没有收到 MEV，而有些验证者的年回报率则远远超过 100%。平均来说，MEV会为验证者平均多带来1.5% - 3%的年回报。算上区块奖励，验证者中位数年回报率大致在6.1%到7.6%（基于 MEV “淡季”和“旺季”的数据集）。
+那么谁是MEV的受益者呢？
+
+首先矿工/验证者躺赢，买家之间的竞争使卖家的收入最大化，区块空间市场也不例外；其次MEV攻击的发起者受益，这很显然。那么矿工/验证者可以自己下场做MEV吗？答案当然是可以的。最优的情况当然是矿工/验证者出块时恰好自己又发起了MEV交易。当然实际上这种几率实在够低，MEV的出现也有些看运气，运气好的验证者出的块可能正好包含大量MEV，运气差些的可能完全没有。根据[Post-Merge MEV: Modelling Validator Returns](https://pintail.xyz/posts/post-merge-mev/)文章中计算结果，有些验证者在一年中几乎没有收到 MEV，而有些验证者的年回报率则远远超过 100%。平均来说，MEV会为验证者平均多带来1.5% - 3%的年回报。算上区块奖励，验证者中位数年回报率大致在6.1%到7.6%（基于 MEV “淡季”和“旺季”的数据集）。
 
 
 ## MEV的提取过程
@@ -70,7 +72,7 @@ JIT流动性实际上在DEX交易中占比非常少，虽然听起来很厉害�
 
 用Dune做MEV分析这里分享两种思路。
 
-### 1. 利用来自Flashbots的`社区贡献表`。
+### 1. 利用来自Flashbots的`社区贡献表`
  
 如下图所示，Dune的四类数据表中，社区贡献表是由外部组织提供的数据源，其中包括Flashbots提供的数据。
 
@@ -120,7 +122,7 @@ ORDER BY 2 DESC;
 
 可以发现一flashbots的数据确实是最近才开始更新了，二套利的机会和竞争，都比清算的激烈多，支付给矿工的小费自然也多。
 
-![mevsumchat.png](img/mmevsumchat.png)
+![mevsumchat.png](img/mevsumchat.png)
 
 参考query：https://dune.com/queries/625974/1167301
 
@@ -149,7 +151,8 @@ ORDER BY 2 DESC
 参考query：https://dune.com/queries/1498537/2524835
 
 
-### 2. 将Labels的Spellbook表与DeFi的Spellbook表联合建立查询。以Uniswap为例说明：
+### 2. 将Labels的Spellbook表与DeFi的Spellbook表联合建立查询
+以Uniswap为例说明：
 
 如果不依赖于flashbots社区表，尤其是它的维护可能会出现中断的情况下，我们还可以使用Spellbook中的labels表，按分类选择`arbitrage_traders`，就获得了套利交易者的地址表。
 
@@ -163,7 +166,7 @@ with
   ),
 ```
 
-接着将uniswap_v3_ethereum.trades表与套利交易者表联合，筛选其中的吃单者（taker），即交易者，为套利交易者的交易。接下来就可以统计交易笔数，总的交易金额，平均交易金额，统计独立的交易机器人个数等MEV套利信息。
+接着将uniswap_v3_ethereum.trades表与套利交易者表联合，筛选其中的吃单者（taker），即交易者，为套利交易者的交易。接下来就可以统计交易笔数，总的交易金额，平均交易金额，统计独立的交易机器人个数等MEV套利信息。类似的，我们也可以查询三明治攻击的相关数据。
 
 ```sql
 daily_data as (
@@ -186,7 +189,65 @@ daily_data as (
  
 具体内容可以参考query：https://dune.com/queries/1493954/2518698
 
-Dune官方的[十二天课程](https://www.youtube.com/watch?v=SMnzCw-NeFE)中也有一讲关于MEV的，感兴趣的朋友也可以看该课程。
+
+由此我们可以进一步地，查询MEV机器人的交易数、交易金额和普通用户的进行对比；Uniswap中每个交易对的MEV交易数占比、交易量占比：
+
+区分是否是MEV机器人，我们依旧通过标签表，用`taker in/not in (select address from eth_arb_traders)`来判断。将bot交易和非bot交易联合成一张表，通过`is_bot_tx`的`true`与`false`来区分。
+
+```sql
+  txs_classified as (
+    -- bot txs
+    select 
+        block_date, 
+        amount_usd, 
+        token_bought_symbol,
+        token_sold_symbol,
+        true as is_bot_tx
+    from uniswap_v3_ethereum.trades t
+    inner join eth_arb_traders e
+        on t.taker = e.address
+        
+    union
+    
+    -- non-bot txs
+    select 
+        block_date, 
+        amount_usd, 
+        token_bought_symbol,
+        token_sold_symbol,
+        false as is_bot_tx
+    from uniswap_v3_ethereum.trades
+    where
+        taker not in (select address from eth_arb_traders)
+    
+)
+```
+
+按交易对，对bot和普通用户交易进行分别统计交易数、交易金额
+
+```sql
+bot_data as (
+    SELECT
+        trading_pair,
+        count(trading_pair) AS num_txs,
+        count(trading_pair) filter (where is_bot_tx) as bot_txs,
+        count(trading_pair) filter (where not is_bot_tx) as human_txs,
+        sum(amount_usd) filter (where is_bot_tx) as bot_volume,
+        sum(amount_usd) filter (where not is_bot_tx) as human_volume
+    FROM uni_v3_trades
+    WHERE amount_usd IS NOT NULL 
+    GROUP BY trading_pair
+    ORDER BY sum(amount_usd) DESC
+    
+    limit 20
+)
+```
+
+完整详细的SQL代码，请参考query：https://dune.com/queries/1500339/2527415
+
+## 总结
+
+以上介绍了以太坊MEV的原理，分类，以及如以Uniswap为例如何用Dune做MEV查询的两种方法。[AndrewHong](https://twitter.com/andrewhong5297)在Dune的[十二天课程](https://www.youtube.com/watch?v=SMnzCw-NeFE)中也有一讲关于MEV的，感兴趣的朋友可以看看Duniversity校长的讲解，其中提到Dune的标签表源于Etherscan，其[覆盖率](https://dune.com/queries/1764004)也不一定足够，所以本文介绍的两种方法，最后的查询结果可能会略有出入。MEV是个复杂的课题，这里只是抛砖引玉，更多的方法需要大家自己探索。
 
 ## 参考
 1. Understanding the Full Picture of MEV https://huobi-ventures.medium.com/understanding-the-full-picture-of-mev-4151160b7583
@@ -196,6 +257,8 @@ Dune官方的[十二天课程](https://www.youtube.com/watch?v=SMnzCw-NeFE)中�
 5. https://dune.com/amdonatusprince/mev-sandwich-attacks-and-jit
 6. https://dune.com/alexth/uniswap-v3-mev-activity
 7. Just-in-time Liquidity on the Uniswap Protocol https://uniswap.org/blog/jit-liquidity
+8. https://github.com/33357/smartcontract-apps/blob/main/Robot/MEV_Who_are_you_working_for.md
+
 
 ## SixDegreeLab介绍
 
