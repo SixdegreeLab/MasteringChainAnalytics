@@ -152,7 +152,7 @@ ORDER BY 2 DESC
 参考query：https://dune.com/queries/1498537/2524835
 
 
-### 2. 将Labels的Spellbook表与DeFi的Spellbook表联合建立查询
+### 2. 将Spellbook的Labels表与DeFi的Spellbook表联合建立查询
 以Uniswap为例说明：
 
 如果不依赖于flashbots社区表，尤其是它的维护可能会出现中断的情况下，我们还可以使用Spellbook中的labels表，按分类选择`arbitrage_traders`，就获得了套利交易者的地址表。
