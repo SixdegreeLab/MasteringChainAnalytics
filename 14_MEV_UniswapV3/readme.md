@@ -1,4 +1,4 @@
-# MEV研究——以Uniswap为例
+# MEV数据分析——以Uniswap为例
 
 ## 什么是MEV？
 
@@ -46,7 +46,7 @@ MEV 机器人根据它们创建者的旨意进行着链上活动, 将交易包�
 套利是 MEV 最常见的形式。当同一资产在不同交易所的价格不同时，就存在套利机会。与在传统金融市场寻找套利机会的高频交易员类似，搜寻者（Searcher，即挖掘MEV的人）部署机器人来发现去中心化交易所(DEX) 上的任何潜在套利机会。AMM机制天然地欢迎套利交易，因为成交价不再由挂单方决定，由池内交易决定，那么套利行为就等同于手动将一个DEX的交易对与其他DEX/CEX交易对价格进行同步，确保市场公平稳定，同时为协议贡献交易量、活跃度，所以这类MEV被认为是“好“的MEV。注意，只有发现别人套利并通过提高gas插队替换该笔交易时，套利才被视为MEV。
 
 ### 2.清算
-DeFi借贷平台目前采用超额抵押借贷的模式。自然地，用作抵押品的资产价格会随时间波动，如果资产跌破特定价格，则抵押品将被清算。通常，抵押品会被打折出售，购买走这部分抵押品的人称为清算人，清算完成后还会得到借贷平台的奖励。只要找到清算机会，就可以出现替换清算交易的情况，存在 MEV 机会。搜寻者注意到传入交易池中的清算交易，然后创建与初始清算交易相同的交易，插入他们自己的交易，于是搜寻者称为清算头寸并收取赏金的人。
+DeFi借贷平台目前采用超额抵押借贷的模式。自然地，用作抵押品的资产价格会随时间波动，如果资产跌破特定价格，则抵押品将被清算。通常，抵押品会被打折出售，购买走这部分抵押品的人称为清算人，清算完成后还会得到借贷平台的奖励。只要找到清算机会，就可以出现替换清算交易的情况，存在 MEV 机会。搜寻者注意到传入交易池中的清算交易，然后创建与初始清算交易相同的交易，插入他们自己的交易，于是搜寻者成为清算头寸并收取赏金的人。
 
 这类MEV加速了DeFi的流动性，为借贷平台的正常运行提供保障，也被认为是“好”的MEV。
 
@@ -71,7 +71,7 @@ JIT流动性实际上在DEX交易中占比非常少，虽然听起来很厉害�
 
 ## 用Dune做MEV的分析
 
-用Dune做MEV分析这里分享两种思路。
+用Dune做MEV分析这里分享两种思路。相关查询请参考数据看板[MEV Data Analytics Tutorial](https://dune.com/sixdegree/mev-data-analytics-tutorial)。
 
 ### 1. 利用来自Flashbots的`社区贡献表`
  
@@ -83,7 +83,7 @@ JIT流动性实际上在DEX交易中占比非常少，虽然听起来很厉害�
 
 [Flashbots](https://www.flashbots.net/)是一个MEV研究和开发组织，它的成立是为了减轻MEV对区块链造成的负外部性，目前超过百分之九十的以太坊验证者节点在运行Flashbots程序。关于Flashbots，感兴趣的朋友可以自行查看他们的[研究和文档](https://boost.flashbots.net/)，这里只需要知道他们是一个mev研究组织，提供mev相关的数据供用户在Dune上做查询和分析即可。
 
-之前很长一段时间，flashbots的社区表都停更在2022.9.15，在写这篇文章时我又检查了一下，发现从2023.01.09开始该表居然又开始更新了，那会方便我们做一些MEV的查询，具体每个表包含的内容，各列数据对应的含义，都可以通过Dune的[文档查询](https://github.com/duneanalytics/docs/tree/master/zh/docs/reference/tables/v2/community/flashbots)。
+之前很长一段时间，flashbots的社区表都停更在2022.9.15，在写这篇文章时我又检查了一下，发现从2023.01.09开始该表居然又开始更新了，那会方便我们做一些MEV的查询，具体每个表包含的内容，各列数据对应的含义，都可以通过Dune的[Flashbots 文档](https://dune.com/docs/reference/tables/community/flashbots/)查询。
 
 以**flashbots.mev\_summary**表为例，查询矿工收益：
 
@@ -107,50 +107,97 @@ JIT流动性实际上在DEX交易中占比非常少，虽然听起来很厉害�
 | timestamp                            | timestamp | 文件最后更新的时间戳             |
 
 
-这里我们以日为单位作统计，将支付给矿工的费用求和，并按MEV类型分类，即每日各类MEV支付给矿工的矿工费统计，用线图表示：
+这里我们以日为单位作统计，将支付给矿工的费用求和，并按MEV类型分类，即每日各类MEV支付给矿工的矿工费统计。
 
 ```sql
-SELECT type, 
-date_trunc('day',block_timestamp), 
-SUM(mev_summary.miner_payment_usd)
-FROM flashbots.mev_summary
-WHERE block_timestamp > '2021-03-01 00:00'
-GROUP BY 2,1
-ORDER BY 2 DESC;
+select date_trunc('day', block_timestamp) as block_date,
+    type,
+    sum(miner_payment_usd) as miner_revenue_usd
+from flashbots.mev_summary
+where error is null
+group by 1, 2
+having sum(miner_payment_usd) <= 100000000 -- 排除异常值
+order by 1, 2
 ```
 
-![mev_sum.png](img/mev_sum.png)
-
-可以发现一flashbots的数据确实是最近才开始更新了，二套利的机会和竞争，都比清算的激烈多，支付给矿工的小费自然也多。
+生成Line Chart，可以发现在2021年MEV非常活跃，2022年因为市场趋于熊市，MEV活跃度有明显的下降。同时，套利的机会和竞争，都比清算的激烈得多，支付给矿工的费用自然也多。另外一个细节，我们发现Flashbots的数据中有小部分明显的异常值，所以查询中我们做了排除过滤。
 
 ![mevsumchat.png](img/mevsumchat.png)
 
-参考query：https://dune.com/queries/625974/1167301
+参考query：[https://dune.com/queries/1883628](https://dune.com/queries/1883628)
 
-接下来的例子查询，哪个项目上套利所产生的利润最多：将arbitrage表和summary表联合取交集筛选出套利的交易，条件是交易哈希相同。从summary表中获取套利相关的收益，即用毛利gross_profit减去支付给矿工的费用。
+
+接下来的例子查询，哪个项目上套利所产生的利润最多，即用毛利gross_profit减去支付给矿工的费用即可。
 
 ```sql
-SELECT 
-mev.`protocols`,
-SUM(mev.`gross_profit_usd`-mev.`miner_payment_usd`) 
-FROM flashbots.arbitrages as arbs
-INNER JOIN flashbots.mev_summary mev ON arbs.transaction_hash = mev.transaction_hash
-WHERE mev.`block_timestamp` > NOW() - interval '6 months'
-AND arbs.error is NULL
-GROUP BY 1
-ORDER BY 2 DESC
+select protocols,
+    sum(gross_profit_usd - miner_payment_usd) as mev_pure_profit_usd
+from flashbots.mev_summary
+where error is null
+    and type = 'arbitrage'
+    and miner_payment_usd <= 1e9 -- exclude outlier
+    and abs(gross_profit_usd) <= 1e9 -- exclude outlier
+group by 1
+order by 2 desc
 ```
 
-选择MEV设计的项目名称，利润，过滤时间六个月内以提高查询效率，并按项目分类，按MEV利润排序就可以获得以下结果：
+为以上查询结果分别生成一个Table 类型的可视化结果集和饼图图表，就可以获得以下结果：
 
 ![arb.png](img/arb.png)
 
-绘制饼图，可以发现六个月内，98%的套利利润来自于Uniswap的V2、V3，获利金额超$3.9 M。
+可以发现，目前Flashbots 收录的套利交易主要涉及Uniswap V2，Uniswap V3，Balancer V1，Curve和Bancor。其中绝大部分的套利利润来自于Uniswap协议。
 
-![arb_pie.png](img/arb_pie.png)
+参考query：[https://dune.com/queries/1883757](https://dune.com/queries/1883757)
 
-参考query：https://dune.com/queries/1498537/2524835
+考虑到`protocols`是由多个不同协议组合的一个集合，我们可以进一步优化上面的查询，对数据进行拆分，如果某个套利交易涉及多个协议，我们可以将利润或金额平均分配。这样能更好的看出具体哪一个协议产生了最多的套利利润。Fork 上面的查询并修改如下：
 
+```sql
+with protocols_profit as (
+    select protocols,
+        sum(gross_profit_usd - miner_payment_usd) as mev_pure_profit_usd
+    from flashbots.mev_summary
+    where error is null
+        and type = 'arbitrage'
+        and miner_payment_usd <= 1e9 -- exclude outlier
+        and abs(gross_profit_usd) <= 1e9 -- exclude outlier
+    group by 1
+),
+
+protocols_profit_array as (
+    select protocols,
+        mev_pure_profit_usd,
+        regexp_extract_all(protocols, '"([0-9a-zA-Z_]+)"', 1) as protocols_array
+    from protocols_profit
+),
+
+single_protocol_profit as (
+    select p.protocol,
+        mev_pure_profit_usd / cardinality(protocols_array) as mev_pure_profit_usd,
+        protocols_array,
+        cardinality(protocols_array) as array_size,
+        mev_pure_profit_usd as origin_amount
+    from protocols_profit_array
+    cross join unnest(protocols_array) as p(protocol)
+)
+
+select protocol,
+    sum(mev_pure_profit_usd) as mev_pure_profit_usd
+from single_protocol_profit
+group by 1
+order by 2 desc
+```
+
+在这个查询中，因为`protocols`字段是字符串类型，我们使用`regexp_extract_all()`来将其拆分并转换为数组，定义了一个 CTE `protocols_profit_array` 作为过渡。其中，正则表达式`"([0-9a-zA-Z_]+)"`匹配包含在双引号中的字母数字或下划线的任意组合。可以参考[Trino Regular expression functions#](https://trino.io/docs/current/functions/regexp.html)了解更多信息。
+
+然后我们在`single_protocol_profit` CTE中，根据数组的基数（大小）将收益金额进行平均分配。使用`unnest(protocols_array) as p(protocol)`将数组拆分开并为其定义为一个表别名和字段别名（分别为`p`和`protocol`。结合使用`cross join`，就可以在SELECT子句中输出拆分开的`protocol`值。
+
+最后我们针对拆分开的协议进行汇总。调整可视化图表的输出字段，加入数据看板，显示如下：
+
+![arb_protocol.png](img/arb_protocol.png)
+
+现在我们可以很清晰的看到，来自Uniswap V2的套利收益高达176M，占比约接近70%。
+
+参考query：[https://dune.com/queries/1883791](https://dune.com/queries/1883791)
 
 ### 2. 将Spellbook的Labels表与DeFi的Spellbook表联合建立查询
 以Uniswap为例说明：
@@ -158,94 +205,78 @@ ORDER BY 2 DESC
 如果不依赖于flashbots社区表，尤其是它的维护可能会出现中断的情况下，我们还可以使用Spellbook中的labels表，按分类选择`arbitrage_traders`，就获得了套利交易者的地址表。
 
 ```sql
-with 
- arb_labels as (
-    SELECT address 
-    from labels.all 
-    where category = 'arbitrage_traders'
-    and array_contains(blockchain, 'ethereum')
-  ),
+select address 
+from labels.all 
+where category = 'arbitrage_traders'
+and contains(blockchain, 'ethereum')
+limit 1000
 ```
 
 接着将uniswap_v3_ethereum.trades表与套利交易者表联合，筛选其中的吃单者（taker），即交易者，为套利交易者的交易。接下来就可以统计交易笔数，总的交易金额，平均交易金额，统计独立的交易机器人个数等MEV套利信息。类似的，我们也可以查询三明治攻击的相关数据。
 
 ```sql
-daily_data as (
-        with arb_data as (
-            select 
-                block_date as day, 
-                COUNT(*) as arb_txs, 
-                SUM(amount_usd) as arb_volume,
-                AVG(amount_usd) as arb_tx_size,
-                COUNT(distinct u.taker) as arb_bots_unique,
-                true as is_arb,
-                false as is_sandwich
-            from uniswap_v3_ethereum.trades u
-            where 
-                u.taker in (select address from arb_labels) 
-                and u.block_date > now() - interval '6 months'
-            group by 1
-        )    
+with arbitrage_traders as (
+    select address 
+    from labels.all 
+    where category = 'arbitrage_traders'
+    and contains(blockchain, 'ethereum')
+)
+
+select block_date,
+    count(*) as arbitrage_transaction_count, 
+    sum(amount_usd) as arbitrage_amount,
+    avg(amount_usd) as arbitrage_average_amount,
+    count(distinct u.taker) as arbitrage_bots_count
+from uniswap_v3_ethereum.trades u
+inner join arbitrage_traders a on u.taker = a.address
+where u.block_date > now() - interval '6' month
+group by 1
+order by 1 
  ```
  
-具体内容可以参考query：https://dune.com/queries/1493954/2518698
-
+具体内容可以参考query：[https://dune.com/queries/1883865](https://dune.com/queries/1883865)
 
 由此我们可以进一步地，查询MEV机器人的交易数、交易金额和普通用户的进行对比；Uniswap中每个交易对的MEV交易数占比、交易量占比：
 
-区分是否是MEV机器人，我们依旧通过标签表，用`taker in/not in (select address from eth_arb_traders)`来判断。将bot交易和非bot交易联合成一张表，通过`is_bot_tx`的`true`与`false`来区分。
+区分是否是MEV机器人，我们依旧通过标签表来判断，只需要判断`taker`是否在`arbitrage_traders`中，就可以区分其是否为套利机器人。
 
 ```sql
-  txs_classified as (
-    -- bot txs
-    select 
-        block_date, 
-        amount_usd, 
-        token_bought_symbol,
-        token_sold_symbol,
-        true as is_bot_tx
-    from uniswap_v3_ethereum.trades t
-    inner join eth_arb_traders e
-        on t.taker = e.address
-        
-    union
-    
-    -- non-bot txs
-    select 
-        block_date, 
-        amount_usd, 
-        token_bought_symbol,
-        token_sold_symbol,
-        false as is_bot_tx
-    from uniswap_v3_ethereum.trades
-    where
-        taker not in (select address from eth_arb_traders)
-    
+with arbitrage_traders as (
+    select address 
+    from labels.all 
+    where category = 'arbitrage_traders'
+    and contains(blockchain, 'ethereum')
+),
+
+trade_details as (
+    select block_date,
+        taker,
+        amount_usd,
+        tx_hash,
+        (case when a.address is null then 'MEV Bot' else 'Trader' end) as trader_type
+    from uniswap_v3_ethereum.trades u
+    left join arbitrage_traders a on u.taker = a.address
+    where u.block_date > now() - interval '6' month
 )
+
+select block_date,
+    trader_type,
+    count(*) as arbitrage_transaction_count, 
+    sum(amount_usd) as arbitrage_amount
+from trade_details
+group by 1, 2
+order by 1, 2
+
 ```
 
-按交易对，对bot和普通用户交易进行分别统计交易数、交易金额
+为以上查询结果分别生成两个Area Chart图表，对比MEV Bots 和普通Trader 的交易次数和交易金额占比，就可以获得以下结果：
 
-```sql
-bot_data as (
-    SELECT
-        trading_pair,
-        count(trading_pair) AS num_txs,
-        count(trading_pair) filter (where is_bot_tx) as bot_txs,
-        count(trading_pair) filter (where not is_bot_tx) as human_txs,
-        sum(amount_usd) filter (where is_bot_tx) as bot_volume,
-        sum(amount_usd) filter (where not is_bot_tx) as human_volume
-    FROM uni_v3_trades
-    WHERE amount_usd IS NOT NULL 
-    GROUP BY trading_pair
-    ORDER BY sum(amount_usd) DESC
-    
-    limit 20
-)
-```
+![uniswap_bot.png](img/uniswap_bot.png)
 
-完整详细的SQL代码，请参考query：https://dune.com/queries/1500339/2527415
+具体内容可以参考query：[https://dune.com/queries/1883887](https://dune.com/queries/1883887)
 
+
+我们还可以按交易对，对bot和普通用户交易进行分别统计交易数、交易金额等。只需结合魔法表里面的`token_pair`进行分类统计即可，这里不再举例。
 
 ## 总结
 
@@ -261,6 +292,7 @@ bot_data as (
 6. https://dune.com/alexth/uniswap-v3-mev-activity
 7. Just-in-time Liquidity on the Uniswap Protocol https://uniswap.org/blog/jit-liquidity
 8. https://github.com/33357/smartcontract-apps/blob/main/Robot/MEV_Who_are_you_working_for.md
+9. https://dune.com/sixdegree/mev-data-analytics-tutorial
 
 
 ## SixDegreeLab介绍
