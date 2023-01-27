@@ -1,18 +1,16 @@
 # Uniswap 多链数据对比分析
 
-Uniswap 是DeFi领域领先的DEX之一。Uniswap 智能合约于2018年率先部署在Ethereum区块链，2021年又先后部署到Arbitrum，Optimism和Polygon，2022年扩展到Celo链。近期又有新的提案提议将其部署到BNB链，发展势头不减。本文我们将一起来探讨如何分析2022年度Uniswap在多链上的数据。由于Dune目前尚未支持Celo链，所以并未包含在内。
+Uniswap 是DeFi领域领先的DEX之一。Uniswap 智能合约于2018年率先部署在Ethereum区块链，2021年又先后部署到Arbitrum，Optimism和Polygon，2022年扩展到Celo链。近期又有新的提案提议将其部署到BNB链，发展势头不减。本文我们将一起来探讨如何对比分析2022年度Uniswap在多链上的数据表现。由于Dune目前尚未支持Celo链，所以并未包含在内。
 
 本教程的数据看板：[Uniswap V3 Performance In 2022 Multichains](https://dune.com/sixdegree/uniswap-v3-performance-in-2022-multi-chains)
 
 本教程中全部Query都使用Dune SQL引擎完成。
 
-很巧，在编写完善这篇教程期间，2023年1月25日Uniswap Foundation推出了新一期的Bounty活动，其主题正好是分析Uniswap在多链的表现。希望本文可以抛砖引玉，给大家提供一些参考思路，大家可以进一步扩展思路，编写出更好的查询去参加这个Bounty活动。预祝您获得丰厚的奖金。
-
-活动链接：[Bounty # 21 - Uniswap Multichain](https://unigrants.notion.site/Bounty-21-Uniswap-Multichain-b1edc714fe1949779530e920701fd617)
+很巧，在编写完善这篇教程期间，2023年1月25日Uniswap Foundation推出了新一期的Bounty活动，其主题正好是分析Uniswap在多链的表现。希望本文可以抛砖引玉，给大家提供一些参考思路，大家可以进一步扩展思路，编写出更好的查询去参加这个Bounty活动。预祝您获得丰厚的奖金。Unigrants活动链接：[Bounty # 21 - Uniswap Multichain](https://unigrants.notion.site/Bounty-21-Uniswap-Multichain-b1edc714fe1949779530e920701fd617)
 
 ## 多链数据分析的主要内容
 
-正如“Bounty # 21 - Uniswap Multichain”活动的描述所说，针对Uniswap这类DeFi应用，我们最常见需要分析的指标包括交易量、互换数量、用户、TVL（总锁仓价值）等。Uniswap 部署大量不同Token交易对的流动资金池（Pool）智能合约，流动性提供者（Liquidity Provider，LP）将其资金注入流动性池以获取交易手续费收益，其他用户在相应的流动性资金池兑换自己需要的Token。所以，更深入的分析还可以包括流动性池（Pool）相关、流动性提供者（LP）相关的内容。
+正如“Bounty # 21 - Uniswap Multichain”活动的描述所说，针对Uniswap这类DeFi应用，我们最常见需要分析的指标包括交易量、交易金额、用户、TVL（总锁仓价值）等。Uniswap 部署大量不同Token交易对的流动资金池（Pool）智能合约，流动性提供者（Liquidity Provider，LP）将其资金注入流动性池以获取交易手续费收益，其他用户在相应的流动性资金池兑换自己需要的Token。所以，更深入的分析还可以包括流动性池（Pool）相关、流动性提供者（LP）相关的内容。
 
 本教程中我们将主要讨论如下内容：
 - 总交易概况（交易数量、交易金额、用户数量、TVL）
@@ -33,14 +31,14 @@ Dune社区用户为Uniswap创建了相当完善的交易数据魔法表`uniswap.
 可以直接针对表`uniswap.trades`编写一个查询来汇总交易总金额、交易次数和独立用户地址数量。
 
 ```sql
-    select blockchain,
-        sum(amount_usd) as trade_amount,
-        count(*) as transaction_count,
-        count(distinct taker) as user_count
-    from uniswap.trades
-    where block_time >= date('2022-01-01')
-        and block_time < date('2023-01-01')
-    group by 1
+select blockchain,
+    sum(amount_usd) as trade_amount,
+    count(*) as transaction_count,
+    count(distinct taker) as user_count
+from uniswap.trades
+where block_time >= date('2022-01-01')
+    and block_time < date('2023-01-01')
+group by 1
 ```
 
 考虑到结果数据的数字都比较大，我们可以将上述查询放入一个CTE中，从CTE输出的时候，可以将数字换算成Million（百万）或Billion（十亿）单位，同时可以很方便地将多个链的数据汇总到一起。
