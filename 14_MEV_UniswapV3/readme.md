@@ -280,7 +280,7 @@ order by 1, 2
 
 ## 总结
 
-以上介绍了以太坊MEV的原理，分类，以及如以Uniswap为例如何用Dune做MEV查询的两种方法。[AndrewHong](https://twitter.com/andrewhong5297)在Dune的[十二天课程](https://www.youtube.com/watch?v=SMnzCw-NeFE)中也有一讲关于MEV的，感兴趣的朋友可以看看Duniversity校长的讲解，其中提到Dune的标签表源于Etherscan，其[覆盖率](https://dune.com/queries/1764004)也不一定足够，所以本文介绍的两种方法，最后的查询结果可能会略有出入。MEV是个复杂的课题，这里只是抛砖引玉，更多的方法需要大家自己探索。
+以上介绍了以太坊MEV的原理，分类，以及以Uniswap为例如何用Dune做MEV查询的两种方法。[AndrewHong](https://twitter.com/andrewhong5297)在Dune的[十二天课程](https://www.youtube.com/watch?v=SMnzCw-NeFE)中也有一讲关于MEV的，感兴趣的朋友可以看看Duniversity校长的讲解，其中提到Dune的标签表源于Etherscan，其[覆盖率](https://dune.com/queries/1764004)也不一定足够，所以本文介绍的两种方法，最后的查询结果可能会略有出入。MEV是个复杂的课题，这里只是抛砖引玉，更多的方法需要大家自己探索。
 
 
 ## 参考
