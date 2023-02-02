@@ -24,6 +24,7 @@
 * [#16 Polygon区块链概况分析](13_polygon/readme.md)
 * [#17 MEV数据分析——以Uniswap为例](14_MEV_UniswapV3/readme.md)
 * [#18 Uniswap 多链数据对比分析](15_uniswap_multichain/readme.md)
+* [#19 各类常见指标分析（一）](19_common_index/readme.md)
 
 ## 高级教程
 
