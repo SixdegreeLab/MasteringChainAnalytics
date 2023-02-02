@@ -106,8 +106,14 @@ FROM bitcoin.blocks
 我们继续以比特币为例，在计算出其流通总量的基础上，我们再乘以它当前的价格即可获得它的总市值：
 
 ```sql
-SELECT SUM(50/POWER(2, ROUND(height/210000))) as Supply,                                                                                                                  SUM(50/POWER(2, ROUND(height/210000)))* (SELECT price FROM prices.usd_latest WHERE symbol='BTC' AND contract_address IS NULL) /POWER(10, 9) AS "market cap"               
+SELECT SUM(50/POWER(2, ROUND(height/210000))) as Supply, 
+       SUM(50/POWER(2, ROUND(height/210000)) * p.price) /POWER(10, 9) AS "Market Cap"
 FROM bitcoin.blocks
+INNER JOIN (
+    SELECT price FROM prices.usd_latest
+    WHERE symbol='BTC'
+        AND contract_address IS NULL
+) p ON TRUE
 ```
 
 我们最开始提到的比特币市值占比（Bitcoin Dominance），就是以此为分子，然后以所有加密货币市值之和为分母计算出来的。
