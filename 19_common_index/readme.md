@@ -2,32 +2,34 @@
 
 ## 背景知识
 
-在前面的教程中，我们学习了许多关于数据表和SQL查询语句的知识。准确规范地检索统计出所需数据是一名合格分析师的必备技能。与此同时，正确地认识和解读这些数据指标也是十分关键。只有对数据指标有足够深刻的理解，它才能对我们的决策提供强力的支持。
+在前面的教程中，我们学习了许多关于数据表和SQL查询语句的知识。准确规范地检索统计出所需数据是一名合格分析师的必备技能。与此同时，正确地认识和解读这些数据指标也十分关键。只有对数据指标有足够深刻的理解，它才能对我们的决策提供强力的支持。
 
-在看具体的指标之前，我们先思考一下，我们为什么需要数据指标呢？简单地说，指标就是能够反映一种现象的数字，比如某个NFT的地板价，某家DEX的日活跃交易数。指标可以直接反映我们研究对象的状况，为相应决策提供数据支撑，我们可以通过之前学习的数据表和SQL语句知识，构建、调用、分析这些指标，达到事半功倍的效果。如果没有指标，我们获取的信息就会显得很乱，我们能够知道的信息就会变少。
+在看具体的指标之前，我们先思考一下，我们为什么需要数据指标呢？简单地说，指标就是能够反映一种现象的数字，比如某个NFT的地板价，某家DEX的日活跃交易数。指标可以直接反映我们研究对象的状况，为相应决策提供数据支撑，我们可以通过之前学习的数据表和SQL语句知识，构建、调用、分析这些指标，达到事半功倍的效果。如果没有指标，我们获取的信息就会显得很乱，我们能够从中获得的洞察就少。
 
 具体到区块链领域，虽然有些指标与金融市场的指标类似，但它也有相当一部分特有的指标，比如比特币市值占比（Bitcoin Dominance），交易所七日流入量（All Exchanges Inflow Mean-MA7）等。在本教程中，我们先来学习以下几个常见指标和它们的计算方法：
 
 - 总锁仓量 Total Value Locked (TVL)
 - 流通总量 Circulating Supply
 - 总市值 Market Cap 
-- 日/月活跃用户 Daily/Monthly Active User (DAU, MAU)
+- 日/月活跃用户 Daily / Monthly Active User (DAU / MAU)
+- 日/月新用户数 Daily / Monthly New User
 
 
 ## 总锁仓量Total Value Locked (TVL)
-我们来看我们今天学习的第一个指标- 总锁仓量Total Value Locked (TVL)。 它描述了一个协议中锁定的所有代币价值的总和，该协议可以是Dex,借贷平台,也可以是侧链，L2二层网络等等。TVL描述了该协议的流动性，同时也反映了其受欢迎程度以及用户的信心。
+我们来看我们今天学习的第一个指标 - 总锁仓量Total Value Locked (TVL)。 它描述了一个协议中锁定的所有代币价值的总和，该协议可以是Dex,借贷平台,也可以是侧链，L2二层网络等等。TVL描述了该协议的流动性，同时也反映了其受欢迎程度以及用户的信心。
 
 比如我们来看一下DEX的TVL排行：
 
-![DEX TVL](https://user-images.githubusercontent.com/85688147/214268451-496d2dd7-e771-4034-b483-0e0c9bc873a6.png)
+![DEX TVL](img/image_01.png)
 
 以及二层网络L2的TVL排行：
 
-![L2TVL](https://user-images.githubusercontent.com/85688147/214268702-38008feb-5eaa-44a5-8cb5-c4f5260b224c.png)
+![L2TVL](img/image_02.png)
 
 排名靠前的均是热度比较高的协议。
 
 TVL的计算逻辑比较简单，即统计出协议中所有代币的数目，再乘以每种代币的价格，最后求和得出。我们以zksync为例，为了计算它自2021.6.15以来的TVL，我们可以先统计出它在各个时间点上的所有ERC20代币的数量，以及代币在该时间点的价格，然后相乘。这里Dune提供了一个抽象表 `erc20."view_token_balances_daily"`，我们可以直接取到所有ERC20代币在各个日期的价值，因此可以略过计算步骤。因为ERC20代币众多，为了运算速度，我们限定只纳入代币总价值高于3000美元的进行统计：
+
 ```sql
 with erc_zksync as(
     select day, token_symbol as label, amount, amount_usd as token_amount_usd, token_symbol as label1
@@ -36,7 +38,9 @@ with erc_zksync as(
     order by 1
 ),
 ```
+
 除了ERC20，我们还需要另外计算ETH的价值。该部分的计算没有直接的抽象表可以取用，我们要根据每天zksync的转入转出计算当日的ETH数目，然后再乘以当日ETH均价进行计算。
+
 ```sql
 prices as (
     select  date_trunc('day', minute) as day, avg(price) as price ,symbol from prices."usd"
@@ -65,7 +69,9 @@ eth_zksync as (
     on n.day = p.day and n.label = p.symbol
 ),
 ```
+
 最后我们把每日ERC20的价值和ETH的价值按照日期整合到一起，我们就获得了最后的结果表：
+
 ```sql
 
 zksync_tvl as (
@@ -81,9 +87,10 @@ order by TVL_usd DESC
 这样我们就能够把TVL的变化呈现出来：
 
 
-![tvl](https://user-images.githubusercontent.com/85688147/214280256-5d9ee348-83c3-49e4-9688-86679e1f5afa.png)
+![tvl](img/image_03.png)
 
 ## 流通总量 Circulating Supply
+
 流通总量是当前市场中以及持币者掌握的流通的加密货币数量。它与总供应量(Total Supply)不同，它不会将无法交易流通的部分纳入统计，比如被锁定而无法交易的货币数量。由于这部分无法流通的加密货币通常并不会影响其价格，所以流通总量作为代币数量的度量较总供应量更为常用。对于不同的加密货币，其计算方式有所不同。比如一些线性释放的代币，他的供应量随时间增加。又如一些有通缩燃烧机制的代币，我们在计算流通总量的时候就要减去这一部分。这里我们以比特币为例，计算它的当前流通总量。
 比特币的流通总量计算逻辑较为简单，从起始周期每个区块产出50枚，每210000个区块进入一个减半周期。基于此，我们可以计算出它当前的流通总量：
 
@@ -94,6 +101,7 @@ FROM bitcoin.blocks
 
 
 ## 总市值 Market Cap 
+
 今天学习的第三个指标是总市值(Market Cap)。相信大家对这个指标并不陌生。在股票市场，总市值是指在某特定时间内总股本数乘以当时股价得出的股票总价值。相应的在区块链领域，它是一种加密货币的流通总量(Circulating Supply）乘以该加密货币的价格得出的该加密货币总价值。因此计算总市值的关键是计算出我们刚刚学习的指标-流通总量。当我们计算出了流通总量，再乘以该加密货币的当前价格，就能得出其总市值。
 我们继续以比特币为例，在计算出其流通总量的基础上，我们再乘以它当前的价格即可获得它的总市值：
 
@@ -106,7 +114,8 @@ FROM bitcoin.blocks
 
 
 ## 日/月活跃用户 Daily/Monthly Active User
-今天学习的最后一个指标是日/月活跃用户 (Daily/Monthly Active User,D/MAU)。相对于绝对交易数额，活跃用户的数目更能反应一个协议受欢迎程度。由于少数用户的大额交互就可以拉高交易数额，活跃的用户数可以更客观的描述该协议的热度。它的计算方式比较简单，我们只要找出与某个合约交易的钱包地址，并按天/月统计频数即可得出。
+
+今天学习的下一个指标是日/月活跃用户 (Daily/Monthly Active User,DAU/MAU)。相对于绝对交易数额，活跃用户的数目更能反应一个协议受欢迎程度。由于少数用户的大额交互就可以拉高交易数额，活跃的用户数可以更客观的描述该协议的热度。它的计算方式比较简单，我们只要找出与某个合约交易的钱包地址，并按天/月统计频数即可得出。
 我们以最近比较热门的Lens为例：
 
 ```sql
@@ -130,13 +139,32 @@ from daily_count
 order by block_date
 ```
 
-我们使用distinct函数让每位用户每天只会被统计一次。在统计每日活跃人数的基础上，我们还使用 `sum` `over`函数，统计出了累计用户数。
+我们使用distinct函数让每位用户每天只会被统计一次。在统计每日活跃人数的基础上，我们还使用 `sum` `over`函数，统计出了累计用户数。如果要统计月度活跃用户数（MAU），只需要改成使用`date_trunc('month', block_time)` 来获取每月第一天的日期并进行汇总统计即可。
 
-![user](https://user-images.githubusercontent.com/85688147/214829368-a9524d70-6a8c-4b38-800c-4909f0de56ba.png)
+![user](img/image_04.png)
 
+## 日/月新用户数 Daily / Monthly New User
 
+除了关注活跃用户数据外，每日/每月新增用户数量也是非常常见的一个分析指标。通常，为了得到准确的新增用户数据，我们需要先计算出每个用户地址第一次交易的日期时间，或者收到/发出第一笔转账记录的日期时间，然后再按天或者月进行统计得到新增用户数量。这里我们以统计Optimism链上每日新增用户数量的查询为例。
 
+```sql
+with optimism_new_users as (
+    SELECT `from` as address,
+        min(block_time) as start_time
+    FROM optimism.transactions
+    GROUP BY 1
+)
 
+SELECT date_trunc('day', start_time) as block_date,
+    count(n.address) as new_users_count
+FROM optimism_new_users n
+WHERE start_time >= '2022-10-01'
+GROUP BY 1
+```
+
+![new users](img/image_05.png)
+
+这里有一个结合了新用户数量和具体NFT项目用户数据统计的[实际案例](https://dune.com/queries/1334302)。
 
 
 ## SixDegreeLab介绍
