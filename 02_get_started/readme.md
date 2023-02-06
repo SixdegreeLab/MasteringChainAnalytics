@@ -221,7 +221,7 @@ select 1.23 * power(10, 18) as raw_amount,
 
 #### Group By分组与常用汇总函数
 
-SQL中有一些常用的汇总函数，`count()`计数，`sum()`求和，`avg()`求平均值，`min()`求最小值，`max()`求最大值等。除了对表中所有数据汇总的情况外，汇总函数通常需要结合分组语句`group by`来使用，按照某个条件进行分组汇总统计。Group By分组子句的语法为`group by field_name`，还可以指定多个分组字段`group by field_name1. field_name2`。与Order By子句相似，也可以按字段在Select子句中出现的位置来指定分组字段，这样可以让我们的SQL更加简洁。例如`group by 1`表示按第一个字段分组，`group by 1, 2`表示同时按第一个和第二个字段分组。我们通过一些例子来说明常用汇总函数的用法。
+SQL中有一些常用的汇总函数，`count()`计数，`sum()`求和，`avg()`求平均值，`min()`求最小值，`max()`求最大值等。除了对表中所有数据汇总的情况外，汇总函数通常需要结合分组语句`group by`来使用，按照某个条件进行分组汇总统计。Group By分组子句的语法为`group by field_name`，还可以指定多个分组字段`group by field_name1, field_name2`。与Order By子句相似，也可以按字段在Select子句中出现的位置来指定分组字段，这样可以让我们的SQL更加简洁。例如`group by 1`表示按第一个字段分组，`group by 1, 2`表示同时按第一个和第二个字段分组。我们通过一些例子来说明常用汇总函数的用法。
 
 **统计目前支持的各个区块链的ERC20代币类型数量：**
 
