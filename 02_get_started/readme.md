@@ -170,7 +170,7 @@ select now(), current_date
 
 #### Date_Trunc 截取日期
 
-区块链中的日期时间字段通常是以“年-月-日 时:分:秒”的格式保存的。如果要按天、按周、按月等进行汇总统计，可以使用`date_trunc()`函数对日期先进行转换。例如：`date_trunc('day', block_time`将block_time的值转换为以“天”表示的日期值，`date_trunc('month', block_time`将block_time的值转换为以“月”表示的日期值。
+区块链中的日期时间字段通常是以“年-月-日 时:分:秒”的格式保存的。如果要按天、按周、按月等进行汇总统计，可以使用`date_trunc()`函数对日期先进行转换。例如：`date_trunc('day', block_time)`将block_time的值转换为以“天”表示的日期值，`date_trunc('month', block_time)`将block_time的值转换为以“月”表示的日期值。
 
 ```sql
 select now(),
