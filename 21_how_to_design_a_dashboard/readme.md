@@ -46,8 +46,9 @@ UTXO是 Unspent Transaction Output的简称。BTC现有的运行机制中其实�
   - `block_time：这次转出Transaction发生的时间`
   - `tx_id：这次转出Transaction的tx id`
   -` value：这次转出Transaction包含的BTC金额`
-  - `spent_tx_id：这次产生Input(花费)是源于那个Output(我这次花的是之前收到哪笔钱)`    
-![input_info.png](./image/input_info.png)    
+  - `spent_tx_id：这次产生Input(花费)是源于那个Output(我这次花的是之前收到哪笔钱)`     
+    
+![input_info.png](./image/input_info.png)       
 
 ### 2.2 bitcoin.outputs 
 
