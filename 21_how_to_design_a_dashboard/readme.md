@@ -7,7 +7,7 @@ CDD 是 Coin Day Destroyed 的简称，在某种程度上我们可以认为它�
 
 这里我们引入一个新的概念叫币天(Coin Day)，`币天(Coin Day)  = Token数量 * 该Token保持HODL状态的天数`。
 
-链上的所有BTC每天都在累积币天(Coin Day)，如果其中某一部分BTC发生了移动(从钱包A转移到钱包B),那么这部分累积币天就会被消耗，这就是所谓的 Coin Day Destroyed 。
+链上的所有BTC每天都在累积币天(Coin Day)，如果其中某一部分BTC发生了移动(从钱包A转移到钱包B),那么这部分累积币天就会被消耗，这就是所谓的 Coin Day Destroyed 。   
 ![historical_trend.png](./image/historical_trend.png)
 
 ### 2.底层逻辑
