@@ -7,8 +7,10 @@ CDD 是 Coin Day Destroyed 的简称，在某种程度上我们可以认为它�
 
 这里我们引入一个新的概念叫币天(Coin Day)，`币天(Coin Day)  = Token数量 * 该Token保持HODL状态的天数`。
 
-链上的所有BTC每天都在累积币天(Coin Day)，如果其中某一部分BTC发生了移动(从钱包A转移到钱包B),那么这部分累积币天就会被消耗，这就是所谓的 Coin Day Destroyed 。   
-![historical_trend.png](./image/historical_trend.png)
+链上的所有BTC每天都在累积币天(Coin Day)，如果其中某一部分BTC发生了移动(从钱包A转移到钱包B),那么这部分累积币天就会被消耗，这就是所谓的 Coin Day Destroyed 。      
+
+![historical_trend.png](./image/historical_trend.png)    
+
 
 ### 2.底层逻辑
 
@@ -44,8 +46,9 @@ UTXO是 Unspent Transaction Output的简称。BTC现有的运行机制中其实�
   - `block_time：这次转出Transaction发生的时间`
   - `tx_id：这次转出Transaction的tx id`
   -` value：这次转出Transaction包含的BTC金额`
-  - `spent_tx_id：这次产生Input(花费)是源于那个Output(我这次花的是之前收到哪笔钱)`
-![input_info.png](./image/input_info.png)
+  - `spent_tx_id：这次产生Input(花费)是源于那个Output(我这次花的是之前收到哪笔钱)`    
+  - 
+![input_info.png](./image/input_info.png)    
 
 ### 2.2 bitcoin.outputs 
 
@@ -88,9 +91,9 @@ UTXO是 Unspent Transaction Output的简称。BTC现有的运行机制中其实�
 - `今日gas fee消耗总量 = 今日单个tx平均消耗gas fee *今日 tx数`
   - `今日tx数 = 今日以太坊活跃用户 * 今日以太坊活跃用户平均发出tx数`
     - `今日以太坊活跃用户 = 以太坊总用户数 * 今日活跃比例`
-- `燃烧比例：取决于EIP1559 或者是否有新的提案`
+- `燃烧比例：取决于EIP1559 或者是否有新的提案`    
 
-![funnel_info.png](./image/funnel_info.png)
+![funnel_info.png](./image/funnel_info.png)    
 
 
 **2.事物本身的特征**
@@ -108,32 +111,34 @@ UTXO是 Unspent Transaction Output的简称。BTC现有的运行机制中其实�
 回到这次的主题，我们开始设计 Bitcoin - Coin Day Destroyed。
 
 #### 2.1 整体状况
-首先是需要一张图反映整体的状况，因为只有CDD这一个指标比较简单，我就只放了一张历史趋势图。
-![historical_trend.png](./image/historical_trend.png)
-但是这个图的时间周期过长，我们很难通过这张图比较明显地看出近期CDD的变化，因此我又增加了一个近期的趋势
-![recent_trend.png](./image/recent_trend.png)
+首先是需要一张图反映整体的状况，因为只有CDD这一个指标比较简单，我就只放了一张历史趋势图。    
+![historical_trend.png](./image/historical_trend.png)    
+但是这个图的时间周期过长，我们很难通过这张图比较明显地看出近期CDD的变化，因此我又增加了一个近期的趋势    
+![recent_trend.png](./image/recent_trend.png)     
 PS：这里还是可以看到这轮下跌钱又明显的CDD异动的。
 
 #### 2.2 波动分析
 这里我只做了3个纬度的拆解
 
-- 按照时间(小时)拆解，这样我就指标异动发生在大概什么时间【统计最新一天的数据】
-![hour.png](./image/hour.png)
+- 按照时间(小时)拆解，这样我就指标异动发生在大概什么时间【统计最新一天的数据】    
+![hour.png](./image/hour.png)    
 
-- 按照发起Transaction的钱包地址拆解，这样我就知道指标异动是由什么引起的：是一个钱包还是很多钱包引起的，是一小部分‘老币’，还是大量‘新币’。【统计最新一天的数据】
-![wallet.png](./image/wallet.png)
-- 按照Transaction_ID这个非常细的粒度去拆解，这样我就知道异动具体是由哪些Transaction带来的，也可以去区块链浏览器中去核实。【统计最新一天的数据】
-![transaction.png](./image/transaction.png)
+- 按照发起Transaction的钱包地址拆解，这样我就知道指标异动是由什么引起的：是一个钱包还是很多钱包引起的，是一小部分‘老币’，还是大量‘新币’。【统计最新一天的数据】     
+![wallet.png](./image/wallet.png)    
+- 按照Transaction_ID这个非常细的粒度去拆解，这样我就知道异动具体是由哪些Transaction带来的，也可以去区块链浏览器中去核实。【统计最新一天的数据】    
+![transaction.png](./image/transaction.png)    
 
-- 除此之外，为了方便按照钱包地址去分析历史上任意一天的波动原因，我新增了一个工具模块，可以通过输入日期来查找历史上任意一天CDD按照钱包的分布
-![tool.png](./image/tool.png)
+- 除此之外，为了方便按照钱包地址去分析历史上任意一天的波动原因，我新增了一个工具模块，可以通过输入日期来查找历史上任意一天CDD按照钱包的分布    
+- 
+![tool.png](./image/tool.png)    
 
 
 ### 3. 完成
 就这样一个用于关注CDD的Dashboard就完成了.最终的效果就是你可以比较方便地看到该指标的历史趋势以及近期变化，
-如果某天发生异动，可以快速地定位到异动发生的时间以及关联钱包，具体的transaction_id辅助进一步分析
+如果某天发生异动，可以快速地定位到异动发生的时间以及关联钱包，具体的transaction_id辅助进一步分析    
 
-![overview.png](./image/overview.png)
+![overview.png](./image/overview.png)    
+
 详细Dashboard见：https://dune.com/sixdegree/bitcoin-coin-day-destroyed-matrix  
 
 
