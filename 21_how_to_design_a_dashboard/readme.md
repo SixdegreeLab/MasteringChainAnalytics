@@ -24,12 +24,8 @@ CDD 是 Coin Day Destroyed 的简称，在某种程度上我们可以认为它�
 
 UTXO是 Unspent Transaction Output的简称，即未花费的交易产出。BTC现有的运行机制中其实没有Balance的概念，每个钱包的Balance是通过将与该钱包拥有的所有UTXO中包含的BTC数量求和得到的。
 
-- 钱包A向钱包B转账 10BTC (假设在此之前B没有任何BTC)，那么在链上钱包B就多了包含10BTC且来源A的Output，因为这10个BTC还没有被消耗。此时对于B来讲它的所有Output的都是UTXO(包含的BTC数量是10)
-- 然后钱包B向钱包C转账 2BTC ，那么此时B钱包的所有UTXO包含BTC的数量就是8，此外B还会产生一个Input(其包含的BTC数量是 2)
-- 可以很简单粗暴地认为一个钱包的UTXO(Balance)=Output(收到的BTC数量)-Input(发送出去的BTC数量)
 
-
-搜索到一篇文章感觉讲地比较通俗易懂，这里放一下链接：https://zhaozhiming.github.io/2018/07/07/btc-transaction-intro-and-practice-part1/
+搜索到一篇文章感觉讲地比较通俗易懂，这里放一下链接：https://www.liaoxuefeng.com/wiki/1207298049439968/1207298275932480
 
 ## 二、 Dune相关表
 
