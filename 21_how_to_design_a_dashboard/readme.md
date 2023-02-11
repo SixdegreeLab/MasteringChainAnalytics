@@ -20,7 +20,7 @@ CDD 是 Coin Day Destroyed 的简称，在某种程度上我们可以认为它�
 
 ### 3.UTXO机制
 
-这里需要引入关于BTC的一个基本常识：UTXO机制。理解它后才能明白应该如何利用Dune上的关于BTC的几张表完成上述的计算(这里纯粹是个人理解，如果有误欢迎指正)。
+这里需要引入关于BTC的一个基本常识：UTXO机制。理解它后才能明白应该如何利用Dune上的关于BTC的几张表完成上述的计算。
 
 UTXO是 Unspent Transaction Output的简称，即未花费的交易产出。BTC现有的运行机制中其实没有Balance的概念，每个钱包的Balance是通过将与该钱包拥有的所有UTXO中包含的BTC数量求和得到的。
 
