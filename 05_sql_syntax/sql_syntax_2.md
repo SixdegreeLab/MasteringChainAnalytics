@@ -116,7 +116,7 @@ select 'a' = 'A' -- 字符大小写不同，返回false
 
 2. Substring() 函数
 
-当有时我们因为某些特殊的原因不得不使用原始数据表`transactions`或`logs`并解析其中的`data`数据时，需要先从其中提取部分字符串，然后进行针对性的转换处理，此时就需要使用Sbustring 函数。Substring函数的语法格式为`substring(expr, pos [, len])`或者`substring(expr FROM pos [FOR len] ] )`，表示在表达式`expr`中，从位置`pos`开始，截取`len`个字符并返回。如果省略参数`len`，则一直截取到字符串末尾。
+当有时我们因为某些特殊的原因不得不使用原始数据表`transactions`或`logs`并解析其中的`data`数据时，需要先从其中提取部分字符串，然后进行针对性的转换处理，此时就需要使用Substring函数。Substring函数的语法格式为`substring(expr, pos [, len])`或者`substring(expr FROM pos [FOR len] ] )`，表示在表达式`expr`中，从位置`pos`开始，截取`len`个字符并返回。如果省略参数`len`，则一直截取到字符串末尾。
 
 3. Concat() 函数和 || 操作符
 
