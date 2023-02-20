@@ -511,7 +511,7 @@ git push
 
 PR的Github链接：[Add BNB spaceid view](https://github.com/duneanalytics/spellbook/pull/2725)
 
-特别鸣谢社区成员 @hosuke (Dune: [https://dune.com/hosuke](https://dune.com/hosuke)及时协助PR的Review，提供问题反馈和完善建议，并帮忙修改了魔法表的物化策略部分。
+特别鸣谢社区成员 @hosuke (Dune: [https://dune.com/hosuke](https://dune.com/hosuke)）及时协助PR的Review，提供问题反馈和完善建议，并帮忙修改了魔法表的物化策略部分。
 
 ## SixDegreeLab介绍
 
