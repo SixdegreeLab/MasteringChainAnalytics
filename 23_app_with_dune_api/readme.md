@@ -53,7 +53,7 @@ export const executeResults = async (id: string) => {
 
 数据展示： 在pages目录增加对应页面中增加个递归function，判断是否有data.result节点返回用于递归调用，useEffect中触发即可。
 
-部署：与Next.js项目部署方式一致，这儿已将 DB 初始化放到package.json
+部署：与 Next.js 项目部署方式一致，这儿已将 DB 初始化放到package.json
 ```
   "scripts": {
     "dev": "prisma generate && prisma migrate dev && next dev",
