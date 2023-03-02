@@ -6,7 +6,7 @@
 
 ## 开发概览
 
-创建项目，基于Next.js, CSS framework 使用 tailwindcss，fetcher 使用 Axios，前端数据操作使用 dexie，后端数据使用 prisma
+创建项目，基于Next.js, CSS framework 使用 tailwindcss，fetcher 使用 Axios，前端数据操作使用 dexie，后端数据操作使用 prisma
 ```
 $ yarn create next-app
 $ yarn add tailwindcss autoprefixer postcss prisma -D
