@@ -6,31 +6,81 @@
 
 ## 开发概览
 
-这里请结合用到的技术栈，描述下项目实现中涉及的相关内容。
+创建项目，基于Next.js, CSS framework 使用 tailwindcss，fetcher 使用 Axios，前端数据操作使用 dexie，后端数据使用 prisma
+```
+$ yarn create next-app
+$ yarn add tailwindcss autoprefixer postcss prisma -D
+$ yarn add axios dexie dexie-react-hooks @prisma/client
+```
 
-数据的获取、缓存、展示
-项目的部署等
+初始化 schema
+```
+$ yarn prisma init --datasource-provider sqlite
+$ vim prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model DuneQuery {
+  id           String   @unique
+  execution_id String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+$ yarn prisma migrate dev --name init
+$ yarn prisma generate
+```
+
+增加lib/dune.ts, 封装 Dune API 执行的三个步骤：
+```
+export const executeQuery = async (id: string, parameters: any) => {
+  // 用hash生成当前执行的query key, 检查并获取sqlite中是否有对应execution_id
+  // ...
+};
+export const executeStatus = async (id: string) => {
+  // ...
+};
+export const executeResults = async (id: string) => {
+  // ...
+};
+```
+
+数据展示： 在pages目录增加对应页面中增加个递归function，判断是否有data.result节点返回用于递归调用，useEffect中触发即可。
+
+部署：不同Next.js项目部署方式一只，这儿已将 DB 初始化放到package.json
+```
+  "scripts": {
+    "dev": "prisma generate && prisma migrate dev && next dev",
+    "build": "prisma generate && prisma migrate deploy && next build",
+    "start": "next start"
+  }
+```
 
 ## 为API编写SQL查询
 
 编写相应的SQL。这部分可以跳过
 
 ## 开发环境配置
-
-配置项目开发环境的步骤、注意事项等。
+```
+yarn dev  #没什么特别
+```
 
 
 ## 重要功能点说明
 
-针对项目中的重点难点，截图或者摘录代码的方式加以解读说明。
+1. Dune API 需要先 Execute Query ID， 获取其execution_id，才能执行后面的status/results
+2. 前端需要递归调用系统 API 来获取结果
 
 
 ## 示例项目代码仓库
 
-这里放Github 的链接并简要说明。
-
-github 需要配置好readme。
-
+[Uniswap New Pools Watcher](https://github.com/codingtalent/watcher)
 
 ## SixDegreeLab介绍
 
