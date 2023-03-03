@@ -6,7 +6,7 @@
 
 ## 开发概览
 
-创建项目，基于Next.js, CSS framework 使用 tailwindcss，fetcher 使用 Axios，前端数据操作使用 dexie，后端数据操作使用 prisma
+创建项目，基于 Next.js, CSS framework 使用 tailwindcss，fetcher 使用 Axios，前端数据操作使用 dexie，后端数据操作使用 prisma
 ```
 $ yarn create next-app
 $ yarn add tailwindcss autoprefixer postcss prisma -D
@@ -37,10 +37,10 @@ $ yarn prisma migrate dev --name init
 $ yarn prisma generate
 ```
 
-增加lib/dune.ts, 封装 Dune API 执行的三个步骤：
+增加 lib/dune.ts, 封装 Dune API 执行的三个步骤：
 ```
 export const executeQuery = async (id: string, parameters: any) => {
-  // 用hash生成当前执行的query key, 检查并获取sqlite中是否有对应execution_id
+  // 用 hash 生成当前执行的 query key, 检查并获取 sqlite 中是否有对应 execution_id。记得做好缓存过期处理
   // ...
 };
 export const executeStatus = async (id: string) => {
@@ -51,9 +51,9 @@ export const executeResults = async (id: string) => {
 };
 ```
 
-数据展示： 在pages目录增加对应页面中增加个递归function，判断是否有data.result节点返回用于递归调用，useEffect中触发即可。
+数据展示： 在 pages 目录增加对应页面中增加个递归 function，判断是否有 data.result 节点返回用于递归调用，useEffect 中触发即可。
 
-部署：与 Next.js 项目部署方式一致，这儿已将 DB 初始化放到package.json
+部署：与 Next.js 项目部署方式一致，这儿已将 DB 初始化放到 package.json
 ```
   "scripts": {
     "dev": "prisma generate && prisma migrate dev && next dev",
@@ -74,7 +74,7 @@ yarn dev  #没什么特别
 
 ## 重要功能点说明
 
-1. Dune API 需要先 Execute Query ID， 获取其execution_id，才能执行后面的status/results
+1. Dune API 需要先 Execute Query ID， 获取其 execution_id，才能执行后面的 status/results。做好缓存过期处理。
 2. 前端需要递归调用系统 API 来获取结果
 
 
