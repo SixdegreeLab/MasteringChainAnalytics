@@ -31,4 +31,4 @@
 * [#20 区块链网络分析](12_Network_Analytics/Network_Analytics.md)
 * [#21 如何设计Dashboard - 以BTC指标CDD为例](21_how_to_design_a_dashboard/readme.md)
 * [#22 如何构建魔法表（Spell）](22_cast_a_spell/readme.md)
-
+* [#23 使用Dune API创建应用程序](23_app_with_dune_api/readme.md)
