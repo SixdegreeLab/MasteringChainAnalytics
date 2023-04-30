@@ -335,14 +335,14 @@ select block_date from unnest(sequence(date('2022-01-01'), date('2022-01-31'))) 
 
 ### 数组查询
 
-1. Dune SQL 使用`cardinality()`查询数组大小，Spark SQL使用`array_size()`（也可以使用`cardinality()`）。
+1. Dune SQL 使用`cardinality()`查询数组大小。
 
 Spark SQL语法：
 
 ```sql
 select evt_block_time, evt_tx_hash, profileIds
 from lens_polygon.LensHub_evt_Followed
-where array_size(profileIds) = 2
+where cardinality(profileIds) = 2
 limit 10
 ```
 
@@ -363,7 +363,7 @@ Spark SQL访问数组元素：
 select evt_block_time, evt_tx_hash, profileIds,
     profileIds[0] as id1, profileIds[1] as id2, profileIds[2] as id3    -- id3返回空值
 from lens_polygon.LensHub_evt_Followed
-where array_size(profileIds) = 2
+where cardinality(profileIds) = 2
 limit 10
 ```
 
@@ -389,7 +389,7 @@ Spark SQL拆分数组元素到多行：
 select evt_block_time, evt_tx_hash, profileIds, profile_id
 from lens_polygon.LensHub_evt_Followed
 lateral view explode(profileIds) as profile_id
-where array_size(profileIds) = 3
+where cardinality(profileIds) = 3
 limit 20
 ```
 

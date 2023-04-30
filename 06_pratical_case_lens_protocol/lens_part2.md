@@ -9,8 +9,9 @@ Lens协议允许一个地址创建多个Profile。我们可以编写一个查询
 
 ```sql
 with profile_created as (
-    select vars:to as user_address,
-        vars:handle as handle_name,
+    select json_value(vars, 'lax $.to') as user_address,
+        json_value(vars, 'lax $.handle') as handle_name,
+        replace(json_value(vars, 'lax $.handle'), '.lens', '') as short_name,
         call_block_time,
         output_0 as profile_id,
         call_tx_hash
@@ -56,10 +57,10 @@ Lens的创作者有两种发帖（Post）的方式，一直是直接用自己的
 select call_block_time,
     call_tx_hash,
     output_0 as post_id,
-    vars:profileId as profile_id, -- Access element in json string
-    vars:contentURI as content_url,
-    vars:collectModule as collection_module,
-    vars:referenceModule as reference_module,
+    json_value(vars, 'lax $.profileId') as profile_id, -- Access element in json string
+    json_value(vars, 'lax $.contentURI') as content_url,
+    json_value(vars, 'lax $.collectModule') as collection_module,
+    json_value(vars, 'lax $.referenceModule') as reference_module,
     vars
 from lens_polygon.LensHub_call_post
 where call_success = true
@@ -73,10 +74,10 @@ with post_data as (
     select call_block_time,
         call_tx_hash,
         output_0 as post_id,
-        vars:profileId as profile_id,
-        vars:contentURI as content_url,
-        vars:collectModule as collection_module,
-        vars:referenceModule as reference_module
+        json_value(vars, 'lax $.profileId') as profile_id, -- Access element in json string
+        json_value(vars, 'lax $.contentURI') as content_url,
+        json_value(vars, 'lax $.collectModule') as collection_module,
+        json_value(vars, 'lax $.referenceModule') as reference_module,
     from lens_polygon.LensHub_call_post
     where call_success = true
     
@@ -85,10 +86,10 @@ with post_data as (
     select call_block_time,
         call_tx_hash,
         output_0 as post_id,
-        vars:profileId as profile_id,
-        vars:contentURI as content_url,
-        vars:collectModule as collection_module,
-        vars:referenceModule as reference_module
+        json_value(vars, 'lax $.profileId') as profile_id, -- Access element in json string
+        json_value(vars, 'lax $.contentURI') as content_url,
+        json_value(vars, 'lax $.collectModule') as collection_module,
+        json_value(vars, 'lax $.referenceModule') as reference_module,
     from lens_polygon.LensHub_call_postWithSig
     where call_success = true
 ),
@@ -113,7 +114,7 @@ select profile_id,
     sum(post_count) over () as top_profile_post_count,
     total_post_count,
     posted_profile_count,
-    (sum(post_count) over ()) / total_post_count * 100 as top_profile_posts_ratio
+    cast(sum(post_count) over () as double) / total_post_count * 100 as top_profile_posts_ratio
 from top_post_profiles
 inner join posts_summary on true
 order by 2 desc
@@ -168,26 +169,26 @@ with post_data as (
     select call_block_time,
         call_tx_hash,
         output_0 as post_id,
-        vars:profileId as profile_id,
-        vars:contentURI as content_url,
-        vars:collectModule as collection_module,
-        vars:referenceModule as reference_module
+        json_value(vars, 'lax $.profileId') as profile_id, -- Access element in json string
+        json_value(vars, 'lax $.contentURI') as content_url,
+        json_value(vars, 'lax $.collectModule') as collection_module,
+        json_value(vars, 'lax $.referenceModule') as reference_module
     from lens_polygon.LensHub_call_post
     where call_success = true
-        and call_block_time >= now() - interval '30 days'
+        and call_block_time >= now() - interval '30' day
     
     union all
     
     select call_block_time,
         call_tx_hash,
         output_0 as post_id,
-        vars:profileId as profile_id,
-        vars:contentURI as content_url,
-        vars:collectModule as collection_module,
-        vars:referenceModule as reference_module
+        json_value(vars, 'lax $.profileId') as profile_id, -- Access element in json string
+        json_value(vars, 'lax $.contentURI') as content_url,
+        json_value(vars, 'lax $.collectModule') as collection_module,
+        json_value(vars, 'lax $.referenceModule') as reference_module
     from lens_polygon.LensHub_call_postWithSig
     where call_success = true
-        and call_block_time >= now() - interval '30 days'
+        and call_block_time >= now() - interval '30' day
 )
 
 select profile_id,
@@ -213,17 +214,17 @@ limit 100
 Lens的评论数据与发帖数据类似，按数据产生来源不同，分别保存在`LensHub_call_comment`和`LensHub_call_commentWithSig`表中。基于Lens协议目前的功能，用户必须已经创建了自己的Profile才能对其他人创作者对Post进行评论。在评论数据表中，是通过评论者的Profile ID来进行追踪的。同时，每个创作者的发帖，其编号是从1开始累加的。也就是说，不同创作者的发帖，其编号可能相同。我们需要将创作者的Profile ID 和其Publication ID关联起来这样才能得到唯一的编号。SQL如下：
 
 ```sql
-    select call_block_time,
-        call_tx_hash,
-        output_0 as comment_id, -- 评论编号
-        vars:profileId as profile_id_from, -- 评论者的Profile ID
-        vars:contentURI as content_url, -- 评论内容链接
-        vars:pubIdPointed as publication_id_pointed, -- 被评论的Publication ID
-        vars:profileIdPointed as profile_id_pointed, -- 被评论的创作者的Profile ID
-        vars:profileIdPointed || '-' || vars:pubIdPointed as unique_publication_id  -- 组合生成唯一编号
-    from lens_polygon.LensHub_call_comment
-    where call_success = true
-    limit 10
+select call_block_time,
+    call_tx_hash,
+    output_0 as comment_id, -- 评论编号
+    json_value(vars, 'lax $.profileId') as profile_id_from, -- 评论者的Profile ID
+    json_value(vars, 'lax $.contentURI') as content_url, -- 评论内容链接
+    json_value(vars, 'lax $.pubIdPointed') as publication_id_pointed, -- 被评论的Publication ID
+    json_value(vars, 'lax $.profileIdPointed') as profile_id_pointed, -- 被评论的创作者的Profile ID
+    json_value(vars, 'lax $.profileIdPointed') || '-' || json_value(vars, 'lax $.pubIdPointed') as unique_publication_id  -- 组合生成唯一编号
+from lens_polygon.LensHub_call_comment
+where call_success = true
+limit 10
 ```
 
 我们同样通过定义额外的CTE来获取总的评论数据，从而可以在同一个查询中输出Counter图表，对比评论最多的1000个账号的评论数据和所有账号的评论数据。将查询结果可视化并加入到数据看板后的显示效果如下：
@@ -276,15 +277,15 @@ Lens的收藏数据同样分别保存在`LensHub_call_collect`和`LensHub_call_c
 
 ```sql
 select call_block_time,
-    t.`from` as collector,
+    t."from" as collector,
     c.profileId as profile_id,
     c.pubId as publication_id,
-    c.profileId || '-' || c.pubId as unique_publication_id,
+    cast(c.profileId as varchar) || '-' || cast(c.pubId as varchar) as unique_publication_id,
     c.output_0 as collection_id
 from lens_polygon.LensHub_call_collect c
 inner join polygon.transactions t on c.call_tx_hash = t.hash -- 关联交易表获取用户地址
-where call_block_time >= '2022-05-18' -- Lens合约的发布日期，提升查询效率
-    and block_time >= '2022-05-18'
+where call_block_time >= date('2022-05-18') -- Lens合约的发布日期，提升查询效率
+    and block_time >= date('2022-05-18')
     and c.call_success = true
 limit 10
 ```
@@ -310,47 +311,50 @@ Lens协议的关注数据仍然是分别保存在`LensHub_call_follow`和`LensHu
 {"follower":"0xdacc5a4f232406067da52662d62fc75165f21b23","profileIds":[21884,25271,39784],"datas":["0x","0x","0x"],"sig":"..."}
 ```
 
-要从JSON字符串中读取数组值并不容易，无法直接将字符串格式的数组值`[21884,25271,39784]`转换为数组，所以这里我们要借用`from_json()`方法，将JSON字符串映射为一个结构体（Struct），然后从结构体里面提取数组。示例代码如下：
+使用Dune SQL的JSON函数，可以从JSON字符串中读取数组值。我们可以先使用`json_extract()`从json 字符串中提取需要的元素值，再使用`cast()`方法将其转换为指定类型的数组。示例代码如下：
 
 ```sql
-select from_json(vars, 'struct<follower:string,profileIds:array<long>>') AS vars_struct
+select
+json_query(vars, 'lax $.follower') AS follower, -- single value
+json_query(vars, 'lax $.profileIds') AS profileIds, -- still string
+from_hex(cast(json_extract(vars,'$.follower') as varchar)) as follower2, -- cast to varbinary
+cast(json_extract(vars,'$.profileIds') as array(integer)) as profileIds2, -- cast to array
+vars
 from lens_polygon.LensHub_call_followWithSig
-where array_size(output_0) > 1
+where cardinality(output_0) > 1
 limit 10
 ```
-
-我们通过结构体的映射，将其中的`follower`影视为一个字符串类型，将`profileIds`映射为长整型数组`array<long>`，忽略json中的其他无关内容。这样我们就可以使用`struct_name.element_name`的形式访问结构体中的元素，其中profileIds是一个数组。然后我们可以使用提取数组元素的方法来读取profileIds里面的单个数值。具体语法为使用`lateral view explode(profile_ids) as profile_id`将数组拆分为多行，关联到主查询，然后使用给定的别名`profile_id`来访问拆分得到的数组元素值。关于`lateral view clause`的更多信息，可以参考[LATERAL VIEW Clause](https://spark.apache.org/docs/latest/sql-ref-syntax-qry-select-lateral-view.html)。
 
 读取关注详情的完整SQL代码如下：
 
 ```sql
 with follow_data as (
-    select follower, profile_id
+    select f.follower, p.profile_id
     from (
-        select vars_struct.follower as follower, -- read element from struct
-            vars_struct.profileIds as profile_ids
-        from (
-            -- belowe we map json string to a struct with data type
-            select from_json(vars, 'struct<follower:string,profileIds:array<long>>') AS vars_struct
-            from lens_polygon.LensHub_call_followWithSig
-        )
+        select from_hex(cast(json_extract(vars,'$.follower') as varchar)) as follower, -- cast to varbinary
+            cast(json_extract(vars,'$.profileIds') as array(integer)) as profile_ids -- cast to array
+        from lens_polygon.LensHub_call_followWithSig
             
         union all
         
-        select t.`from` as follower, f.profileIds as profile_ids
+        select t."from" as follower,
+            cast(f.profileIds as array(integer)) as profile_ids
         from lens_polygon.LensHub_call_follow f
         inner join polygon.transactions t on f.call_tx_hash = t.hash
-        where call_block_time >= '2022-05-18' -- Lens launch date
-            and block_time >= '2022-05-18'
+        where call_block_time >= date('2022-05-18') -- Lens launch date
+            and block_time >= date('2022-05-18')
+            and call_success = true
     ) f
-    lateral view explode(profile_ids) as profile_id
+    cross join unnest(f.profile_ids) as p(profile_id)
 )
 
 select * from follow_data
 limit 100
 ```
 
-同样，我们也在上面的查询基础上添加获取全部关注数据的CTE定义，从而可以在取得最多关注的Profile列表时，将其与整体关注数量进行对比。查询结果可视化并加入数据看板后的效果如下：
+这里需要说明一下，我们使用了`cross join unnest(f.profile_ids) as p(profile_id)`子句，将子查询中的数组进行拆解，并获取拆开的单个ID值。同时，因为`lens_polygon.LensHub_call_follow`表中的元素类型为`uint256`，这是一个Dune 的自定义类型，我们无法在从json字符串提取值时使用这个类型，所以我们用`cast(f.profileIds as array(integer))`将`uint256`转换为`integer`类型。
+
+同样，我们也在上面的查询基础上添加获取全部关注数据的CTE定义，从而可以在取得最多关注的Proile列表时，将其与整体关注数量进行对比。查询结果可视化并加入数据看板后的效果如下：
 
 ![image_17.png](img/image_17.png)
 

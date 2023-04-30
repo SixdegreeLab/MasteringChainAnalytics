@@ -287,8 +287,7 @@ where row_num = 1 -- 按行号筛选出每个token最新的平均价格
 
 
 窗口函数的更多完整资料：
-- [分析窗函数](https://docs.databricks.com/sql/language-manual/sql-ref-functions-builtin.html#analytic-window-functions)
-- [排名窗口函数](https://docs.databricks.com/sql/language-manual/sql-ref-functions-builtin.html#ranking-window-functions)
+- [分析窗函数](https://trino.io/docs/current/functions/window.html)
 
 
 ## array_agg()函数
