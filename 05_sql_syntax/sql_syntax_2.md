@@ -29,15 +29,13 @@ select now() -- 当前系统日期和时间
 SQL示例如下：
 
 ```sql
-select dateadd(MONTH, 2, current_date) -- 当前日期加2个月后的日期
-    ,dateadd(HOUR, 12, now()) -- 当前日期时间加12小时
-    ,dateadd(DAY, -2, current_date) -- 当前日期减去2天
-    ,date_add(current_date, 2) -- 当前日期加上2天
-    ,date_sub(current_date, -2) -- 当前日期减去-2天，相当于加上2天
-    ,date_add(current_date, -5) -- 当前日期加上-5天，相当于减去5天
-    ,date_sub(current_date, 5) -- 当前日期减去5天
-    ,datediff('2022-11-22', '2022-11-25') -- 结束日期早于开始日期，返回负值
-    ,datediff('2022-11-25', '2022-11-22') -- 结束日期晚于开始日期，返回正值
+select date_add('MONTH', 2, current_date) -- 当前日期加2个月后的日期
+    ,date_add('HOUR', 12, now()) -- 当前日期时间加12小时
+    ,date_add('DAY', -2, current_date) -- 当前日期减去2天
+    ,date_add('DAY', 2, current_date) -- 当前日期加上2天
+    ,date_add('DAY', -5, current_date) -- 当前日期加上-5天，相当于减去5天
+    ,date_diff('DAY', date('2022-11-22'), date('2022-11-25')) -- 结束日期早于开始日期，返回负值
+    ,date_diff('DAY', date('2022-11-25'), date('2022-11-22')) -- 结束日期晚于开始日期，返回正值
 ```
 
 ### 3. INTERVAL 类型
@@ -45,12 +43,12 @@ select dateadd(MONTH, 2, current_date) -- 当前日期加2个月后的日期
 Interval是一种数据类型，以指定的日期时间单位表示某个时间间隔。以Interval 表示的时间间隔使用起来非常便利，避免被前面的几个名称相似、作用也类似的日期函数困扰。
 
 ```sql
-select now() - interval '2 hours' -- 2个小时之前
-    ,current_date - interval '7 days' -- 7天之前
-    ,now() + interval '1 week' -- 一个星期之后的当前时刻
+select now() - interval '2' hour -- 2个小时之前
+    ,current_date - interval '7' day -- 7天之前
+    ,now() + interval '1' month -- 一个月之后的当前时刻
 ```
 
-更多日期时间相关函数的说明，请参考[日期、时间和间隔函数](https://docs.databricks.com/sql/language-manual/sql-ref-functions-builtin.html#date-timestamp-and-interval-functions)
+更多日期时间相关函数的说明，请参考[日期、时间函数和运算符](https://trino.io/docs/current/functions/datetime.html)
 
 ## 条件表达式Case、If
 
@@ -58,7 +56,11 @@ select now() - interval '2 hours' -- 2个小时之前
 
 我们在“Lens实践案例：创作者个人资料域名分析”部分就多次用到了CASE语句。其中部分代码摘录如下：
 
+TODO
+
 ```sql
+-- ...省略部分代码...
+
 profiles_summary as (
     select (
             case
@@ -85,6 +87,8 @@ profiles_total as (
         ) as pure_letter_profile_count
     from profile_created
 )
+
+-- ...省略部分代码...
 ```
 
 可以看到，通过CASE语句，我们可以根据实际的需要对数据进行灵活的转换，方便后续的统计汇总。
@@ -93,32 +97,20 @@ profiles_total as (
 - 查询：[https://dune.com/queries/1535541](https://dune.com/queries/1535541)
 - 说明：[Lens创作者个人资料域名分析](https://sixdegreelab.gitbook.io/mastering-chain-analytics/ru-men-jiao-cheng/06_pratical_case_lens_protocol)
 
-函数`if(cond, expr1, expr2)`或者`iff(cond, expr1, expr2)`互为同义词，可以交替使用，它们的作用时根据条件值评估的真假，返回两个表达式中的其中一个值。如果条件评估结果为真值，则返回第一个表达式，如果评估为假值，则返回第二个表达式。
+函数`if(cond, expr1, expr2)` 的作用时根据条件值评估的真假，返回两个表达式中的其中一个值。如果条件评估结果为真值，则返回第一个表达式，如果评估为假值，则返回第二个表达式。
 
 ```sql
 select if(1 < 2, 'a', 'b') -- 条件评估结果为真，返回第一个表达式
-    ,iff('x' > 'z', 'x > z', 'x <= z') -- 跟if()功能相同
     ,if('a' = 'A', 'case-insensitive', 'case-sensitive') -- 字符串值区分大小写
  ```
 
 ## 字符串处理的常用函数
 
-1. Lower() 函数
-
-Dune V2引擎中，交易哈希值（hash）、用户地址、智能合约地址这些全部以小写字符格式保存。但是在字符串比较的时候，是区分大小写的。字符`a`和`A`是不同的，地址`0xbf16ef186e715668aa29cef57e2fd7f9d48adfe6`和`0XBF16EF186E715668AA29CEF57E2FD7F9D48ADFE6`比较是“不相等”的。所以我们需要将地址手动转换为全部小写再比较，或者使用`lower()`函数转换后比较。
-
-```sql
-select 'a' = 'A' -- 字符大小写不同，返回false
-    ,'B' = 'B'  -- 字符大小写相同，返回true
-    ,'0xbf16ef186e715668aa29cef57e2fd7f9d48adfe6' = '0XBF16EF186E715668AA29CEF57E2FD7F9D48ADFE6' -- 大小写不同，返回false
-    ,lower('0xbf16ef186e715668aa29cef57e2fd7f9d48adfe6') = lower('0XBF16EF186E715668AA29CEF57E2FD7F9D48ADFE6') -- 转换为小写后比较，返回true
-```
-
-2. Substring() 函数
+1. Substring() 函数
 
 当有时我们因为某些特殊的原因不得不使用原始数据表`transactions`或`logs`并解析其中的`data`数据时，需要先从其中提取部分字符串，然后进行针对性的转换处理，此时就需要使用Substring函数。Substring函数的语法格式为`substring(expr, pos [, len])`或者`substring(expr FROM pos [FOR len] ] )`，表示在表达式`expr`中，从位置`pos`开始，截取`len`个字符并返回。如果省略参数`len`，则一直截取到字符串末尾。
 
-3. Concat() 函数和 || 操作符
+2. Concat() 函数和 || 操作符
 
 函数`concat(expr1, expr2 [, ...] )`将多个表达式串接到一起，常用来链接字符串。操作符`||`的功能和Concat函数相同。
 
@@ -127,34 +119,33 @@ select concat('a', ' ', 'b', ' c') -- 连接多个字符串
     , 'a' || ' ' || 'b' || ' c' -- 与concat()功能相同
 ```
 
-4. bytea2numeric_v2() 函数
-
-函数`bytea2numeric_v2(hex_string)`是Dune团队自定义的一个函数，其作用是将16进制格式存贮的数值转换为10进制的值。在`logs`这样的原始数据表里，数值是首先转换为16进制，然后每64个字符一组（不足64位的前面填充`0`补足位数），前后连接到一起，最前面再添加`0x`两个字符，最后存入`data`字段。当我们需要从`logs.data`数据解析这些具体的数值时，就需要反向做解析处理：从第3个字符开始，使用Substring()函数分别截取对应位置的64个字符，如果其存贮的是数值，则使用bytea2numeric_v2()函数转换为10进制值。
-
-5. Right() 函数
+3. Right() 函数
 函数`right(str, len)`从字符串`str`中返回右边开始计数的`len`个字符。如前所述，在`logs`这样的原始数据表里数据是按64个字符一组连接到一起后放入`data`里面的，对于合约地址或用户地址，其长度是40个字符，在保存时就会在左边填充`0`来补足64位长度。解析提取地址的时候，我们就需要提取右边的40个字符，再加上`0x`前缀将其还原为正确的地址格式。
 
-下面是一个使用上述函数的一个综合例子，这个例子从`logs`表解析跨链到Arbitrum的记录：
+注意，在Dune SQL中，直接使用`right()`函数可能返回语法错误，可以将函数名放到双引号中来解决，即使用`"right"()`。由于这种方式显得比较繁琐，我们可以使用substring函数的负数开始位置参数来表示从字符串右边开始计数确定截取的开始位置。
+
+下面是一个使用上述函数的一个综合例子，这个例子从`logs`表解析跨链到Arbitrum的记录，综合使用了几个方式：
 
 ```sql
 select date_trunc('day', block_time) as block_date, --截取日期
-    concat('0x', right(substring(data, 3 + 64 * 2, 64), 40)) as address, -- 提取data中的第3部分转换为用户地址，从第3个字符开始，每64位为一组
-    concat('0x', right(substring(data, 3 + 64 * 3, 64), 40)) as token, -- 提取data中的第4部分转换为用户地址
-    substring(data, 3 + 64 * 4, 64) as hex_amount, -- 提取data中的第5部分
-    bytea2numeric_v2(substring(data, 3 + 64 * 4, 64)) as amount, -- 提取data中的第5部分，转换为10进制数值
+    concat('0x', "right"(substring(cast(data as varchar), 3 + 64 * 2, 64), 40)) as address, -- 提取data中的第3部分转换为用户地址，从第3个字符开始，每64位为一组
+    concat('0x', "right"(substring(cast(data as varchar), 3 + 64 * 3, 64), 40)) as token, -- 提取data中的第4部分转换为用户地址
+    concat('0x', substring(substring(cast(data as varchar), 3 + 64 * 3, 64), -40, 40)) as same_token, -- 提取data中的第4部分转换为用户地址
+    substring(cast(data as varchar), 3 + 64 * 4, 64) as hex_amount, -- 提取data中的第5部分
+    bytearray_to_uint256(bytearray_substring(data, 1 + 32 * 4, 32)) as amount, -- 提取data中的第5部分，转换为10进制数值
     tx_hash
 from ethereum.logs
-where contract_address = '0x5427fefa711eff984124bfbb1ab6fbf5e3da1820'   -- Celer Network: cBridge V2 
-    and topic1 = '0x89d8051e597ab4178a863a5190407b98abfeff406aa8db90c59af76612e58f01'  -- Send
-    and substring(data, 3 + 64 * 5, 64) = '000000000000000000000000000000000000000000000000000000000000a4b1'   -- 42161，直接判断16进制值
-    and substring(data, 3 + 64 * 3, 64) = '000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' -- WETH，直接判断16进制值
-    and block_time >= now() - interval '7 days'
+where contract_address = 0x5427fefa711eff984124bfbb1ab6fbf5e3da1820   -- Celer Network: cBridge V2 
+    and topic0 = 0x89d8051e597ab4178a863a5190407b98abfeff406aa8db90c59af76612e58f01  -- Send
+    and substring(cast(data as varchar), 3 + 64 * 5, 64) = '000000000000000000000000000000000000000000000000000000000000a4b1'   -- 42161，直接判断16进制值
+    and substring(cast(data as varchar), 3 + 64 * 3, 64) = '000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' -- WETH，直接判断16进制值
+    and block_time >= now() - interval '30' day
 limit 10
 ```
 
 上述示例查询的相关链接：
 - [https://dune.com/queries/1647016](https://dune.com/queries/1647016)
-- [字符串和二进制函数](https://docs.databricks.com/sql/language-manual/sql-ref-functions-builtin.html#string-and-binary-functions)
+- [字符串函数和运算符](https://trino.io/docs/current/functions/string.html)
 
 ## 窗口函数
 
@@ -176,7 +167,7 @@ Lead()函数从分区内的后续行返回指定表达式的值。其语法为`l
 with pool_details as (
     select date_trunc('day', evt_block_time) as block_date, evt_tx_hash, pool
     from uniswap_v3_ethereum.Factory_evt_PoolCreated
-    where evt_block_time >= now() - interval '29 days'
+    where evt_block_time >= now() - interval '29' day
 )
 
 select block_date, count(pool) as pool_count
@@ -191,7 +182,7 @@ order by 1
 with pool_details as (
     select date_trunc('day', evt_block_time) as block_date, evt_tx_hash, pool
     from uniswap_v3_ethereum.Factory_evt_PoolCreated
-    where evt_block_time >= now() - interval '29 days'
+    where evt_block_time >= now() - interval '29' day
 ),
 
 pool_summary as (
@@ -259,13 +250,13 @@ with latest_token_price as (
         avg(price) as price -- 计算平均价格
     from prices.usd
     where contract_address in (
-        '0xdac17f958d2ee523a2206206994597c13d831ec7',
-        '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
-        '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-        '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-        '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9'
+        0xdac17f958d2ee523a2206206994597c13d831ec7,
+        0x2260fac5e5542a773aa44fbcfedf7c193bc2c599,
+        0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2,
+        0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,
+        0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9
     )
-    and minute > now() - interval '1 day' -- 取最后一天内的数据，确保即使数据有延迟也工作良好
+    and minute > now() - interval '1' day -- 取最后一天内的数据，确保即使数据有延迟也工作良好
     group by 1, 2, 3, 4
 ),
 
@@ -300,12 +291,12 @@ where row_num = 1 -- 按行号筛选出每个token最新的平均价格
 - [排名窗口函数](https://docs.databricks.com/sql/language-manual/sql-ref-functions-builtin.html#ranking-window-functions)
 
 
-## Collect_List() 和 Collect_Set() 函数
+## array_agg()函数
 
-如果你想将查询结果集中每一行数据的某一列合并到一起，可以使用Collect_List()函数。如果只需要唯一值，可以使用Collect_Set() 函数。如果希望将多列数据都合并到一起（想象将查询结果导出为CSV的情形），你可以考虑用前面介绍的字符串连接的方式将多列数据合并为一列，然后再应用Collect_List()函数。这里举一个简单的例子：
+如果你想将查询结果集中每一行数据的某一列合并到一起，可以使用 array_agg()函数。如果希望将多列数据都合并到一起（想象将查询结果导出为CSV的情形），你可以考虑用前面介绍的字符串连接的方式将多列数据合并为一列，然后再应用 array_agg()函数。这里举一个简单的例子：
 
 ```sql
-select collect_list(contract_address) from
+select array_agg(contract_address) from
 (
     select contract_address 
     from ethereum.logs
@@ -317,7 +308,7 @@ select collect_list(contract_address) from
 ## 总结
 
 每一种数据库都有几十个甚至上百个内置的函数，而我们这里介绍的只是其中一小部分常用的函数。如果你想要成为熟练的数据分析师，我们强烈建议阅读并了解这里的每一个内置函数的用法：
-[Databricks 内置函数](https://docs.databricks.com/sql/language-manual/sql-ref-functions-builtin.html)。
+[Trino 函数](https://trino.io/docs/current/functions.html)。
 
 ## SixDegreeLab介绍
 

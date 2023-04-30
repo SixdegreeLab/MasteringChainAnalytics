@@ -6,7 +6,7 @@ Dune 近期推出了其团队基于Trino（[https://trino.io/](https://trino.io/
 
 在开始尝试将Spark SQL编写的查询迁移到Dune SQL语法的过程中，印象深刻的语法差异有几个：
 - Dune SQL 使用双引号来引用包含特殊字符或者本身是关键字的字段名或表名，如` "from", "to" `。Spark SQL则使用反引号来引用带关键字或特殊字符的字段名或表名，如` \`from\` `, ` \`to\` `。
-- Dune SQL的字符串类型和常用数值类型分别是`varchar`、`double`；Spark SQL中则分别是`string`、`decimal(38, 0)`。
+- Dune SQL的字符串类型和常用数值类型分别是`varchar`、`double`和`decimal(38, 0)`。
 - Dune SQL 不支持隐式类型转换，Spark SQL支持。比如，Dune SQL中，不能将`'2022-10-01'`直接与 block_time 进行比较，需要用 `date('2022-10-01')`等函数显式转换为日期后才能比较。不能直接将数值类型和字符串连接，要用`cast(number_value as varchar)`转换为字符串后才能连接。
 
 Dune 文档提供了一份比较详细的语法对照表表，链接是：[Syntax Comparison](https://dune.com/docs/reference/dune-v2/query-engine/#syntax-comparison)，大家可以参考。下图列出了部分差异对照：
@@ -144,7 +144,7 @@ where block_time >= date('2022-12-18') and block_time < date('2022-12-19')
 
 ### Dune SQL的字符串类型 varchar 和数值类型 double
 
-SparkSQL 中字符串类型是`string`，因为数值通常很大所以在类型转换时推荐的数值类型是`decimal(38, 0)`。Dune SQL中对应的类型则是`varchar`和`double`。Dune SQL中的整数值默认是`bigint`类型，在做一些大数字的乘法时，容易产生溢出错误，此时可以强制转换为`double`类型。Dune SQL中进行整数除法也不会隐式转换为浮点数再进行相除，而是直接返回一个整数，这点也需要注意。
+Dune SQL中的字符串和常用数值类型是`varchar`和`double`。Dune SQL中的整数值默认是`bigint`类型，在做一些大数字的乘法时，容易产生溢出错误，此时可以强制转换为`double`类型或者`decimal(38, 0)`类型。Dune SQL中进行整数除法也不会隐式转换为浮点数再进行相除，而是直接返回一个整数，这点也需要注意。
 
 1. 转换为字符串
 
