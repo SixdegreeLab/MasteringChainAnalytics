@@ -1,14 +1,17 @@
 # 借贷协议数据分析
 
 ## 背景知识
+
 去中心化金融（DeFi）是区块链的金融创新。通过各协议之间的可组合性、互操作性，DeFi乐高就此诞生。2020年6月，DeFi借贷协议Compound开启流动性挖矿，不仅拉开了DeFi Summer的序幕，也给DeFi借贷赛道注入新活力、新思路、新用户，借贷业务成为DeFi的三大核心之一。
 
 ### 借贷协议的意义
+
 借贷协议是DeFi的银行。传统银行中，用户可以向银行存款收取利息，也可以向银行借款，最后连本带利一起归还。类似的，在DeFi的借贷协议中用户可以向协议存钱、借钱，不同的是没有了中心化的托管机构，而是用户和借贷协议的智能合约直接交互，靠代码的运行确保一切有条不紊地进行。CeFi中的借贷，贷款担保方式分为信用、保证以及抵押贷款。银行的风险偏好较低，抵押贷款在各类贷款中是占比最高的。得益于大数据信用体系建设，信用借贷越来越普遍，不过需要大量的审查、资质证明等。
 
 ![](images/bank.jpeg)
 
 而DeFi中的借贷是匿名的，无需信任的。从模式上讲基本都处于抵押贷款方式，普遍采用的方式是超额抵押。也就是说，我抵押200块的资产，可以从借贷协议这借走不足200块的资金，这样就无需担心我借钱不还跑路，可以放心地借钱给我了。这种以币借币，甚至越借越少的行为看似非常愚蠢，但是实际上它解决的是市场切实存在的需求：
+
 1. 交易活动的需求：包括套利、杠杆、做市等交易活动。例如做市商需要借资金来满足大量的交易；在DEX上买币只能做多，但是通过借币可以做空；通过抵押资产加杠杆，甚至可以通过循环贷不断增加杠杆（抵押ETH借USDC买ETH再抵押再借再买…）
 
 2. 获得被动收入：闲置资金/屯币党在屯币的过程中可以通过借出资产获得额外收益
@@ -18,6 +21,7 @@
 相比传统房车类型抵押贷款，需要人力验证资产所有人，还款违约还需要人力及时间进行资产拍卖。DeFi中的当铺模式只需要在抵押率过低停止抵押，对资产清算即可结束贷款合同。
 
 ### 借贷协议的运作模式
+
 在区块链上抵押借贷，能借多少代币、什么时候清算，都是由智能合约中的一系列参数设定好的。
 
 ![](images/loan.png)
@@ -76,39 +80,41 @@ Liquidation penalty：强平罚款，当清算发生时，以该资产为抵押�
 
 ![](images/tvl.png)
 
-以Arbitrum上的AAVE V3为例，做[TVL](https://dune.com/queries/1042816/1798270)的查询。基本思路是：将AAVE智能合约中，定义为'Supply'的存入资金，减去定义为'Withdraw'的提取资金，就是锁定在合约中的总价值。打开[Arbscan](https://arbiscan.io/address/0x794a61358d6845594f94dc1db02a252b5b4814ad)找到一笔[AAVE的交易](https://arbiscan.io/tx/0x6b8069b62dc762e81b41651538d211f9a1a33009bcb41798e673d715867b2f29#eventlog)，点开log可以看到topic0 = '0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61' 对应智能合约中'Supply'的行为。
+以Arbitrum上的AAVE V3为例，做[TVL](https://dune.com/queries/1042816/1798270)的查询。
+
+基本思路是：将AAVE智能合约中，定义为'Supply'的存入资金，减去定义为'Withdraw'的提取资金，就是锁定在合约中的总价值。打开[Arbscan](https://arbiscan.io/address/0x794a61358d6845594f94dc1db02a252b5b4814ad)找到一笔[AAVE的交易](https://arbiscan.io/tx/0x6b8069b62dc762e81b41651538d211f9a1a33009bcb41798e673d715867b2f29#eventlog)，点开log可以看到 topic0 = '0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61' 对应智能合约中'Supply'的行为。
 
 ![](images/arbscan1.png)
 
 ![](images/tvl2.png)
 
-类似的，topic0 = '0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7' 时对应'Withdraw'的行为（注，在Dune中topic1指的是etherscan中的topic0）。在Dune里，从Arbitrum的log表中选择发往AAVE V3合约的交易，根据topic定义“存入“和”提取“这两个动作（action_type）。存入为正提款为负，相加之后就是在合约内锁定的代币。用`concat`函数拼接'0x'和topic中的字符得到转账token的地址和转账人的地址，用`bytea2numeric_v2`函数得到转账token对应的数量（非usd计价金额）。
+类似的，topic0 = '0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7' 时对应'Withdraw'的行为（注，在Dune中topic1指的是etherscan中的topic0）。在Dune里，从Arbitrum的log表中选择发往AAVE V3合约的交易，根据topic定义“存入“和”提取“这两个动作（action_type）。存入为正提款为负，相加之后就是在合约内锁定的代币。用`bytearray_ltrim(topic1)`函数得到转账token的地址，用`bytearray_to_uint256(bytearray_substring(data, 1 + 32, 32))`函数得到转账token对应的数量（非usd计价金额）。
 
 ```sql
 with aave_v3_transactions as (
     select 'Supply' as action_type,
         block_time,
-        concat('0x', right(topic2, 40)) as token_address, --拼接得到token地址
-        concat('0x', right(topic3, 40)) as user_address,
-        bytea2numeric_v2(substring(data, 3 + 64, 64)) as raw_amount, --从第3个字符开始，使用Substring()函数分别截取对应位置的64个字符，使用bytea2numeric_v2()函数转换为10进制值
+        bytearray_ltrim(topic1) as token_address,
+        bytearray_ltrim(topic2) as user_address,
+        cast(bytearray_to_uint256(bytearray_substring(data, 1 + 32, 32)) as decimal(38, 0)) as raw_amount,
         tx_hash
     from arbitrum.logs
-    where contract_address = '0x794a61358d6845594f94dc1db02a252b5b4814ad'   -- Aave: Pool V3
-        and topic1 = '0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61' -- Supply
-        and block_time > '2022-03-16' -- First transaction date
+    where contract_address = 0x794a61358d6845594f94dc1db02a252b5b4814ad   -- Aave: Pool V3
+        and topic0 = 0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61 -- Supply
+        and block_time > date('2022-03-16') -- First transaction date
     
     union all
     
-    select 'Withdraw' as action_type, --withdraw处理类似
+    select 'Withdraw' as action_type,
         block_time,
-        concat('0x', right(topic2, 40)) as token_address,
-        concat('0x', right(topic3, 40)) as user_address,
-        (-1) * bytea2numeric_v2(substring(data, 3, 64)) as raw_amount, --在数值前面加负号
+        bytearray_ltrim(topic1) as token_address,
+        bytearray_ltrim(topic2) as user_address,
+        -1 * cast(bytearray_to_uint256(bytearray_substring(data, 1 + 32, 32)) as decimal(38, 0)) as raw_amount,
         tx_hash
     from arbitrum.logs
-    where contract_address = '0x794a61358d6845594f94dc1db02a252b5b4814ad'   -- Aave: Pool V3
-        and topic1 = '0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7' -- Withdraw
-        and block_time > '2022-03-16' -- First transaction date
+    where contract_address = 0x794a61358d6845594f94dc1db02a252b5b4814ad   -- Aave: Pool V3
+        and topic0 = 0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7 -- Withdraw
+        and block_time > date('2022-03-16') -- First transaction date
 ),
 
 aave_v3_transactions_daily as (
@@ -118,7 +124,9 @@ aave_v3_transactions_daily as (
     from aave_v3_transactions
     group by 1, 2
     order by 1, 2
-),
+)
+
+select * from aave_v3_transactions_daily
 ```
 
 到此我们得到了锁定在智能合约中的token数量，要得到美元计价的TVL，我们还需要将token和其价格匹配，这里我们手动选取了一些主流的币种：
@@ -126,14 +134,14 @@ aave_v3_transactions_daily as (
 ```sql
 token_mapping_to_ethereum(aave_token_address, ethereum_token_address, token_symbol) as (
     values
-    ('0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9', '0xdac17f958d2ee523a2206206994597c13d831ec7', 'USDT'),
-    ('0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f', '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', 'WBTC'),
-    ('0xd22a58f79e9481d1a88e00c343885a588b34b68b', '0xdb25f211ab05b1c97d595516f45794528a807ad8', 'EURS'),
-    ('0xff970a61a04b1ca14834a43f5de4533ebddb5cc8', '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 'USDC'),
-    ('0xf97f4df75117a78c1a5a0dbb814af92458539fb4', '0x514910771af9ca656af840dff83e8264ecf986ca', 'LINK'),
-    ('0x82af49447d8a07e3bd95bd0d56f35241523fbab1', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', 'WETH'),
-    ('0xda10009cbd5d07dd0cecc66161fc93d7c9000da1', '0x6b175474e89094c44da98b954eedeac495271d0f', 'DAI'),
-    ('0xba5ddd1f9d7f570dc94a51479a000e3bce967196', '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9', 'AAVE')
+    (0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9, 0xdac17f958d2ee523a2206206994597c13d831ec7, 'USDT'),
+    (0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f, 0x2260fac5e5542a773aa44fbcfedf7c193bc2c599, 'WBTC'),
+    (0xd22a58f79e9481d1a88e00c343885a588b34b68b, 0xdb25f211ab05b1c97d595516f45794528a807ad8, 'EURS'),
+    (0xff970a61a04b1ca14834a43f5de4533ebddb5cc8, 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48, 'USDC'),
+    (0xf97f4df75117a78c1a5a0dbb814af92458539fb4, 0x514910771af9ca656af840dff83e8264ecf986ca, 'LINK'),
+    (0x82af49447d8a07e3bd95bd0d56f35241523fbab1, 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2, 'WETH'),
+    (0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, 0x6b175474e89094c44da98b954eedeac495271d0f, 'DAI'),
+    (0xba5ddd1f9d7f570dc94a51479a000e3bce967196, 0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9, 'AAVE')
 ),
 
 latest_token_price as (
@@ -147,7 +155,7 @@ latest_token_price as (
         select ethereum_token_address
         from token_mapping_to_ethereum
     )
-    and minute > now() - interval '1 day'
+    and minute > now() - interval '1' day
     group by 1, 2, 3, 4
 ),
 
@@ -192,36 +200,42 @@ from daily_liquidity_change
 参考：https://dune.com/queries/1037796/1798021。
 
 ### 2.未偿贷款（Outstanding Loan）
-即外借出去尚未归还的金额。与计算TVL时类似，参考区块链浏览器的数据，找出topic0（1）所对应的合约功能，用借出的（‘Borrow’）减去已偿还（‘Repay’）的，参考：https://dune.com/queries/1037796/1798021。
+
+即外借出去尚未归还的金额。与计算TVL时类似，参考区块链浏览器的数据，找出topic0（1）所对应的合约功能，用借出的（‘Borrow’）减去已偿还（‘Repay’）的。
+
+参考：https://dune.com/queries/1037796/1798021
 
 ```sql
  select 'Borrow' as action_type,
-        block_time,
-        concat('0x', right(topic2, 40)) as token_address,
-        concat('0x', right(topic3, 40)) as user_address,
-        bytea2numeric_v2(substring(data, 3 + 64, 64)) as raw_amount,
-        tx_hash
-    from arbitrum.logs
-    where contract_address = '0x794a61358d6845594f94dc1db02a252b5b4814ad'   -- Aave: Pool V3
-        and topic1 = '0xb3d084820fb1a9decffb176436bd02558d15fac9b0ddfed8c465bc7359d7dce0' -- Borrow
-        and block_time > '2022-03-16' -- First transaction date
-    
-    union all
-    
-    select 'Repay' as action_type,
-        block_time,
-        concat('0x', right(topic2, 40)) as token_address,
-        concat('0x', right(topic3, 40)) as user_address,
-        (-1) * bytea2numeric_v2(substring(data, 3, 64)) as raw_amount,
-        tx_hash
-    from arbitrum.logs
-    where contract_address = '0x794a61358d6845594f94dc1db02a252b5b4814ad'   -- Aave: Pool V3
-        and topic1 = '0xa534c8dbe71f871f9f3530e97a74601fea17b426cae02e1c5aee42c96c784051' -- Repay
-        and block_time > '2022-03-16' -- First transaction date
+    block_time,
+    bytearray_ltrim(topic1) as token_address,
+    bytearray_ltrim(topic2) as user_address,
+    cast(bytearray_to_uint256(bytearray_substring(data, 1 + 32, 32)) as decimal(38, 0)) as raw_amount,
+    tx_hash
+from arbitrum.logs
+where contract_address = 0x794a61358d6845594f94dc1db02a252b5b4814ad   -- Aave: Pool V3
+    and topic0 = 0xb3d084820fb1a9decffb176436bd02558d15fac9b0ddfed8c465bc7359d7dce0 -- Borrow
+    and block_time > date('2022-03-16') -- First transaction date
+
+union all
+
+select 'Repay' as action_type,
+    block_time,
+    bytearray_ltrim(topic1) as token_address,
+    bytearray_ltrim(topic2) as user_address,
+    -1 * cast(bytearray_to_uint256(bytearray_substring(data, 1 + 32, 32)) as decimal(38, 0)) as raw_amount,
+    tx_hash
+from arbitrum.logs
+where contract_address = 0x794a61358d6845594f94dc1db02a252b5b4814ad   -- Aave: Pool V3
+    and topic0 = 0xa534c8dbe71f871f9f3530e97a74601fea17b426cae02e1c5aee42c96c784051 -- Repay
+    and block_time > date('2022-03-16') -- First transaction date
+
+limit 100
 ```
 
 
 ### 3.资本效率（Utilization Ratio）
+
 简单理解就是存入协议中的资金有多少被真正利用起来（借走）了，当前Arbitrum上AAVE V3的资本效率大约在30%，处于一个低杠杆水平，对比21年牛市时，资金利用率在40%-80%之间。有了前两段的基础，计算这部分并不困难，参考https://dune.com/queries/1037796/1798141。
 
 ![](images/ur.png)
@@ -230,23 +244,31 @@ from daily_liquidity_change
 
 
 ### 4.详细分类
+
 包括合约锁定资产构成和用户行为分布，参考：https://dune.com/queries/1026402/1771390。
+
 ![](images/4.1.png)
+
 AAVE在Arbitrum上资金池中占比前三的是WETH（37.6%）、USDC（29.5%）和WBTC（22.6%）。目前还处于熊市，用户对杠杆需求不强烈，整体以存款吃息为主。
+
 ![](images/4.2.png)
 
 ### 5.基础指标 
+
 一些基础的协议分析指标，如用户数，交易数，日均变化量情况，参考：https://dune.com/queries/1026141/1771147。
 
 ![](images/dunedata.png)
 
 ## 借贷的综合看板
+
 1. Arbitrum上AAVE V3的综合dashboard。
+
 https://dune.com/sixdegree/aave-on-arbitrum-overview
 
 ![](images/dashboard.png)
 
 2. 将以太坊上三大经典借贷协议Maker，AAVE和Compound进行对比的dashboard。不过这个dashboard比较老，用的是Dune V1引擎，Dune即将下架V1，今后只使用V2，所以大家学习时借鉴思路即可。
+
 https://dune.com/datanut/Compound-Maker-and-Aave-Deposits-Loans-LTV
 
 ![](images/dashboard2.png)

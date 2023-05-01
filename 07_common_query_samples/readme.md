@@ -16,7 +16,7 @@
 select * from prices.usd
 where symbol = 'WETH'
     and blockchain = 'ethereum'
-    and minute >= now() - interval '6 hours'
+    and minute >= now() - interval '6' hour
 order by minute desc
 limit 1
 ```
@@ -25,8 +25,8 @@ limit 1
 
 ```sql
 select * from prices.usd
-where contract_address = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'   -- WETH
-    and minute >= now() - interval '6 hours'
+where contract_address = 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2   -- WETH
+    and minute >= now() - interval '6' hour
 order by minute desc
 limit 1
 ```
@@ -64,7 +64,7 @@ from (
     from prices.usd
     where symbol in ('WETH', 'WBTC', 'USDC')
         and blockchain = 'ethereum'
-        and minute >= now() - interval '6 hours'
+        and minute >= now() - interval '6' hour
     order by minute desc
 ) p
 where row_num = 1
@@ -82,7 +82,7 @@ select date_trunc('day', minute) as block_date,
 from prices.usd
 where symbol = 'WETH'
     and blockchain = 'ethereum'
-    and minute >= '2022-01-01'
+    and minute >= date('2023-01-01')
 group by 1
 order by 1
 ```
@@ -98,7 +98,7 @@ select date_trunc('day', minute) as block_date,
 from prices.usd
 where symbol = 'WETH'
     and blockchain = 'ethereum'
-    and minute >= '2022-01-01'
+    and minute >= date('2023-01-01')
 group by 1, 2, 3, 4
 order by 1
 ```
@@ -116,7 +116,7 @@ select date_trunc('day', minute) as block_date,
 from prices.usd
 where symbol in ('WETH', 'WBTC', 'USDC')
     and blockchain = 'ethereum'
-    and minute >= '2022-10-01'
+    and minute >= date('2022-10-01')
 group by 1, 2, 3, 4
 order by 2, 1   -- Order by symbol first
 ```
@@ -181,8 +181,8 @@ with trade_detail as (
         token_sold_amount,
         token_sold_symbol
     from dex.trades
-    where project_contract_address = '0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8'
-        and block_date >= now() - interval '3 days'
+    where project_contract_address = 0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8
+        and block_date >= now() - interval '3' day
     order by block_time desc
     limit 1000
 )
@@ -206,14 +206,14 @@ from trade_detail
 ```sql
 with token_mapping_to_ethereum(aave_token_address, ethereum_token_address, token_symbol) as (
     values
-    ('0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9', '0xdac17f958d2ee523a2206206994597c13d831ec7', 'USDT'),
-    ('0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f', '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', 'WBTC'),
-    ('0xd22a58f79e9481d1a88e00c343885a588b34b68b', '0xdb25f211ab05b1c97d595516f45794528a807ad8', 'EURS'),
-    ('0xff970a61a04b1ca14834a43f5de4533ebddb5cc8', '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 'USDC'),
-    ('0xf97f4df75117a78c1a5a0dbb814af92458539fb4', '0x514910771af9ca656af840dff83e8264ecf986ca', 'LINK'),
-    ('0x82af49447d8a07e3bd95bd0d56f35241523fbab1', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', 'WETH'),
-    ('0xda10009cbd5d07dd0cecc66161fc93d7c9000da1', '0x6b175474e89094c44da98b954eedeac495271d0f', 'DAI'),
-    ('0xba5ddd1f9d7f570dc94a51479a000e3bce967196', '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9', 'AAVE')
+    (0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9, 0xdac17f958d2ee523a2206206994597c13d831ec7, 'USDT'),
+    (0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f, 0x2260fac5e5542a773aa44fbcfedf7c193bc2c599, 'WBTC'),
+    (0xd22a58f79e9481d1a88e00c343885a588b34b68b, 0xdb25f211ab05b1c97d595516f45794528a807ad8, 'EURS'),
+    (0xff970a61a04b1ca14834a43f5de4533ebddb5cc8, 0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48, 'USDC'),
+    (0xf97f4df75117a78c1a5a0dbb814af92458539fb4, 0x514910771af9ca656af840dff83e8264ecf986ca, 'LINK'),
+    (0x82af49447d8a07e3bd95bd0d56f35241523fbab1, 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2, 'WETH'),
+    (0xda10009cbd5d07dd0cecc66161fc93d7c9000da1, 0x6b175474e89094c44da98b954eedeac495271d0f, 'DAI'),
+    (0xba5ddd1f9d7f570dc94a51479a000e3bce967196, 0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9, 'AAVE')
 ),
 
 latest_token_price as (
@@ -227,7 +227,7 @@ latest_token_price as (
         select ethereum_token_address
         from token_mapping_to_ethereum
     )
-    and minute > now() - interval '1 day'
+    and minute > now() - interval '1' day
     group by 1, 2, 3, 4
 ),
 
@@ -273,25 +273,26 @@ evm_signatures签名数据查询的截图如下：
 ![image_02.png](img/image_02.png)
 
 上图查询`evm_signatures`时我们做了一下处理以让相关各列数据从上到下显示。对应的SQL为：
+
 ```sql
-select 'ID:' as name, id as value
+select 'ID:' as name, cast(id as varchar) as value
 from decoding.evm_signatures
-where id = '0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822'
+where id = 0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822
 union all
 select 'Signature:' as name, signature as value
 from decoding.evm_signatures
-where id = '0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822'
+where id = 0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822
 union all
 select 'ABI:' as name, abi as value
 from decoding.evm_signatures
-where id = '0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822'
+where id = 0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822
 ```
 
 结合上述相关信息，我们就可以通过解析事件日志里面的Swap记录，换算出价格。在下面的查询中，我们取最新1000条交易记录来计算平均价格。因为交换是双向的，可能从`token0` 兑换为 `token1`或者与之相反，我们使用一个case语句相应取出不同的值用来计算交易的价格。另外，我们没有再进一步取得USDC的价格来换算，毕竟其本身是稳定币，价格波动较小。需要更精确的数据时，可以参考前面的例子通过USDC的价格信息换算。
 
 ```sql
 with op_price as (
-    select '0x4200000000000000000000000000000000000042' as token_address,
+    select 0x4200000000000000000000000000000000000042 as token_address,
         'OP' as token_symbol,
         18 as decimals,
         avg(
@@ -301,14 +302,15 @@ with op_price as (
         ) as price
     from (
         select tx_hash,
-            bytea2numeric_v2(substring(data, 3, 64)) / 1e18 as amount0_in,
-            bytea2numeric_v2(substring(data, 3 + 64, 64)) / 1e6  as amount1_in,
-            bytea2numeric_v2(substring(data, 3 + 64 * 2, 64)) / 1e18  as amount0_out,
-            bytea2numeric_v2(substring(data, 3 + 64 * 3, 64)) / 1e6  as amount1_out
+            index,
+            cast(bytearray_to_uint256(bytearray_substring(data, 1, 32)) as decimal(38, 0)) / 1e18 as amount0_in,
+            cast(bytearray_to_uint256(bytearray_substring(data, 1 + 32, 32)) as decimal(38, 0)) / 1e6  as amount1_in,
+            cast(bytearray_to_uint256(bytearray_substring(data, 1 + 32 * 2, 32)) as decimal(38, 0)) / 1e18  as amount0_out,
+            cast(bytearray_to_uint256(bytearray_substring(data, 1 + 32 * 3, 32)) as decimal(38, 0)) / 1e6  as amount1_out
         from optimism.logs
-        where block_time >= now() - interval '2 days'
-            and contract_address = '0x47029bc8f5cbe3b464004e87ef9c9419a48018cd' -- OP - USDC Pair
-            and topic1 = '0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822'   -- Swap
+        where block_time >= now() - interval '2' day
+            and contract_address = 0x47029bc8f5cbe3b464004e87ef9c9419a48018cd -- OP - USDC Pair
+            and topic0 = 0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822   -- Swap
         order by block_time desc
         limit 1000
     )

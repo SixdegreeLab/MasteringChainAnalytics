@@ -23,7 +23,9 @@
 - 通过Dune获取原始数据
 - 通过Networkx处理Node之间的关系并处理画网络图时需要的各种属性数据(pos,label,color,Size等等)
 - 通过Plotly画出网络图
+
 ## 详细过程
+
 #### 一、通过Dune获取原始数据(SQL部分)
 
 SQL比较复杂，就不展开说了，大家感兴趣去URL里自己研究
@@ -37,7 +39,7 @@ SQL比较复杂，就不展开说了，大家感兴趣去URL里自己研究
 
   ![image-20221214165849494.png](image/image-20221214165849494.png)
 
-- 通过SQL获得包含所有地址的列表以及相关标签：https://dune.com/queries/1752471
+- 通过SQL获得包含所有地址的列表以及相关标签：https://dune.com/queries/2430347
 
   - address:本次网络分析中涉及的所有地址
   - level_type:本次网络分析中涉及的所有地址的在网络中的层级(Core,Layer One,Layer Two)
@@ -113,6 +115,7 @@ df_target_label['Balance'] = df_target_label['Balance'].round(2).astype('string'
 df_target_label['label'] =df_target_label['label']+' | '+ df_target_label['Balance'] +' ETH' 
 ```
 #### 三、定义一个函数通过Network X处理节点关系并使用Plotly画图
+
 ```python
 def drew_graph(df_target_relation,df_target_label):
     def add_node_base_data(df_target_relation):
@@ -267,6 +270,7 @@ def drew_graph(df_target_relation,df_target_label):
 
 
 #### 四、调用函数drew_graph，传入2个Dataframe画图。并导出HTML文件
+
 ```python
 fig =drew_graph(df_target_relation,df_target_label)
 fig.show()

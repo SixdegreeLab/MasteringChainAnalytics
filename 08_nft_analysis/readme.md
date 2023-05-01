@@ -171,16 +171,19 @@ uint256 constant receivedItemsHash_ptr = 0x60;
 ```sql
 -- 按时间排序，找出该合约最近的10笔交易
 with lastest_trades as (
-    select * from nft.trades 
-    WHERE nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544' -- azuki NFT的合约地址
-    order by block_time desc limit 10
-    -- block_time > now() - interval '24 h' --你也可以按时间排序
+    select * 
+    from nft.trades 
+    where nft_contract_address = 0xed5af388653567af2f388e6224dc7c4b3241c544 -- azuki NFT的合约地址
+    -- and block_time > now() - interval '24' hour --你也可以按时间排序
+    order by block_time desc
+    limit 10
 )
-SELECT
-    min(amount_original) as floor_price --直接获取最小值
+
+select min(amount_original) as floor_price --直接获取最小值
     -- percentile_cont(.05) within GROUP (order by amount_original) as floor_price --这么做是取最低和最高价之间5%分位数，防止一些过低的价格交易影响
-FROM lastest_trades
-where  currency_symbol IN ('ETH', 'WETH') AND number_of_items = 1 -- 这里可以按不同的链，不同的交易token进行过滤
+from lastest_trades
+where  currency_symbol IN ('ETH', 'WETH')
+    and cast(number_of_items as integer) = 1 -- 这里可以按不同的链，不同的交易token进行过滤
 ```
 
 参考链接：https://dune.com/queries/1660139
@@ -190,23 +193,25 @@ where  currency_symbol IN ('ETH', 'WETH') AND number_of_items = 1 -- 这里可�
 ```sql
 with total_volume as(
     SELECT
-        sum(amount_original) as `Total Trade Volume(ETH)`, --总成交量ETH
-        sum(amount_usd) as `Total Trade Volume(USD)`,      --总成交量USD
-        count(amount_original) as `Total Trade Tx`         --总交易笔数
+        sum(amount_original) as "Total Trade Volume(ETH)", --总成交量ETH
+        sum(amount_usd) as "Total Trade Volume(USD)",      --总成交量USD
+        count(amount_original) as "Total Trade Tx"         --总交易笔数
     FROM nft.trades
-    WHERE nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
+    WHERE nft_contract_address = 0xed5af388653567af2f388e6224dc7c4b3241c544
         -- AND currency_symbol IN ('ETH', 'WETH') 
 ),
+
 total_fee as (
     select 
-        sum(royalty_fee_amount) as `Total Royalty Fee(ETH)`,      --总版权税ETH
-        sum(royalty_fee_amount_usd) as `Total Royalty Fee(USD)`,  --总版权税USD
-        sum(platform_fee_amount) as `Total Platform Fee(ETH)`,    --总平台抽成ETH
-        sum(platform_fee_amount_usd) as `Total Platform Fee(USD)` --总平台抽成USD
+        sum(royalty_fee_amount) as "Total Royalty Fee(ETH)",      --总版权税ETH
+        sum(royalty_fee_amount_usd) as "Total Royalty Fee(USD)",  --总版权税USD
+        sum(platform_fee_amount) as "Total Platform Fee(ETH)",    --总平台抽成ETH
+        sum(platform_fee_amount_usd) as "Total Platform Fee(USD)" --总平台抽成USD
     from nft.fees 
-    WHERE nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
+    WHERE nft_contract_address = 0xed5af388653567af2f388e6224dc7c4b3241c544
     -- AND royalty_fee_currency_symbol IN ('ETH', 'WETH') 
 )
+
 select * from total_volume, total_fee
 ```
 
@@ -215,14 +220,14 @@ select * from total_volume, total_fee
 **每日/每月/每周成交量**
 
 ```sql
-    with hourly_trade_summary as (
+with hourly_trade_summary as (
     select date_trunc('day', block_time) as block_date, 
         sum(number_of_items) as items_traded,
         sum(amount_raw) / 1e18 as amount_raw_traded,
         sum(amount_usd) as amount_usd_traded
     from opensea.trades
-    where nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
-    -- and block_time > now() - interval '90 days'
+    where nft_contract_address = 0xed5af388653567af2f388e6224dc7c4b3241c544
+    -- and block_time > now() - interval '90' day
     group by 1
     order by 1
 )
@@ -247,16 +252,16 @@ order by block_date
 ```sql
 with nft_trade_details as ( --获取交易的买入卖出方详细信息表，卖出方是负数，买入方是
     select seller as trader,
-        -1 * number_of_items as hold_item_count
+        -1 * cast(number_of_items as integer) as hold_item_count
     from nft.trades
-    where nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
+    where nft_contract_address = 0xed5af388653567af2f388e6224dc7c4b3241c544
 
     union all
     
     select buyer as trader,
-        number_of_items as hold_item_count
+        cast(number_of_items as integer) as hold_item_count
     from nft.trades
-    where nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
+    where nft_contract_address = 0xed5af388653567af2f388e6224dc7c4b3241c544
 ),
 
 nft_traders as (
@@ -289,13 +294,13 @@ total_traders_count as (
 
 total_summary as (
     select 
-        0 as total_nft_count,   --TODO
+        0 as total_nft_count,
         count(*) as transaction_count,
         sum(number_of_items) as number_of_items_traded,
         sum(amount_raw) / 1e18 as eth_amount_traded,
         sum(amount_usd) as usd_amount_traded
     from opensea.trades
-    where nft_contract_address = '0xed5af388653567af2f388e6224dc7c4b3241c544'
+    where nft_contract_address = 0xed5af388653567af2f388e6224dc7c4b3241c544
 )
 
 select *

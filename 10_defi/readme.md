@@ -44,7 +44,7 @@ select block_date,
     count(distinct taker) as active_user_count,
     sum(amount_usd) as trade_amount
 from dex.trades
-where block_date >= '2022-10-01'
+where block_date >= date('2022-10-01')
 group by 1
 order by 1
 ```
@@ -59,7 +59,7 @@ with trade_summary as (
         sum(amount_usd) as trade_amount
     from dex.trades
     where blockchain = 'ethereum'
-        and block_date >= '2021-01-01'
+        and block_date >= date('2021-01-01')
         and token_pair <> 'POP-WETH' -- Exclude outlier that has wrong amount
     group by 1
     order by 1
@@ -70,7 +70,7 @@ user_initial_trade as (
         min(block_date) as initial_trade_date
     from dex.trades
     where blockchain = 'ethereum'
-        and block_date >= '2021-01-01'
+        and block_date >= date('2021-01-01')
         and token_pair <> 'POP-WETH' -- Exclude outlier that has wrong amount
     group by 1
 ),
@@ -135,7 +135,7 @@ select block_date,
     sum(amount_usd) as trade_amount
 from dex.trades
 where blockchain = 'ethereum'
-    and block_date >= '2021-01-01'
+    and block_date >= date('2021-01-01')
     and token_pair <> 'POP-WETH' -- Exclude outlier that has wrong amount
 group by 1, 2
 order by 1, 2
@@ -205,7 +205,7 @@ select block_date,
     count(distinct taker) as active_user_count,
     sum(amount_usd) as trade_amount
 from uniswap_ethereum.trades
-where block_date >= '2022-01-01'
+where block_date >= date('2022-01-01')
 group by 1
 order by 1
 ```
@@ -278,16 +278,16 @@ user_initial_trade as (
 ),
 
 user_status_detail as (
-    select coalesce(c.active_trade_month, date_trunc('month', p.active_trade_month + interval '45 days')) as trade_month,
+    select coalesce(c.active_trade_month, date_trunc('month', p.active_trade_month + interval '45' day)) as trade_month,
         coalesce(c.address, p.address) as address,
         (case when n.address is not null then 1 else 0 end) as is_new,
         (case when n.address is null and c.address is not null and p.address is not null then 1 else 0 end) as is_retained,
         (case when n.address is null and c.address is null and p.address is not null then 1 else 0 end) as is_churned,
         (case when n.address is null and c.address is not null and p.address is null then 1 else 0 end) as is_returned
     from monthly_active_user c
-    full join monthly_active_user p on p.address = c.address and p.active_trade_month = date_trunc('month', c.active_trade_month - interval '5 days')
+    full join monthly_active_user p on p.address = c.address and p.active_trade_month = date_trunc('month', c.active_trade_month - interval '5' day)
     left join user_initial_trade n on n.address = c.address and n.initial_trade_month = c.active_trade_month
-    where coalesce(c.active_trade_month, date_trunc('month', p.active_trade_month + interval '45 days')) < current_date
+    where coalesce(c.active_trade_month, date_trunc('month', p.active_trade_month + interval '45' day)) < current_date
 ),
 
 user_status_summary as (
