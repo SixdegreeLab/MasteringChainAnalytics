@@ -210,7 +210,7 @@ group by gap
 order by gap
 ```
 
-在CTE`num_series`中，我们使用`explode(sequence(1, 20))`来生成了一个从1到20点数字序列并且转换为20行，每行一个数字。然后在`bin_gap`中，我们通过JOIN两个CTE计算得到了每一个区间的低点价格值和高点价格值。使用`union all`集合添加了一个额外的高点价格值足够大的区间来覆盖其他交易记录。接下来`bucket_trade`就可以简化为只需要简单关联`bin_gap`并比较价格落入对应区间即可。整体上逻辑得到了简化而显得更加清晰易懂。
+在CTE`num_series`中，我们使用`unnest(sequence(1, 20)) as tbl(num)`来生成了一个从1到20点数字序列并且转换为20行，每行一个数字。然后在`bin_gap`中，我们通过JOIN两个CTE计算得到了每一个区间的低点价格值和高点价格值。使用`union all`集合添加了一个额外的高点价格值足够大的区间来覆盖其他交易记录。接下来`bucket_trade`就可以简化为只需要简单关联`bin_gap`并比较价格落入对应区间即可。整体上逻辑得到了简化而显得更加清晰易懂。
 
 以上查询的示例链接：
 - [https://dune.com/queries/1054461](https://dune.com/queries/1054461)

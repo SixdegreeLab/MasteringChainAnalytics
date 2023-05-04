@@ -6,8 +6,6 @@ Polygon的口号是“将世界带入以太坊”，Polygon 相信所有人都�
 
 本教程的数据看板：[Polygon Chain Overview](https://dune.com/sixdegree/polygon-chain-overview)
 
-在之前的教程中我们介绍了Dune SQL引擎。不过近日的测试发现Dune SQL引擎有时不够稳定，所以本教程仍然使用Spark SQL引擎。
-
 ## 区块链概况分析涉及的内容
 
 我们的目标是对整个Polygon区块链进行全面的分析以掌握其当前发展状态。分析内容包括：

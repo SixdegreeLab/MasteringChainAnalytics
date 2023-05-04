@@ -1,8 +1,8 @@
 # Dune SQL 查询引擎入门
 
-Dune 已经正式推出了其团队基于Trino（[https://trino.io/](https://trino.io/)）自研的查询引擎Dune SQL。本文介绍将Spark SQL编写的Query迁移到Dune SQL的一些主要修改、注意事项和细节。
+Dune 已经正式推出了其团队基于Trino（[https://trino.io/](https://trino.io/)）自研的查询引擎Dune SQL。本文介绍Dune SQL的一些常见查询语法、注意事项和细节。
 
-注：由于Dune已经宣布2023年下半年起将不再支持Spark SQL引擎，所以本篇教程将原有的Spark SQL相关的例子移除了。
+注：由于Dune已经宣布2023年下半年起将全面过渡到Dune SQL查询引擎，所以本篇教程将原有的所有Query全部升级到了Dune SQL 版本。
 
 ## Dune SQL 语法概览
 

@@ -188,9 +188,6 @@ order by 1, 2
 查询链接：
 - [https://dune.com/queries/1670196](https://dune.com/queries/1670196)
 
-注意：这里因为某些不确定的原因，在Spark SQL 版本查询引擎下出错。所以改用了Dune 新近推出的Dune SQL查询引擎。
-
-
 ## 单个DeFi项目的分析
 
 针对具体的单个DeFi项目，我们可以分析其活跃交易对、新的流动资金池数量、交易量、活跃用户等相关数据指标。以Uniswap 为例，从前面“DeFi魔法表”部分的查询可以找到Uniswap在Ethereum链上对应的魔法表是`uniswap_ethereum.trades`表。
