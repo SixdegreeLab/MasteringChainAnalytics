@@ -16,7 +16,7 @@
 
 ### 数据库的基本概念介绍
 
-**数据库（Database）**：数据库是结构化信息或数据的有序集合，是按照数据结构来组织、存储和管理数据的仓库。Dune平台目前提供了多个数据库，分别支持来自不同区块链的数据。本教程使用Dune平台的“Dune Engine V2 (Spark SQL)”数据库，通常被称为V2 Engine或者简称V2。与此对照，Dune平台支持的其他数据库也被统称为V1。
+**数据库（Database）**：数据库是结构化信息或数据的有序集合，是按照数据结构来组织、存储和管理数据的仓库。Dune平台目前提供了多个数据库，分别支持来自不同区块链的数据。本教程使用Dune平台的“v2 Dune SQL”数据库查询引擎。所有示例查询和引用的例子链接（第三方的query除外）均以更新到Dune SQL。
 
 **模式（Schema）**：同一个数据库中，可以定义多个模式。我们暂时可以将模式简单理解为数据表的拥有者（Owner）。不同的模式下可以存在相同名称的数据表。
 
@@ -49,6 +49,7 @@ ERC20代币表`tokens.erc20`的结构如下：
 
 ```sql
 select * from tokens.erc20
+limit 10
 ```
 
 ### Select 查询语句基本语法介绍
@@ -67,7 +68,7 @@ limit 返回记录数量
 
 **数据表**以`schema_name.table_name`的格式来指定，例如`tokens.erc20`。我们可以用`as alias_name`的语法给表指定一个别名，例如：`from tokens.erc20 as t`。这样就可以同一个查询中用别名`t`来访问表`tokens.erc20`和其中的字段。
 
-**筛选条件**用于按指定的条件筛选返回的数据。对于不同数据类型的字段，适用的筛选条件语法各有不同。字符串（`string`）类型的字段，可以用`=`，`like`等条件做筛选。日期时间（`datetime`）类型的字段可以用`>=`，`<=`，`between ... and ...`等条件做筛选。使用`like`条件时，可以用通配符`%`匹配一个或多个任意字符。多个筛选条件可以用`and`（表示必须同时满足）或`or`（表示满足任意一个条件即可）连接起来。
+**筛选条件**用于按指定的条件筛选返回的数据。对于不同数据类型的字段，适用的筛选条件语法各有不同。字符串（`varchar`）类型的字段，可以用`=`，`like`等条件做筛选。日期时间（`datetime`）类型的字段可以用`>=`，`<=`，`between ... and ...`等条件做筛选。使用`like`条件时，可以用通配符`%`匹配一个或多个任意字符。多个筛选条件可以用`and`（表示必须同时满足）或`or`（表示满足任意一个条件即可）连接起来。
 
 **排序字段**用于指定对查询结果集进行排序的判断依据，这里是一个或多个字段名称，加上可选的排序方向指示（`asc`表示升序，`desc`表示降序）。多个排序字段之间用英文逗号分隔。Order By排序子句还支持按照字段在Select子句中出现的位置来指定排序字段，比如`order by 1`表示按照Select子句中出现的第一个字段进行排序（默认升序）。
 
@@ -80,6 +81,7 @@ limit 返回记录数量
 ```sql
 select blockchain, contract_address, decimals, symbol   -- 逐个指定需要返回的列
 from tokens.erc20
+limit 10
 ```
 
 **添加筛选条件：**
@@ -88,6 +90,7 @@ from tokens.erc20
 select blockchain, contract_address, decimals, symbol
 from tokens.erc20
 where blockchain = 'ethereum'   -- 只返回以太坊区块链的ERC20代币信息
+limit 10
 ```
 
 **使用多个筛选条件：**
@@ -134,9 +137,9 @@ limit 10
 可以通过使用“as”子句给表、字段定义别名。别名对于表名（或字段名）较长、包含特殊字符或关键字等情况，或者需要对输出字段名称做格式化时，非常实用。别名经常用于计算字段、多表关联、子查询等场景中。
 
 ```sql
-select t.contract_address as `代币合约地址`,
-    t.decimals as `代币小数位数`,
-    t.symbol as `代币符号`
+select t.contract_address as "代币合约地址",
+    t.decimals as "代币小数位数",
+    t.symbol as "代币符号"
 from tokens.erc20 as t
 limit 10
 ```
@@ -144,9 +147,9 @@ limit 10
 
 ```sql
 -- 定义别名时，as 关键词可以省略
-select t.contract_address `代币合约地址`,
-    t.decimals `代币小数位数`,
-    t.symbol `代币符号`
+select t.contract_address "代币合约地址",
+    t.decimals "代币小数位数",
+    t.symbol "代币符号"
 from tokens.erc20 t
 limit 10
 ```
@@ -183,10 +186,10 @@ select now(),
 使用`interval '2 days'`这样的语法，我们可以指定一个时间间隔。支持多种不同的时间间隔表示方式，比如：`'12 hours'`，`'7 days'`，`'3 months'`, `'1 year'`等。时间间隔通常用来在某个日期时间值的基础上增加或减少指定的间隔以得到某个日期区间。
 
 ```sql
-select now() as current_time, 
-    (now() - interval '2 hours') as two_hours_ago, 
-    (now() - interval '2 days') as two_days_ago,
-    (current_date - interval '1 year') as one_year_ago
+select now() as right_now, 
+    (now() - interval '2' hour) as two_hours_ago, 
+    (now() - interval '2' day) as two_days_ago,
+    (current_date - interval '1' year) as one_year_ago
 ```
 
 #### Concat连接字符串
@@ -200,11 +203,12 @@ select concat('Hello ', 'world!') as hello_world,
 
 #### Cast转换字段数据类型
 
-SQL查询种的某些操作要求相关的字段的数据类型一致，比如concat()函数就需要参数都是字符串`string`类型。如果需要将不同类型的数据连接起来，我们可以用`cast()`函数强制转换为需要的数据类型，比如：`cast(25 as string)`将数字25转换为字符串“25”。还可以使用`::data_type`操作符方式完成类型转换，比如：`'123'::numeric`将字符串转换为数值类型。
+SQL查询种的某些操作要求相关的字段的数据类型一致，比如concat()函数就需要参数都是字符串`varchar`类型。如果需要将不同类型的数据连接起来，我们可以用`cast()`函数强制转换为需要的数据类型，比如：`cast(25 as string)`将数字25转换为字符串“25”。还可以使用`data_type 'value string'`操作符方式完成类型转换，比如：`integer '123'`将字符串转换为数值类型。
 
 ```sql
-select (cast(25 as string) || ' users') as user_counts,
-    ('123'::numeric + 55) as digital_count
+select (cast(25 as varchar) || ' users') as user_counts,
+    integer '123' as intval,
+    timestamp '2023-04-28 20:00:00' as dt_time
 ```
 
 #### Power求幂
@@ -270,6 +274,7 @@ from tokens.erc20 a
 inner join tokens.erc20 b on a.symbol = b.symbol
 where a.blockchain = 'ethereum'
     and b.blockchain = 'bnb'
+limit 100
 ```
 
 #### 集合（Union）
@@ -288,6 +293,8 @@ union all
 select contract_address, symbol, decimals
 from tokens.erc20
 where blockchain = 'bnb'
+
+limit 100
 ```
 
 #### Case 语句

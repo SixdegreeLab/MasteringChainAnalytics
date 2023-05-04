@@ -56,7 +56,7 @@ select * from token_plan
 
 之前在讲解计算ERC20代币价格时，我们介绍过从事件日志原始表（logs）解析计算价格的例子。这里再举例说明一下其他需要直接从logs解析数据的情况。当遇到智能合约未被Dune解析，或者因为解析时使用的ABI数据不完整导致没有生成对应事件的解析表的情况，我们就可能需要直接从事件日志表解析查询数据。以Lens 协议为例，我们发现在Lens的智能合约源代码中（[Lens Core](https://github.com/lens-protocol/core)），几乎每个操作都有发生生成事件日志，但是Dune解析后的数据表里面仅有少数几个Event相关的表。进一步的研究发现时因为解析时使用的ABI缺少了这些事件的定义。我们当然可以重新生成或者找Lens团队获取完整的ABI，提交给Dune去再次解析。不过这里的重点是如何从未解析的日志里面提取数据。
 
-在Lens智能合约的源代码里，我们看到了`FollowNFTTransferred`事件定义，[代码链接](https://github.com/lens-protocol/core/blob/main/contracts/libraries/Events.sol#L347)。代码里面也有`Followed`事件，但是因为其参数用到了数组，解析变得复杂，所以这里用前一个事件为例。从事件名称可以推断，当一个用户关注某个Lens Profile时，将会生成一个对应的关注NFT （FollowNFT）并把这个NFT转移到关注者的地址。那我们可以找到一个关注的交易记录，来看看里面的logs，示例交易：[https://polygonscan.com/tx/0x30311c3eb32300c8e7e173c20a6d9c279c99d19334be8684038757e92545f8cf](https://polygonscan.com/tx/0x30311c3eb32300c8e7e173c20a6d9c279c99d19334be8684038757e92545f8cf)。在浏览器打开这个交易记录页面并切换到“Logs”标签，我们可以看到一共有4个事件日志。对于一些事件，区块链浏览器可以显示原始的事件名称。我们查看的这个Lens交易没有显示原始的名称，那我们怎么确定哪一个是对应`FollowNFTTransferred`事件日志记录的呢？这里我们可以结合第三方的工具，通过生成事件定义的keccak256哈希值来比较。[Keccak-256](https://emn178.github.io/online-tools/keccak_256.html)这个页面可以在线生成Keccak-256哈希值。我们将源代码中`FollowNFTTransferred`事件的定义整理为精简模式（去除参数名称，去除空格），得到`FollowNFTTransferred(uint256,uint256,address,address,uint256)`，然后将其粘贴到Keccak-256工具页面，生成的哈希值为`4996ad2257e7db44908136c43128cc10ca988096f67dc6bb0bcee11d151368fb`。
+在Lens智能合约的源代码里，我们看到了`FollowNFTTransferred`事件定义，[代码链接](https://github.com/lens-protocol/core/blob/main/contracts/libraries/Events.sol#L347)。代码里面也有`Followed`事件，但是因为其参数用到了数组，解析变得复杂，所以这里用前一个事件为例。从事件名称可以推断，当一个用户关注某个Lens Profile时，将会生成一个对应的关注NFT （FollowNFT）并把这个NFT转移到关注者的地址。那我们可以找到一个关注的交易记录，来看看里面的logs，示例交易：[https://polygonscan.com/tx/0x30311c3eb32300c8e7e173c20a6d9c279c99d19334be8684038757e92545f8cf](https://polygonscan.com/tx/0x30311c3eb32300c8e7e173c20a6d9c279c99d19334be8684038757e92545f8cf)。在浏览器打开这个交易记录页面并切换到“Logs”标签，我们可以看到一共有4个事件日志。对于一些事件，区块链浏览器可以显示原始的事件名称。我们查看的这个Lens交易没有显示原始的名称，那我们怎么确定哪一个是对应`FollowNFTTransferred`事件日志记录的呢？这里我们可以结合第三方的工具，通过生成事件定义的keccak256哈希值来比较。[Keccak-256](https://emn178.github.io/online-tools/keccak_256.html)这个页面可以在线生成Keccak-256哈希值。我们将源代码中`FollowNFTTransferred`事件的定义整理为精简模式（去除参数名称，去除空格），得到`FollowNFTTransferred(uint256,uint256,address,address,uint256)`，然后将其粘贴到Keccak-256工具页面，生成的哈希值为`4996ad2257e7db44908136c43128cc10ca988096f67dc6bb0bcee11d151368fb`。（最新的Dune解析表已经有Lens项目的完整事件表，这里仅作示例用途）
 
 ![image_08.png](img/image_08.png)
 
@@ -69,14 +69,14 @@ select * from token_plan
 ```sql
 select block_time,
     tx_hash,
-    conv(substring(topic2, 3), 16, 10) as profile_id, -- 关注的Profile ID
-    conv(substring(topic3, 3), 16, 10) as follower_token_id, -- 关注者的NFT Token ID
-    '0x' || right(substring(data, 3, 64), 40) as from_address, -- NFT转出地址
-    '0x' || right(substring(data, 3 + 64, 64), 40) as to_address -- NFT转入地址（也就是关注者的地址）
+    bytearray_to_uint256(topic1) as profile_id, -- 关注的Profile ID
+    bytearray_to_uint256(topic2) as follower_token_id, -- 关注者的NFT Token ID
+    bytearray_ltrim(bytearray_substring(data, 1, 32)) as from_address2, -- NFT转出地址
+    bytearray_ltrim(bytearray_substring(data, 1 + 32, 32)) as to_address2 -- NFT转入地址（也就是关注者的地址）
 from polygon.logs
-where contract_address = '0xdb46d1dc155634fbc732f92e853b10b288ad5a1d' -- Lens合约地址
-    and block_time >= '2022-05-01' -- Lens合约部署在此日期之后，此条件用于改善查询速度
-    and topic1 = '0x4996ad2257e7db44908136c43128cc10ca988096f67dc6bb0bcee11d151368fb'   -- 事件主题 FollowNFTTransferred
+where contract_address = 0xdb46d1dc155634fbc732f92e853b10b288ad5a1d -- Lens合约地址
+    and block_time >= date('2022-05-01') -- Lens合约部署在此日期之后，此条件用于改善查询速度
+    and topic0 = 0x4996ad2257e7db44908136c43128cc10ca988096f67dc6bb0bcee11d151368fb   -- 事件主题 FollowNFTTransferred
 limit 10
 ```
 
@@ -89,24 +89,32 @@ limit 10
 研究NFT项目时，我们可能需要分析某个时间段内某个NFT项目等所有交易的价格分布情况，也就是看下每一个价格区间内有多少笔交易记录。通常我们会设置最大成交价格和最小成交价格（通过输入或者从成交数据中查询并对异常值做适当处理），然后将这个范围内的价格划分为N个区间，再统计每个区间内的交易数量。下面是逻辑简单但是比较繁琐的查询示例：
 
 ```sql
+-- nft持仓成本分布
+-- 0x306b1ea3ecdf94ab739f1910bbda052ed4a9f949 beanz
+-- 0xED5AF388653567Af2F388E6224dC7C4b3241C544 azuki
 with contract_transfer as (
-    select * from nft.trades where
-    nft_contract_address = lower('0xe361f10965542ee57D39043C9c3972B77841F581')
-    and "to" !='\x0000000000000000000000000000000000000000'
+    select * 
+    from nft.trades
+    where nft_contract_address = 0xe361f10965542ee57D39043C9c3972B77841F581
+        and tx_to != 0x0000000000000000000000000000000000000000
+        and amount_original is not null
 ),
+
 transfer_rn as (
-    select row_number() over (partition by token_id order by block_time desc) as rn, * from contract_transfer
+    select row_number() over (partition by token_id order by block_time desc) as rn, *
+    from contract_transfer
 ),
+
 latest_transfer as (
-    select * from transfer_rn where rn = 1 
+    select * from transfer_rn
+    where rn = 1 
 ),
 
 min_max as (
-    select ({{max_price}}-{{min_price}})/20.0 as bin
+    select (cast({{max_price}} as double) - cast({{min_price}} as double))/20.0 as bin
 ),
 
-bucket_trade as (
-    select *,
+bucket_trade as (select *,
     case 
       when amount_original between {{min_price}}+0*bin and {{min_price}}+1*bin then 1*bin
       when amount_original between {{min_price}}+1*bin and {{min_price}}+2*bin then 2*bin
@@ -132,32 +140,42 @@ bucket_trade as (
     end as gap
   from latest_transfer,min_max
  )
- 
-select gap, count(*) as num from bucket_trade group by gap order by gap 
+
+select gap, count(*) as num
+from bucket_trade
+group by gap
+order by gap 
 ```
 
 这个例子中，我们定义了两个参数`min_price`和`max_price`，将他们的差值等分为20份作为分组价格区间，然后使用了一个冗长的CASE语句来统计每个区间内的交易数量。想象一下如果需要分成50组的情况。有没有更简单的方法呢？答案是有。先看代码：
 
 ```sql
 with contract_transfer as (
-    select * from nft.trades where
-    nft_contract_address = lower('0xe361f10965542ee57D39043C9c3972B77841F581')
-    and "to" !='\x0000000000000000000000000000000000000000'
+    select * 
+    from nft.trades
+    where nft_contract_address = 0xe361f10965542ee57D39043C9c3972B77841F581
+        and tx_to != 0x0000000000000000000000000000000000000000
+        and amount_original is not null
 ),
+
 transfer_rn as (
-    select row_number() over (partition by token_id order by block_time desc) as rn, * from contract_transfer
+    select row_number() over (partition by token_id order by block_time desc) as rn, *
+    from contract_transfer
 ),
+
 latest_transfer as (
-    select * from transfer_rn where rn = 1 
+    select *
+    from transfer_rn
+    where rn = 1 
 ),
 
 min_max as (
-    select ({{max_price}}-{{min_price}})/20.0 as bin
+    select (cast({{max_price}} as double) - cast({{min_price}} as double))/20.0 as bin
 ),
 
 -- 生成一个1到20数字的单列表
 num_series as (
-    select explode(sequence(1, 20)) as num
+    select num from unnest(sequence(1, 20)) as tbl(num)
 ),
 
 -- 生成分组价格区间的开始和结束价格
@@ -186,10 +204,13 @@ bucket_trade as (
       join bin_gap b on t.amount_original >= b.price_lower and t.amount_original < b.price_upper
  )
 
-select gap, count(*) as num from bucket_trade group by gap order by gap
+select gap, count(*) as num
+from bucket_trade
+group by gap
+order by gap
 ```
 
-在CTE`num_series`中，我们使用`explode(sequence(1, 20))`来生成了一个从1到20点数字序列并且转换为20行，每行一个数字。然后在`bin_gap`中，我们通过JOIN两个CTE计算得到了每一个区间的低点价格值和高点价格值。使用`union all`集合添加了一个额外的高点价格值足够大的区间来覆盖其他交易记录。接下来`bucket_trade`就可以简化为只需要简单关联`bin_gap`并比较价格落入对应区间即可。整体上逻辑得到了简化而显得更加清晰易懂。
+在CTE`num_series`中，我们使用`unnest(sequence(1, 20)) as tbl(num)`来生成了一个从1到20点数字序列并且转换为20行，每行一个数字。然后在`bin_gap`中，我们通过JOIN两个CTE计算得到了每一个区间的低点价格值和高点价格值。使用`union all`集合添加了一个额外的高点价格值足够大的区间来覆盖其他交易记录。接下来`bucket_trade`就可以简化为只需要简单关联`bin_gap`并比较价格落入对应区间即可。整体上逻辑得到了简化而显得更加清晰易懂。
 
 以上查询的示例链接：
 - [https://dune.com/queries/1054461](https://dune.com/queries/1054461)
@@ -202,69 +223,49 @@ select gap, count(*) as num from bucket_trade group by gap order by gap
 ```sql
 select tokens, deltas, evt_tx_hash
 from balancer_v2_arbitrum.Vault_evt_PoolBalanceChanged
-where evt_tx_hash = '0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c'
+where evt_tx_hash = 0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c
 ```
 
 上面查询返回的前两个字段都是数组类型（我处理了一下，显示如下图）：
 
 ![image_10.png](img/image_10.png)
 
-我们可以使用`lateral view explode(tokens) t as token`来将`tokens`数组字段拆分为多行：
+我们可以使用`cross join unnest(tokens) as tbl1(token)`来将`tokens`数组字段拆分为多行：
 
 ```sql
 select evt_tx_hash, deltas, token   -- 返回拆分后的字段
 from balancer_v2_arbitrum.Vault_evt_PoolBalanceChanged
-lateral view explode(tokens) as token   -- 拆分为多行，新字段命名为 token
-where evt_tx_hash = '0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c'
+cross join unnest(tokens) as tbl1(token)   -- 拆分为多行，新字段命名为 token
+where evt_tx_hash = 0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c
 ```
 
-同样我们可以对`deltas`字段进行拆分。但是因为每一个`lateral view`都会将拆分得到的值分别附加到查询原来的结果集，如果同时对这两个字段执行操作，我们就会得到一个类似笛卡尔乘积的错误结果集。查询代码和输出结果如下图所示：
+同样我们可以对`deltas`字段进行拆分。但是因为每一个`cross join`都会将拆分得到的值分别附加到查询原来的结果集，如果同时对这两个字段执行操作，我们就会得到一个类似笛卡尔乘积的错误结果集。查询代码和输出结果如下图所示：
 
 ```sql
 select evt_tx_hash, token, delta
 from balancer_v2_arbitrum.Vault_evt_PoolBalanceChanged
-lateral view explode(tokens) as token
-lateral view explode(deltas) as delta
-where evt_tx_hash = '0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c'
+cross join unnest(tokens) as tbl1(token)   -- 拆分为多行，新字段命名为 token
+cross join unnest(deltas) as tbl2(delta)   -- 拆分为多行，新字段命名为 delta
+where evt_tx_hash = 0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c
 ```
 
 ![image_11.png](img/image_11.png)
 
-要避免重复，我们可以使用另一个方法`posexplode()`。这个方法在拆分数组元素时会同时输出对应的索引位置。通过添加索引位置必须匹配的过滤条件，我们可以得到正确的结果集：
+要避免重复，正确的做法是在同一个`unnest()`函数里面同时对多个字段进行拆分，返回一个包括多个对应新字段的临时表。
 
 ```sql
 select evt_tx_hash, token, delta
 from balancer_v2_arbitrum.Vault_evt_PoolBalanceChanged
-lateral view posexplode(tokens) as pos1, token -- 拆分时同时取得索引位置
-lateral view posexplode(deltas) as pos2, delta -- 拆分时同时取得索引位置
-where evt_tx_hash = '0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c'
-    and pos1 = pos2 -- 只返回索引位置相同的记录
+cross join unnest(tokens, deltas) as tbl(token, delta)   -- 拆分为多行，新字段命名为 token 和 delta
+where evt_tx_hash = 0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c
 ```
 
 结果如下图所示：
 
 ![image_12.png](img/image_12.png)
 
-上面这种方式，当遇到需要同时从更多个数组字段提取相关数据时，会更加复杂，也容易引入错误。另外一个可行的方式是使用`array_zip()`函数将多个数组字段合并到一起，生成一个新数组，数组的每一个元素是一个Struct结构，其中的每个元素对应原始数组中的一个值。然后我们可以使用`struct_name.field_name`的语法来访问结构中的变量。上面的查询可以修改为（输出字段略有不同，方便对比）：
-
-```sql
-select evt_tx_hash, item, idx1, 
-    item.tokens as token, 
-    item.deltas as delta,
-    tokens, deltas
-from (
-    select evt_tx_hash,
-        tokens, deltas, 
-        arrays_zip(tokens, deltas) as arr
-    from balancer_v2_arbitrum.Vault_evt_PoolBalanceChanged
-    where evt_tx_hash = '0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c'
-)
-lateral view posexplode(arr) AS idx1, item
-```
-
 以上查询的示例链接：
 - [https://dune.com/queries/1654079](https://dune.com/queries/1654079)
-- [https://dune.com/queries/1387460](https://dune.com/queries/1387460)
 
 
 ## 读取JSON字符串数据
@@ -272,44 +273,36 @@ lateral view posexplode(arr) AS idx1, item
 有的智能合约的解析表里，包含多个参数值的对象被序列化为json字符串格式保存，比如我们之前介绍过Lens的创建Profile事件。我们可以使用`:`来直接读取json字符串中的变量。例如：
 
 ```sql
-select vars:to as user_address, -- 读取json字符串中的用户地址
-    vars:handle as handle_name, -- 读取json字符串中的用户昵称
+select  json_value(vars, 'lax $.to') as user_address, -- 读取json字符串中的用户地址
+     json_value(vars, 'lax $.handle') as handle_name, -- 读取json字符串中的用户昵称
     call_block_time,
     output_0 as profile_id,
     call_tx_hash
 from lens_polygon.LensHub_call_createProfile
 where call_success = true   
+limit 100
 ```
 
-另外一种方式是使用`get_json_object()`函数来提取对应数据。举例如下：
+另外的方式是使用`json_query()`或`json_extract()`函数来提取对应数据。当需要从JSON字符串中提取数组类型的值时，使用`json_extract()`函数才能支持类型转换。举例如下：
 
 ```sql
-select block_time, 
-    tx_hash,
-    get_json_object(txData, '$.receivingChainTxManagerAddress') as receivingChainTxManagerAddress2,
-    get_json_object(txData, '$.sendingAssetId') as sendingAssetId2,
-    get_json_object(txData, '$.receivingChainId') as receivingChainId2,
-    get_json_object(txData, '$.amount') as amount2
-from (
-    SELECT date_trunc('minute', t.evt_block_time) as block_time,
-        date_trunc('day', t.evt_block_time) as block_date,
-        t.user as address,
-        get_json_object(t.args, '$.txData') as txData,
-        t.args,
-	    t.evt_tx_hash as tx_hash
-    FROM xpollinate_ethereum.TransactionManager_evt_TransactionFulfilled t
-    where t.evt_block_time >= '2022-11-01'
-    limit 10
-) 
+select
+json_query(vars, 'lax $.follower') AS follower, -- single value
+json_query(vars, 'lax $.profileIds') AS profileIds, -- still string
+from_hex(cast(json_extract(vars,'$.follower') as varchar)) as follower2, -- cast to varbinary
+cast(json_extract(vars,'$.profileIds') as array(integer)) as profileIds2, -- cast to array
+vars
+from lens_polygon.LensHub_call_followWithSig
+where cardinality(output_0) > 1
+limit 10
 ```
-
-读取json字符串有一个特殊的情况不太好处理，就是如果里面的值包括了数组，无法直接转换为数组。这个我们在之前的“实践案例：制作Lens Protocol的数据看板（二）”教程的“关注数据分析”部分有介绍过例子，大家可以参考。
 
 以上查询的示例链接：
 - [https://dune.com/queries/1562662](https://dune.com/queries/1562662)
 - [https://dune.com/queries/941978](https://dune.com/queries/941978)
 - [https://dune.com/queries/1554454](https://dune.com/queries/1554454)
 
+Dune SQL (Trino 引擎) JSON相关函数的详细帮助可以查看：https://trino.io/docs/current/functions/json.html 
 
 ## SixDegreeLab介绍
 

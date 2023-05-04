@@ -60,10 +60,10 @@ Lens上的典型使用场景包括：
 
 ```sql
 select count(*) as transaction_count,
-    count(distinct `from`) as user_count    -- count unique users
+    count(distinct "from") as user_count    -- count unique users
 from polygon.transactions
-where `to` = '0xdb46d1dc155634fbc732f92e853b10b288ad5a1d'   -- LensHub
-    and block_time >= '2022-05-16'  -- contract creation date
+where "to" = 0xdb46d1dc155634fbc732f92e853b10b288ad5a1d   -- LensHub
+    and block_time >= date('2022-05-16')  -- contract creation date
 ```
 
 创建一个新的查询，使用上面的SQL代码，运行查询得到结果后，保存Query。然后为其添加两个`Counter`类型到可视化图表，标题分别设置为“Lens Total Transactions”和“Lens Total Users”。
@@ -85,10 +85,10 @@ where `to` = '0xdb46d1dc155634fbc732f92e853b10b288ad5a1d'   -- LensHub
 ```sql
 select date_trunc('day', block_time) as block_date,
     count(*) as transaction_count,
-    count(distinct `from`) as user_count
+    count(distinct "from") as user_count
 from polygon.transactions
-where `to` = '0xdb46d1dc155634fbc732f92e853b10b288ad5a1d'   -- LensHub
-    and block_time >= '2022-05-16'  -- contract creation date
+where "to" = 0xdb46d1dc155634fbc732f92e853b10b288ad5a1d   -- LensHub
+    and block_time >= date('2022-05-16')  -- contract creation date
 group by 1
 order by 1
 ```
@@ -103,10 +103,10 @@ order by 1
 with daily_count as (
     select date_trunc('day', block_time) as block_date,
         count(*) as transaction_count,
-        count(distinct `from`) as user_count
+        count(distinct "from") as user_count
     from polygon.transactions
-    where `to` = '0xdb46d1dc155634fbc732f92e853b10b288ad5a1d'   -- LensHub
-        and block_time >= '2022-05-16'  -- contract creation date
+    where "to" = 0xdb46d1dc155634fbc732f92e853b10b288ad5a1d   -- LensHub
+        and block_time >= date('2022-05-16')  -- contract creation date
     group by 1
     order by 1
 )
@@ -180,25 +180,25 @@ Lens致力于打造一个社交图谱生态系统，每个创作者可以给自�
 
 使用下面的SQL，我们可以获取已注册Lens域名的详细信息：
 ```sql
-select vars:to as user_address,
-    vars:handle as handle_name,
-    replace(vars:handle, '.lens', '') as short_handle_name,
+select json_value(vars, 'lax $.to') as user_address,
+    json_value(vars, 'lax $.handle')  as handle_name,
+    replace(json_value(vars, 'lax $.handle') , '.lens', '') as short_handle_name,
     call_block_time,
     output_0 as profile_id,
     call_tx_hash
 from lens_polygon.LensHub_call_createProfile
-where call_success = true   
+where call_success = true
 ```
 
 为了统计不同长度、不同类型（纯数字、纯字母、混合）Lens域名的数量以及各类型下已注册域名的总数量，我们可以将上面的查询放到一个CTE中。使用CTE的好处是可以简化逻辑（你可以按顺序分别调试、测试每一个CTE）。同时，CTE一经定义，就可以在同一个查询的后续SQL脚本中多次使用，非常便捷。鉴于查询各类域名的已注册总数量和对应不同字符长度的已注册数量都基于上面的查询，我们可以在同一个查询中将它们放到一起。因为前述统计都需要区分域名类型，我们在这个查询中增加了一个字段`handle_type`来代表域名的类型。修改后的查询代码如下：
 
 ```sql
 with profile_created as (
-    select vars:to as user_address,
-        vars:handle as handle_name,
-        replace(vars:handle, '.lens', '') as short_name,
-        (case when replace(vars:handle, '.lens', '') rlike '^[0-9]+$' then 'Pure Digits'
-            when replace(vars:handle, '.lens', '') rlike '^[a-z]+$' then 'Pure Letters'
+    select json_value(vars, 'lax $.to') as user_address,
+        json_value(vars, 'lax $.handle') as handle_name,
+        replace(json_value(vars, 'lax $.handle'), '.lens', '') as short_name,
+        (case when regexp_like(replace(json_value(vars, 'lax $.handle'), '.lens', ''), '^[0-9]+$') then 'Pure Digits'
+            when regexp_like(replace(json_value(vars, 'lax $.handle'), '.lens', ''), '^[a-z]+$') then 'Pure Letters'
             else 'Mixed'
         end) as handle_type,
         call_block_time,
@@ -223,7 +223,7 @@ profiles_total as (
     from profile_created
 )
 
-select cast(name_length as string) || ' Chars' as name_length_type,
+select cast(name_length as varchar) || ' Chars' as name_length_type,
     handle_type,
     name_count,
     total_profile_count,
@@ -262,9 +262,9 @@ order by handle_type, name_length
 
 ```sql
 with profile_created as (
-    select vars:to as user_address,
-        vars:handle as handle_name,
-        replace(vars:handle, '.lens', '') as short_name,
+    select json_value(vars, 'lax $.to') as user_address,
+        json_value(vars, 'lax $.handle') as handle_name,
+        replace(json_value(vars, 'lax $.handle'), '.lens', '') as short_name,
         call_block_time,
         output_0 as profile_id,
         call_tx_hash
@@ -301,8 +301,8 @@ where short_name like '%{{name_contains}}%' -- 名称包含输入的字符串的
 ```sql
 where short_name like '%{{name_contains}}%' -- 名称包含输入的字符串的域名
     and length(short_name) = cast('{{name_length}}' as integer) -- 域名长度等于选择的长度值
-    and (case when '{{name_pattern}}' = 'Pure Digits' then short_name rlike '^[0-9]+$'
-            when '{{name_pattern}}' = 'Pure Letters' then short_name rlike '^[a-z]+$'
+    and (case when '{{name_pattern}}' = 'Pure Digits' then regexp_like(short_name, '^[0-9]+$')
+            when '{{name_pattern}}' = 'Pure Letters' then regexp_like(short_name, '^[a-z]+$')
             else 1 = 1
         end)
 ```
@@ -311,9 +311,9 @@ where short_name like '%{{name_contains}}%' -- 名称包含输入的字符串的
 
 ```sql
 with profile_created as (
-    select vars:to as user_address,
-        vars:handle as handle_name,
-        replace(vars:handle, '.lens', '') as short_name,
+    select json_value(vars, 'lax $.to') as user_address,
+        json_value(vars, 'lax $.handle') as handle_name,
+        replace(json_value(vars, 'lax $.handle'), '.lens', '') as short_name,
         call_block_time,
         output_0 as profile_id,
         call_tx_hash
@@ -325,7 +325,7 @@ select call_block_time,
     profile_id,
     handle_name,
     short_name,
-    '<a href=https://polygonscan.com/tx/' || call_tx_hash || ' target=_blank>Polyscan</a>' as link,
+    '<a href=https://polygonscan.com/tx/' || cast(call_tx_hash as varchar) || ' target=_blank>Polyscan</a>' as link,
     call_tx_hash
 from profile_created
 where (case when '{{name_contains}}' <> 'keyword' then short_name like '%{{name_contains}}%' else 1 = 1 end)
@@ -333,8 +333,8 @@ where (case when '{{name_contains}}' <> 'keyword' then short_name like '%{{name_
             when cast('{{name_length}}' as integer) >= 20 then length(short_name) >= 20
             else length(short_name) = cast('{{name_length}}' as integer)
         end)
-    and (case when '{{name_pattern}}' = 'Pure Digits' then short_name rlike '^[0-9]+$'
-            when '{{name_pattern}}' = 'Pure Letters' then short_name rlike '^[a-z]+$'
+    and (case when '{{name_pattern}}' = 'Pure Digits' then regexp_like(short_name, '^[0-9]+$')
+            when '{{name_pattern}}' = 'Pure Letters' then regexp_like(short_name, '^[a-z]+$')
             else 3 = 3
         end)
 order by call_block_time desc

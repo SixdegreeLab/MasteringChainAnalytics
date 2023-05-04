@@ -1,12 +1,10 @@
 # Polygon区块链概况分析
 
-Dune 平台一直在快速发展之中，目前Dune V2已经支持10个主流区块链，包括Ethereum，BNB，Polygon，Fantom等Layer 1公链和Arbitrum，Optimism等致力于扩展Ethereum的Layer 2区块链。本教程中我们一起来探讨如何入手分析一个区块链的概况，以Polygon区块链为分析对象。
+Dune 平台一直在快速发展之中，目前已经支持10个主流区块链，包括Ethereum，BNB，Polygon，Fantom等Layer 1公链和Arbitrum，Optimism等致力于扩展Ethereum的Layer 2区块链。本教程中我们一起来探讨如何入手分析一个区块链的概况，以Polygon区块链为分析对象。
 
 Polygon的口号是“将世界带入以太坊”，Polygon 相信所有人都可以使用 Web3。Polygon是一个去中心化的以太坊扩展平台，使开发人员能够以低交易费用构建可扩展的用户友好型DAPP，而不会牺牲安全性。
 
 本教程的数据看板：[Polygon Chain Overview](https://dune.com/sixdegree/polygon-chain-overview)
-
-在之前的教程中我们介绍了Dune SQL引擎。不过近日的测试发现Dune SQL引擎有时不够稳定，所以本教程仍然使用Spark SQL引擎。
 
 ## 区块链概况分析涉及的内容
 
@@ -25,14 +23,14 @@ Polygon的口号是“将世界带入以太坊”，Polygon 相信所有人都�
 ```sql
 select count(*) / 1e6 as blocks_count,
    min(time) as min_block_time,
-   count(*) / ((unix_timestamp(Now()) - unix_timestamp(min(time))) / 60) as avg_block_per_minute,
+   count(*) / ((to_unixtime(Now()) - to_unixtime(min(time))) / 60) as avg_block_per_minute,
    sum(gas_used * coalesce(base_fee_per_gas, 1)) / 1e18 as total_gas_used,
    avg(gas_used * coalesce(base_fee_per_gas, 1)) / 1e18 as average_gas_used
 from polygon.blocks
 ```
 
 SQL说明：
-1. 使用`unix_timestamp()`函数，可以将日期时间转换为Unix Timestamp 数值，我们就能计算出两个日期时间值中间的秒数，然后用它来计算平均每分钟的新区块数量。
+1. 使用`to_unixtime()`函数，可以将日期时间转换为Unix Timestamp 数值，我们就能计算出两个日期时间值中间的秒数，然后用它来计算平均每分钟的新区块数量。与之对应的函数是`from_unixtime()`。
 2. `gas_used`是消耗的gas 数量，`base_fee_per_gas`是每单位gas的单价，二者相乘可以得到消耗的gas费用。Polygon的原生代币MATIC的小数位数是18位，除以`1e18`则得到最终的MATIC金额。
 
 将此查询结果分别添加为Counter类型的可视化图表。添加到数据看板中。显示效果如下：
@@ -87,14 +85,14 @@ order by block_date
 with transactions_detail as (
     select block_time,
         hash,
-        `from` as address
+        "from" as address
     from polygon.transactions
 
     union all
 
     select block_time,
         hash,
-        `to` as address
+        "to" as address
     from polygon.transactions
 )
 
@@ -115,14 +113,14 @@ from transactions_detail
 with transactions_detail as (
     select block_time,
         hash,
-        `from` as address
+        "from" as address
     from polygon.transactions
 
     union all
 
     select block_time,
         hash,
-        `to` as address
+        "to" as address
     from polygon.transactions
 )
 
@@ -150,13 +148,13 @@ order by 1
 ```sql
 with users_details as (
     select block_time,
-        `from` as address
+        "from" as address
     from polygon.transactions
     
     union all
     
     select block_time,
-        `to` as address
+        "to" as address
     from polygon.transactions
 ),
 
@@ -234,19 +232,19 @@ order by 1
 
 ```sql
 with polygon_transfer_raw as (
-    select `from` as address, (-1) * value as amount
+    select "from" as address, (-1) * cast(value as decimal) as amount
     from polygon.traces
     where call_type = 'call'
         and success = true
-        and value > 0
+        and value > uint256 '0'
     
     union all
     
-    select `to` as address, value as amount
+    select "to" as address, cast(value as decimal) as amount
     from polygon.traces
     where call_type = 'call'
         and success = true
-        and value > 0
+        and value > uint256 '0'
 )
 
 select address,
@@ -256,6 +254,8 @@ group by 1
 order by 2 desc
 limit 1000
 ```
+
+上面查询中的注意事项：`polygon.traces`表中的`value`字段是`uint256`类型，这是Dune SQL自定义的类型，如果直接和数值0进行比较将会遇到类型不匹配不能比较的错误。所以我们用`uint256 '0'`这样的语法将数值0转换为相同类型再比较。也可以用`cast(0 as uint256)`这样的类型转换函数。当然也可以把`value`的值转换为double、decimal、bigint等再比较，但是此时需要注意可能出现数据溢出的问题。
 
 我们还可以在上面查询的基础上，分析一下这头部1000个地址持有MATIC Token 的分布情况。Fork上面的查询，稍作修改。
 
@@ -303,6 +303,7 @@ select type,
     count(*) / 1e6 as transactions_count
 from polygon.traces
 where type in ('create', 'suicide')
+    and block_time >= date('2023-01-01') -- 这里为了性能考虑加了日期条件
 group by 1
 order by 1
 ```
@@ -352,7 +353,7 @@ order by block_date
 
 ```sql
 with contract_summary as (
-    select `to` as contract_address,
+    select "to" as contract_address,
         count(*) as transaction_count
     from polygon.transactions
     where success = true
@@ -362,7 +363,7 @@ with contract_summary as (
 )
 
 select contract_address,
-    '<a href=https://polygonscan.com/address/' || contract_address || ' target=_blank>PolygonScan</a>' as link,
+    '<a href=https://polygonscan.com/address/' || cast(contract_address as varchar) || ' target=_blank>PolygonScan</a>' as link,
     transaction_count
 from contract_summary
 order by transaction_count desc
@@ -382,7 +383,7 @@ order by transaction_count desc
 
 ```sql
 with top_contracts as (
-    select `to` as contract_address,
+    select "to" as contract_address,
         count(*) as transaction_count
     from polygon.transactions
     where success = true
@@ -395,7 +396,7 @@ select date_trunc('day', block_time) as block_date,
     contract_address,
     count(*) as transaction_count
 from polygon.transactions t
-inner join top_contracts c on t.`to` = c.contract_address
+inner join top_contracts c on t."to" = c.contract_address
 group by 1, 2
 order by 1, 2
 ```
@@ -417,11 +418,11 @@ order by 1, 2
 除了针对所有历史交易数据进行分析之外，我们也可以对近期最活跃的智能合约进行简单分析。比如30天内最活跃的Top 50智能合约。
 
 ```
-select `to` as contract_address,
-    '<a href=https://polygonscan.com/address/' || `to` || ' target=_blank>PolygonScan</a>' as link,
+select "to" as contract_address,
+    '<a href=https://polygonscan.com/address/' || cast("to" as varchar) || ' target=_blank>PolygonScan</a>' as link,
     count(*) as transaction_count
 from polygon.transactions
-where block_time >= now() - interval '30 days'
+where block_time >= now() - interval '30' day
 group by 1, 2
 order by 3 desc
 limit 50

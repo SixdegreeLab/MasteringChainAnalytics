@@ -36,13 +36,13 @@
 ```sql
 select --Select后跟着需要查询的字段，多个字段用英文逗号分隔
     block_time 
-    ,from
-    ,to
+    ,"from"
+    ,"to"
     ,hash
     ,value /power(10,18) as value --通过将value除以/power(10,18)来换算精度，18是以太坊的精度
 from ethereum.transactions --从 ethereum.transactions表中获取数据
-where block_time > '2022-01-01'  --限制Transfer时间是在2022年1月1日之后
-and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的钱包，这里用lower()将字符串里的字母变成小写格式(dune数据库里存的模式是小写，直接从以太坊浏览器粘贴可能大些混着小写)
+where block_time > date('2022-01-01')  --限制Transfer时间是在2022年1月1日之后
+and "from" = 0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296 --限制孙哥的钱包
 and value /power(10,18) >1000 --限制ETH Transfer量大于1000
 order by block_time --基于blocktime做升序排列，如果想降序排列需要在末尾加desc
 ```
@@ -80,8 +80,8 @@ select
     ,count( hash ) as tx_count --对符合要求的数据计数，统计有多少条
     ,count( distinct to ) as tx_to_address_count --对符合要求的数据计数，统计有多少条(按照去向地址to去重)
 from ethereum.transactions --从 ethereum.transactions表中获取数据
-where block_time > '2022-01-01'  --限制Transfer时间是在2022年1月1日之后
-and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的钱包，这里用lower()将字符串里的字母变成小写格式(dune数据库里存的模式是小写，直接从以太坊浏览器粘贴可能大些混着小写)
+where block_time > date('2022-01-01')  --限制Transfer时间是在2022年1月1日之后
+and "from" = 0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296
 and value /power(10,18) > 1000 --限制ETH Transfer量大于1000
 ```
 
@@ -108,14 +108,14 @@ select --Select后跟着需要查询的字段，多个字段用空格隔开
     block_time --transactions发生的时间
     ,date_trunc('hour',block_time) as stat_hour --转化成小时的粒度
     ,date_trunc('day',block_time) as stat_date --转化成天的粒度
-    ,date_trunc('week',block_time) as stat_minute--转化成week的粒度
-    ,from
-    ,to
+    ,date_trunc('week',block_time) as stat_week--转化成week的粒度
+    ,"from"
+    ,"to"
     ,hash
     ,value /power(10,18) as value --通过将value除以/power(10,18)来换算精度，18是以太坊的精度
 from ethereum.transactions --从 ethereum.transactions表中获取数据
-where block_time > '2021-01-01'  --限制Transfer时间是在2022年1月1日之后
-and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的钱包，这里用lower()将字符串里的字母变成小写格式(dune数据库里存的模式是小写，直接从以太坊浏览器粘贴可能大些混着小写)
+where block_time > date('2021-01-01')  --限制Transfer时间是在2022年1月1日之后
+and "from" = 0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296
 and value /power(10,18) >1000 --限制ETH Transfer量大于1000
 order by block_time --基于blocktime做升序排列，如果想降序排列需要在末尾加desc
 ```
@@ -139,14 +139,14 @@ order by block_time --基于blocktime做升序排列，如果想降序排列需�
 ##### SQL
 ```sql
 select 
-    date_trunc('day',block_time) as stat_date --用date_trunc函数将block_time转化为只保留日期的格式
+    date_trunc('day',block_time) as stat_date
     ,sum( value /power(10,18) ) as value --对符合要求的数据的value字段求和
 from ethereum.transactions --从 ethereum.transactions表中获取数据
-where block_time > '2022-01-01'  --限制Transfer时间是在2022年1月1日之后
-and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的钱包，这里用lower()将字符串里的字母变成小写格式(dune数据库里存的模式是小写，直接从以太坊浏览器粘贴可能大些混着小写)
+where block_time > date('2022-01-01')  --限制Transfer时间是在2022年1月1日之后
+and "from" = 0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296
 and value /power(10,18) > 1000 --限制ETH Transfer量大于1000
-group by  stat_date --按照stat_date去分组，stat_date是用 'as'对date_trunc('day',block_time)取别名
-order by stat_date --按照stat_date去排序
+group by  1
+order by 1
 ```
 
 ![query-page](images/group_by.png)
@@ -170,27 +170,27 @@ order by stat_date --按照stat_date去排序
 select
      block_time
      ,transactions_info.stat_minute  as stat_minute
-    ,from
-    ,to
+    ,"from"
+    ,"to"
     ,hash
     ,eth_amount --通过将value除以/power(10,18)来换算精度，18是以太坊的精度
     ,price
-    ,eth_amount* price as usd_value
+    ,eth_amount * price as usd_value
 from 
 (
     select --Select后跟着需要查询的字段，多个字段用空格隔开
         block_time
         ,date_trunc('minute',block_time) as stat_minute --把block_time用date_trunc处理成分钟，方便作为主键去关联
-        ,from
-        ,to
+        ,"from"
+        ,"to"
         ,hash
         ,value /power(10,18) as eth_amount --通过将value除以/power(10,18)来换算精度，18是以太坊的精度
     from ethereum.transactions --从 ethereum.transactions表中获取数据
-    where block_time > '2022-01-01'  --限制Transfer时间是在2022年1月1日之后
-    and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的钱包，这里用lower()将字符串里的字母变成小写格式(dune数据库里存的模式是小写，直接从以太坊浏览器粘贴可能大些混着小写)
+    where block_time > date('2022-01-01')  --限制Transfer时间是在2022年1月1日之后
+    and "from" = 0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296
     and value /power(10,18) >1000 --限制ETH Transfer量大于1000
     order by block_time --基于blocktime做升序排列，如果想降序排列需要在末尾加desc
-)transactions_info
+) transactions_info
 left join --讲transactions_info与price_info的数据关联，关联方式为 left join
 (
     --prices.usd表里存的是分钟级别的价格数据
@@ -200,8 +200,7 @@ left join --讲transactions_info与price_info的数据关联，关联方式为 l
     from prices.usd
     where blockchain = 'ethereum' --取以太坊上的价格数据
     and symbol = 'WETH' --取WETH的数据
-)price_info
-on  transactions_info.stat_minute = price_info.stat_minute --left join关联的主键为stat_minute
+) price_info on  transactions_info.stat_minute = price_info.stat_minute --left join关联的主键为stat_minute
 ```
 
 ![query-page](images/left_join.png)
@@ -234,8 +233,8 @@ with  transactions_info as --通过with as 建立子查询命名为transactions_
     select
          block_time
          ,transactions_info.stat_minute  as stat_minute
-        ,from
-        ,to
+        ,"from"
+        ,"to"
         ,hash
         ,eth_amount --通过将value除以/power(10,18)来换算精度，18是以太坊的精度
         ,price
@@ -245,16 +244,16 @@ with  transactions_info as --通过with as 建立子查询命名为transactions_
         select --Select后跟着需要查询的字段，多个字段用空格隔开
             block_time
             ,date_trunc('minute',block_time) as stat_minute --把block_time用date_trunc处理成分钟，方便作为主键去关联
-            ,from
-            ,to
+            ,"from"
+            ,"to"
             ,hash
             ,value /power(10,18) as eth_amount --通过将value除以/power(10,18)来换算精度，18是以太坊的精度
         from ethereum.transactions --从 ethereum.transactions表中获取数据
-        where block_time > '2022-01-01'  --限制Transfer时间是在2022年1月1日之后
-        and from = lower('0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296') --限制孙哥的钱包，这里用lower()将字符串里的字母变成小写格式(dune数据库里存的模式是小写，直接从以太坊浏览器粘贴可能大些混着小写)
-        and value /power(10,18) >1000 --限制ETH Transfer量大于1000
+        where block_time > date('2022-01-01')  --限制Transfer时间是在2022年1月1日之后
+            and "from" = 0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296
+            and value /power(10,18) >1000 --限制ETH Transfer量大于1000
         order by block_time --基于blocktime做升序排列，如果想降序排列需要在末尾加desc
-    )transactions_info
+    ) transactions_info
     left join --讲transactions_info与price_info的数据关联，关联方式为 left join
     (
         --prices.usd表里存的是分钟级别的价格数据
@@ -263,18 +262,16 @@ with  transactions_info as --通过with as 建立子查询命名为transactions_
             ,price
         from prices.usd
         where blockchain = 'ethereum' --取以太坊上的价格数据
-        and symbol = 'WETH' --取WETH的数据
-    )price_info
-    on  transactions_info.stat_minute = price_info.stat_minute --left join关联的主键为stat_minute
+            and symbol = 'WETH' --取WETH的数据
+    ) price_info on  transactions_info.stat_minute = price_info.stat_minute --left join关联的主键为stat_minute
 )
 
-select
-    date_trunc('day',block_time) as stat_date
+select date_trunc('day',block_time) as stat_date
     ,sum(eth_amount) as eth_amount
     ,sum(usd_value) as usd_value
 from transactions_info --从子查询形成的‘虚拟表’transactions_info中取需要的数据
-group by  date_trunc('day',block_time)
-order by  date_trunc('day',block_time)
+group by 1
+order by 1
 ```
 
 ![query-page](images/with_as.png)

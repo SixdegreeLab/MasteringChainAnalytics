@@ -102,13 +102,14 @@ group by 1
 
 费率“fee”是数值形式，代表百万分之N的收费费率。比如，3000，代表3000/1000000，即“0.30%”。用`fee`的值除以10000 （1e4）即可得到用百分比表示的费率。
 将数值转换为百分比表示的费率更加直观。我们可以使用修改上面的查询来做到这一点：
+
 ```sql
-select concat((fee / 1e4)::string, '%') as fee_tier,
+select concat(format('%,.2f', fee / 1e4), '%') as fee_tier,
     count(*) as pool_count
 from uniswap_v3_ethereum.Factory_evt_PoolCreated
 group by 1
 ```
-其中，`concat((fee / 1e4)::string, '%') as fee_tier`部分的作用是将费率转换为百分比表示的值，再连接上“%”符号，使用别名`fee_tier`输出。
+其中，`concat(format('%,.2f', fee / 1e4), '%') as fee_tier`部分的作用是将费率转换为百分比表示的值，再连接上“%”符号，使用别名`fee_tier`输出。关于format()函数的具体语法，可以查看Trino 的帮助（Trino是Dune SQL的底层引擎）。Trino帮助链接：https://trino.io/docs/current/functions.html 。
 
 本查询在Dune上的参考链接：[https://dune.com/queries/1455127](https://dune.com/queries/1455127)
 
@@ -146,11 +147,9 @@ order by 1
 
 ```sql
 with pool_details as (
-    select date_trunc('day', evt_block_time) as block_date,
-        evt_tx_hash, pool
+    select date_trunc('day', evt_block_time) as block_date, evt_tx_hash, pool
     from uniswap_v3_ethereum.Factory_evt_PoolCreated
-    -- 下面的代码中，now()存贮了当前日期+时间，当天的数据已包含在内
-    where evt_block_time >= now() - interval '29 days'
+    where evt_block_time >= now() - interval '29' day
 )
 
 select block_date, count(pool) as pool_count
@@ -172,15 +171,12 @@ order by 1
 
 ```sql
 with pool_details as (
-    select date_trunc('week', evt_block_time) as block_date,
-        fee,
-        evt_tx_hash,
-        pool
+    select date_trunc('week', evt_block_time) as block_date, fee, evt_tx_hash, pool
     from uniswap_v3_ethereum.Factory_evt_PoolCreated
 )
 
 select block_date,
-    concat((fee / 1e4)::string, '%') as fee_tier,
+    concat(format('%,.2f', fee / 1e4), '%') as fee_tier,
     count(pool) as pool_count
 from pool_details
 group by 1, 2
@@ -262,19 +258,15 @@ with last_crated_pools as (
         p.pool,
         p.evt_tx_hash
     from uniswap_v3_ethereum.Factory_evt_PoolCreated p
-    inner join tokens.erc20 t0
-        on p.token0 = t0.contract_address and t0.blockchain = 'ethereum'
-    inner join tokens.erc20 t1
-        on p.token1 = t1.contract_address and t1.blockchain = 'ethereum'
+    inner join tokens.erc20 t0 on p.token0 = t0.contract_address and t0.blockchain = 'ethereum'
+    inner join tokens.erc20 t1 on p.token1 = t1.contract_address and t1.blockchain = 'ethereum'
     order by p.evt_block_time desc
     limit 100
 )
 
 select evt_block_time,
-    token0_symbol || '-' || token1_symbol || ' '
-        || (fee / 1e4)::string || '%' as pool_name,
-    '<a href=https://etherscan.io/address/' || pool
-        || ' target=_blank>' || pool || '</a>' as pool_link,
+    token0_symbol || '-' || token1_symbol || ' ' || format('%,.2f', fee / 1e4) || '%' as pool_name,
+    '<a href=https://etherscan.io/address/' || cast(pool as varchar) || ' target=_blank>' || cast(pool as varchar) || '</a>' as pool_link,
     token0,
     token1,
     fee,

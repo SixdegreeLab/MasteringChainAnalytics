@@ -28,66 +28,140 @@
 
 排名靠前的均是热度比较高的协议。
 
-TVL的计算逻辑比较简单，即统计出协议中所有代币的数目，再乘以每种代币的价格，最后求和得出。我们以zksync为例，为了计算它自2021.6.15以来的TVL，我们可以先统计出它在各个时间点上的所有ERC20代币的数量，以及代币在该时间点的价格，然后相乘。这里Dune提供了一个抽象表 `erc20."view_token_balances_daily"`，我们可以直接取到所有ERC20代币在各个日期的价值，因此可以略过计算步骤。因为ERC20代币众多，为了运算速度，我们限定只纳入代币总价值高于3000美元的进行统计：
+TVL的计算逻辑比较简单，即统计出协议中所有相关代币的数目，再乘以每种代币的价格，最后求和得出。这里我们以Arbitrum链上的一个DEX项目Auragi为例进行说明。DEX项目的TVL通过其中的流动性池Pool的余额来体现。为了计算这个项目每一天的TVL，我们可以先统计出它每一天的所有Pair中相关代币的余额数量，以及代币在该时间点的价格，然后相乘得到以USD计算的金额。
+
+为了得到每一天的各个Pair的代币余额，我们要先整理出所有的交易明细记录：
 
 ```sql
-with erc_zksync as(
-    select day, token_symbol as label, amount, amount_usd as token_amount_usd, token_symbol as label1
-    from erc20."view_token_balances_daily"
-    where wallet_address = '\xaBEA9132b05A70803a4E85094fD0e1800777fBEF' and day > '2021-06-15'  and amount_usd > 3000
-    order by 1
+with token_pairs as (
+    select 
+        coalesce(k1.symbol, 'AGI') || '-' || coalesce(k2.symbol, 'AGI') as pair_name,
+        p.pair,
+        p.evt_block_time,
+        p.token0,
+        p.token1,
+        p.stable
+    from auragi_arbitrum.PairFactory_evt_PairCreated p
+    left join tokens.erc20 k1 on p.token0 = k1.contract_address and k1.blockchain = 'arbitrum'
+    left join tokens.erc20 k2 on p.token1 = k1.contract_address and k2.blockchain = 'arbitrum'
 ),
+
+token_transfer_detail as (
+    select date_trunc('minute', evt_block_time) as block_date,
+        evt_tx_hash as tx_hash,
+        contract_address,
+        "to" as user_address,
+        cast(value as decimal(38, 0)) as amount_raw
+    from erc20_arbitrum.evt_Transfer
+    where "to" in (select pair from token_pairs)
+        and evt_block_time >= date('2023-04-04')
+
+    union all
+    
+    select date_trunc('minute', evt_block_time) as block_date,
+        evt_tx_hash as tx_hash,
+        contract_address,
+        "from" as user_address,
+        -1 * cast(value as decimal(38, 0)) as amount_raw
+    from erc20_arbitrum.evt_Transfer
+    where "from" in (select pair from token_pairs)
+        and evt_block_time >= date('2023-04-04')
+),
+
+token_price as (
+    select date_trunc('minute', minute) as block_date,
+        contract_address,
+        decimals,
+        symbol,
+        avg(price) as price
+    from prices.usd
+    where blockchain = 'arbitrum'
+        and contract_address in (select distinct contract_address from token_transfer_detail)
+        and minute >= date('2023-04-04')
+    group by 1, 2, 3, 4
+    
+    union all
+    
+    -- AGI price from swap trade
+    select date_trunc('minute', block_time) as block_date,
+        0xFF191514A9baba76BfD19e3943a4d37E8ec9a111 as contract_address,
+        18 as decimals,
+        'AGI' as symbol,
+        avg(case when token_in_address = 0xFF191514A9baba76BfD19e3943a4d37E8ec9a111 then token_in_price else token_out_price end) as price
+    from query_2337808
+    group by 1, 2, 3, 4
+)
+
+select p.symbol,
+    d.block_date,
+    d.tx_hash,
+    d.user_address,
+    d.contract_address,
+    d.amount_raw,
+    (d.amount_raw / power(10, p.decimals) * p.price) as amount_usd
+from token_transfer_detail d
+inner join token_price p on d.contract_address = p.contract_address and d.block_date = p.block_date
 ```
 
-除了ERC20，我们还需要另外计算ETH的价值。该部分的计算没有直接的抽象表可以取用，我们要根据每天zksync的转入转出计算当日的ETH数目，然后再乘以当日ETH均价进行计算。
+上面的查询逻辑如下：
+- 先在`token_pairs`中得到这个项目的所有交易对（Pair）。
+- 结合`evt_Transfer`表，查询出每一个交易对的资金转入转出详情。
+- 在`token_price`中计算出哥哥Token的当前价格。因为这个是一个比较新的Token，Dune可能没有它的价格数据，所以我们使用了交易数据来换算价格。交易数据的详细列表在另外一个查询中，这里使用Query of Query的方式来引用。
+- 最后我们将交易明细和价格信息关联，计算出每一笔交易的USD金额。
+
+在上面的交易详情查询结果基础上，我们就可以来统计计算每一天的TVL了。
+
+首先我们在`date_series`中生成一个日期时间序列。考虑到这是一个比较新的项目，我们按小时纬度进行统计。如果项目上线时间已经足够久，建议按天进行统计。
+
+然后在`pool_balance_change`中，结合上面的交易详情数据，我们整理出美国Token每一个小时的余额变化金额。
+
+接下来在`pool_balance_summary`中，我们按时间排序汇总出每个Token的累积余额。这里同时使用`lead()`函数计算出每一个token每一个时间段存在对应后续交易记录的下一个时间点。
+
+最后，我们将时间序列和每一个小时的累积余额进行关联，补足缺失交易数据的时间段的值。请注意这里的关联条件：`inner join date_series d on p.block_date <= d.block_date and d.block_date < p.next_date`。这里使用了两个条件，限定累计余额的日期时间必须小于等于日期序列的日期时间值，同时序列的日期时间值必须小于下一个有记录的余额的日期时间值。这是一个很常见的处理技巧。因为并不是所有的Token在每一个时间段都有交易，如果遇到没有发生交易的时间段，我们需要用前一个时间段的余额来代表其在当前时间段的余额。这个应该不难理解，因为“当前时间段”内没有发生新的变化，所以余额自然跟上一个时间段相同。
+
+查询代码如下：
 
 ```sql
-prices as (
-    select  date_trunc('day', minute) as day, avg(price) as price ,symbol from prices."usd"
-    where minute > '2021-06-15' and symbol ='WETH'
-    group by 1,3 order by 1
+with date_series as (
+    select block_date
+    from unnest(sequence(timestamp '2023-04-01 00:00:00', localtimestamp, interval '1' hour)) as tbl(block_date)
 ),
 
-eth_zksync as (
-    select p.day, label, token_amount as amount, token_amount * price as token_amount_usd ,'ETH' as label1 from (
-    select day, label, avg(token_amount) as token_amount from (
-    select day, 'WETH' as label, 2976.81715478975235801+SUM(transfer) over (order by day) as token_amount from ( 
-    select timeb as day , income+outcome as transfer from (
-    (select date_trunc('day', evt_block_time) as timeb, sum(amount/1e18) as income 
-      from zksync."ZkSync_evt_Deposit" where "tokenId" = 0 and evt_block_time > '2021-06-15' group by date_trunc('day', evt_block_time)
-     ) bb
-      left join
-      (select date_trunc('day', evt_block_time) as timed, sum(-amount/1e18) as outcome 
-       from zksync."ZkSync_evt_Withdrawal" where "tokenId" = 0 and evt_block_time > '2021-06-15' group by date_trunc('day', evt_block_time)
-      ) dd
-      on bb. timeb = dd. timed)
-    ) as cc
-    ) w group by 1,2 order by 1
-    ) n
-    left join 
-    prices p 
-    on n.day = p.day and n.label = p.symbol
+pool_balance_change as (
+    select symbol,
+        date_trunc('hour', block_date) as block_date,
+        sum(amount_usd) as amount
+    from query_2339248
+    group by 1, 2
 ),
-```
 
-最后我们把每日ERC20的价值和ETH的价值按照日期整合到一起，我们就获得了最后的结果表：
+pool_balance_summary as (
+    select symbol,
+        block_date,
+        sum(amount) over (partition by symbol order by block_date) as balance_amount,
+        lead(block_date, 1, current_date) over (partition by symbol order by block_date) as next_date
+    from pool_balance_change
+    order by 1, 2
+)
 
-```sql
-
-zksync_tvl as (
-    select * from erc_zksync union all
-    select * from eth_zksync)
-
-
-select label1, day, sum(token_amount_usd)/1e6 as TVL_usd from zksync_tvl 
-group by 1,2 
-order by TVL_usd DESC
+select d.block_date,
+    p.symbol,
+    p.balance_amount
+from pool_balance_summary p
+inner join date_series d on p.block_date <= d.block_date and d.block_date < p.next_date
+order by 1, 2
 ```
 
 这样我们就能够把TVL的变化呈现出来：
 
-
 ![tvl](img/image_03.png)
+
+以上查询的链接：
+- [https://dune.com/queries/2339317](https://dune.com/queries/2339317)
+- [https://dune.com/queries/2339248](https://dune.com/queries/2339248)
+- [https://dune.com/queries/2337808](https://dune.com/queries/2337808)
+
+另外一个计算TVl的例子：[https://dune.com/queries/1059644/1822157](https://dune.com/queries/1059644/1822157)
 
 ## 流通总量 Circulating Supply
 
@@ -128,10 +202,10 @@ INNER JOIN (
 with daily_count as (
     select date_trunc('day', block_time) as block_date,
         count(*) as transaction_count,
-        count(distinct `from`) as user_count
+        count(distinct "from") as user_count
     from polygon.transactions
-    where `to` = '0xdb46d1dc155634fbc732f92e853b10b288ad5a1d'   -- LensHub
-        and block_time >= '2022-05-16'  -- contract creation date
+    where "to" = 0xdb46d1dc155634fbc732f92e853b10b288ad5a1d   -- LensHub
+        and block_time >= date('2022-05-16')  -- contract creation date
     group by 1
     order by 1
 )
@@ -155,7 +229,7 @@ order by block_date
 
 ```sql
 with optimism_new_users as (
-    SELECT `from` as address,
+    SELECT "from" as address,
         min(block_time) as start_time
     FROM optimism.transactions
     GROUP BY 1
@@ -164,7 +238,7 @@ with optimism_new_users as (
 SELECT date_trunc('day', start_time) as block_date,
     count(n.address) as new_users_count
 FROM optimism_new_users n
-WHERE start_time >= '2022-10-01'
+WHERE start_time >= date('2022-10-01')
 GROUP BY 1
 ```
 

@@ -21,20 +21,20 @@ select * from (
     select evt_block_time,
         evt_tx_hash,
         contract_address,
-        `to` as address,
-        value::decimal(38, 0) as amount
+        "to" as address,
+        cast(value as decimal(38, 0)) as amount
     from erc20_ethereum.evt_Transfer
-    where contract_address = '0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9'
+    where contract_address = 0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9
 
     union all
     
     select evt_block_time,
         evt_tx_hash,
         contract_address,
-        `from` as address,
-        -1 * value::decimal(38, 0) as amount
+        "from" as address,
+        -1 * cast(value as decimal(38, 0)) as amount
     from erc20_ethereum.evt_Transfer
-    where contract_address = '0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9'
+    where contract_address = 0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9
 )
 limit 10    -- for performance
 ```
@@ -48,20 +48,20 @@ with transfer_detail as (
     select evt_block_time,
         evt_tx_hash,
         contract_address,
-        `to` as address,
-        value::decimal(38, 0) as amount
+        "to" as address,
+        cast(value as decimal(38, 0)) as amount
     from erc20_ethereum.evt_Transfer
-    where contract_address = '0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9'
+    where contract_address = 0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9
     
     union all
     
     select evt_block_time,
         evt_tx_hash,
         contract_address,
-        `from` as address,
-        -1 * value::decimal(38, 0) as amount
+        "from" as address,
+        -1 * cast(value as decimal(38, 0)) as amount
     from erc20_ethereum.evt_Transfer
-    where contract_address = '0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9'
+    where contract_address = 0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9
 ),
 
 address_balance as (
@@ -94,20 +94,20 @@ with transfer_detail as (
     select evt_block_time,
         evt_tx_hash,
         contract_address,
-        `to` as address,
-        value::decimal(38, 0) as amount
+        "to" as address,
+        cast(value as decimal(38, 0)) as amount
     from erc20_ethereum.evt_Transfer
-    where contract_address = '{{token_contract_address}}'
+    where contract_address = {{token_contract_address}}
     
     union all
     
     select evt_block_time,
         evt_tx_hash,
         contract_address,
-        `from` as address,
-        -1 * value::decimal(38, 0) as amount
+        "from" as address,
+        -1 * cast(value as decimal(38, 0)) as amount
     from erc20_ethereum.evt_Transfer
-    where contract_address = '{{token_contract_address}}'
+    where contract_address = {{token_contract_address}}
 ),
 
 address_balance as (
@@ -219,16 +219,16 @@ order by 1
 ```sql
 with transfer_detail as (
     select evt_block_time,
-        `to` as address,
-        value::decimal(38, 0),
+        "to" as address,
+        cast(value as decimal(38, 0)) as value,
         evt_tx_hash
     from ftt_ethereum.FTT_Token_evt_Transfer
     
     union all
     
     select evt_block_time,
-        `from` as address,
-        -1 * value::decimal(38, 0) as value,
+        "from" as address,
+        -1 * cast(value as decimal(38, 0)) as value,
         evt_tx_hash
     from ftt_ethereum.FTT_Token_evt_Transfer
 ),
@@ -256,8 +256,9 @@ min_max_date as (
 ),
 
 date_series as (
-    select explode(sequence(mm.start_date, mm.end_date, interval '7 days')) as block_date
-    from min_max_date as mm
+    SELECT dt.block_date 
+    FROM min_max_date as mm
+    CROSS JOIN unnest(sequence(date(mm.start_date), date(mm.end_date), interval '7' day)) AS dt(block_date)
 ),
 
 holder_balance_until_date as (

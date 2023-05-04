@@ -202,24 +202,21 @@ order by 2 desc
 ### 2. 将Spellbook的Labels表与DeFi的Spellbook表联合建立查询
 以Uniswap为例说明：
 
-如果不依赖于flashbots社区表，尤其是它的维护可能会出现中断的情况下，我们还可以使用Spellbook中的labels表，按分类选择`arbitrage_traders`，就获得了套利交易者的地址表。
+如果不依赖于flashbots社区表，尤其是它的维护可能会出现中断的情况下，我们还可以使用Spellbook中的 `labels.arbitrage_traders` 表。
 
 ```sql
-select address 
-from labels.all 
-where category = 'arbitrage_traders'
-and contains(blockchain, 'ethereum')
-limit 1000
+select address
+from labels.arbitrage_traders
+where blockchain = 'ethereum'
 ```
 
 接着将uniswap_v3_ethereum.trades表与套利交易者表联合，筛选其中的吃单者（taker），即交易者，为套利交易者的交易。接下来就可以统计交易笔数，总的交易金额，平均交易金额，统计独立的交易机器人个数等MEV套利信息。类似的，我们也可以查询三明治攻击的相关数据。
 
 ```sql
 with arbitrage_traders as (
-    select address 
-    from labels.all 
-    where category = 'arbitrage_traders'
-    and contains(blockchain, 'ethereum')
+    select address
+    from labels.arbitrage_traders
+    where blockchain = 'ethereum'
 )
 
 select block_date,
@@ -231,7 +228,7 @@ from uniswap_v3_ethereum.trades u
 inner join arbitrage_traders a on u.taker = a.address
 where u.block_date > now() - interval '6' month
 group by 1
-order by 1 
+order by 1
  ```
  
 具体内容可以参考query：[https://dune.com/queries/1883865](https://dune.com/queries/1883865)
@@ -242,10 +239,9 @@ order by 1
 
 ```sql
 with arbitrage_traders as (
-    select address 
-    from labels.all 
-    where category = 'arbitrage_traders'
-    and contains(blockchain, 'ethereum')
+    select address
+    from labels.arbitrage_traders
+    where blockchain = 'ethereum'
 ),
 
 trade_details as (
@@ -266,7 +262,6 @@ select block_date,
 from trade_details
 group by 1, 2
 order by 1, 2
-
 ```
 
 为以上查询结果分别生成两个Area Chart图表，对比MEV Bots 和普通Trader 的交易次数和交易金额占比，就可以获得以下结果：
