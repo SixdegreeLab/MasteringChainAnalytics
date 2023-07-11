@@ -1,0 +1,430 @@
+## ASSISTANT
+# Getting Started with Data Analysis
+
+## 0. Introduction
+
+Our tutorial is heavily focused on practical application, written in conjunction with the scenarios and needs of daily on-chain data analysis. This article will explain the SQL basics you need to understand before starting to create data dashboards. This tutorial is beginner-friendly, primarily aimed at novice users who wish to learn data analysis. We assume that you have no prior experience in writing SQL queries. Users who have SQL experience but are not familiar with the Dune platform can also quickly browse this tutorial. This tutorial mainly includes an introduction to the Dune platform, a quick start to SQL queries, and more. In the next tutorial, we will write queries together, create visual charts, and use these charts to create data dashboards. We believe that as long as you have confidence and follow our tutorial to practice, you can also create high-quality data dashboards, taking the first step towards becoming an on-chain data analyst.
+
+## 1. Introduction to the Dune Platform
+
+[Dune](https://dune.com/) is a powerful blockchain data analysis platform that provides raw blockchain data and parsed data in the form of an SQL database. By using SQL queries, we can quickly search and extract various blockchain information from Dune's database, then convert it into intuitive visual charts to gain insights. The data dashboard (Dashboard) on Dune is composed of various widgets (Widget). These widgets can be visual charts or text boxes generated from Query query results, and you can also embed images, links, etc. in the text box. The query (Query) is the main data source of the Dune data panel. We write SQL statements, execute queries, generate visual charts on the result set, and then add the charts to the corresponding data dashboard.
+
+The general process of using Dune to process data can be summarized as: Write SQL queries to display data -> Visualize query results -> Assemble visual charts in the data dashboard -> Adjust and beautify the data dashboard. For the use of the Dune platform, you can check its [official documentation](https://dune.com/docs/). The Chinese version of the latest Dune documentation is currently being translated and sorted out, and you can find the V1 version of the [Dune Chinese documentation](https://docs.dune.com/v/chinese/) here.
+
+## 2. Basic Knowledge of Databases
+
+Before we start writing the first SQL query needed for our data dashboard, we need to understand some essential SQL query basics.
+
+### Introduction to Basic Concepts of Databases
+
+**Database**: A database is an ordered collection of structured information or data, a warehouse that organizes, stores, and manages data according to data structures. The Dune platform currently provides multiple databases, each supporting data from different blockchains. This tutorial uses the "v2 Dune SQL" database query engine of the Dune platform. All example queries and referenced example links (except third-party queries) have been updated to Dune SQL.
+
+**Schema**: Multiple schemas can be defined in the same database. For now, we can simply understand the schema as the owner of the data table. The same name data table can exist under different schemas.
+
+**Data Table**: A data table consists of the table name, fields within the table, and the records in the table. The data table is the primary object we access when writing SQL queries. Dune stores data from different blockchains in various data tables under different schemas for our querying purposes. When writing a query using a data table, we use the format `schema_name.table_name` to specify the name of the data table to be used in the query. For instance, `ethereum.transactions` represents the `transactions` table under the `ethereum` schema, i.e., the Ethereum transaction table. The data table name within the same schema must be unique, but data tables with the same name can exist under multiple different schemas simultaneously. For example, both `ethereum.transactions` and `bnb.transactions` tables exist in V2.
+
+**Data Column**: Also known as a field (Field), sometimes simply referred to as a "column", it is the basic unit of data storage in a data table. Each data table contains one or more columns, each storing different types of data. When writing a query, we can return all columns or only return the required data columns. Typically, returning only the minimum required data can enhance the efficiency of the query.
+
+**Data Row**: Also known as a record (Record). Each record includes data from multiple columns defined by the data table. The result of executing an SQL query is one or more records. The record set output by the query is often also referred to as the result set (Results).
+
+### Data Tables Used in This Tutorial
+
+In the SQL query examples in this section, we use the ERC20 token table `tokens.erc20` as an example. The ERC20 token table is an abstract data table (Spells, also known as Abstractions) generated by Dune community users through the Spellbook method. Except for the generation method, the usage of this type of data table is exactly the same as other tables. The ERC20 token table stores information about mainstream tokens compatible with the ERC20 standard on different blockchains that Dune supports for retrieval. For each token, it records the blockchain it belongs to, the token contract address, the number of decimal places supported by the token, and the token symbol information.
+
+The structure of the ERC20 token table `tokens.erc20` is as follows:
+
+| **Column Name**                 | **Data Type**   | **Description**                                    |
+| ----------------------- | ------------- | ------------------------------------------ |
+| blockchain              | string        | The name of the blockchain to which the token belongs                           |
+| contract\\_address       | string        | The contract address of the token                                |
+| decimals                | integer       | The number of decimal places supported by the token                             |
+| symbol                  | string        | The symbol of the token                                    |
+
+## Quick Start to SQL Queries
+
+The broad sense of SQL query statement types includes Insert, Delete, Update, Select, and many other types. The narrow sense of SQL queries mainly refers to data retrieval using Select statements. Most of the time, on-chain data analysis only needs to use Select statements to complete the work, so we only introduce Select query statements here. In the following content, we will alternate the use of queries, Query, Select and other vocabulary, unless otherwise specified, all refer to the use of Select statements to write Query for data retrieval.
+
+### Write the First Query
+
+The following SQL can query all ERC20 token information:
+
+```sql
+select * from tokens.erc20
+limit 10
+```
+
+### Introduction to Basic Syntax of Select Query Statements
+
+The structure of a typical SQL query statement is as follows:
+
+```sql
+select field list
+from data table
+where filter condition
+order by sort field
+limit return record quantity
+```
+
+The **field list** can list the fields (data columns) that the query needs to return one by one, multiple fields are separated by English commas, for example, you can specify the field list returned by the query as `contract_address, decimals, symbol`. You can also use the wildcard `*` to indicate the return of all fields in the data table. If the query uses multiple tables and a certain field exists in these tables at the same time, we need to use the `table_name.field_name` format to specify which table the returned field belongs to.
+
+The **data table** is specified in the format `schema_name.table_name`, for example, `tokens.erc20`. We can use the syntax `as alias_name` to assign an alias to the table, for example: `from tokens.erc20 as t`. In this way, the alias `t` can be used to access the table `tokens.erc20` and its fields in the same query.
+
+The **filter condition** is used to filter the returned data according to the specified conditions. For fields of different data types, the syntax of the applicable filter conditions varies. For string (`varchar`) type fields, conditions such as `=` and `like` can be used for filtering. For date and time (`datetime`) type fields, conditions such as `>=`, `<=`, `between ... and ...` can be used for filtering. When using the `like` condition, the wildcard `%` can be used to match one or more arbitrary characters. Multiple filter conditions can be connected with `and` (meaning that they must all be met) or `or` (meaning that any condition can be met).
+
+The **sort field** is used to specify the basis for sorting the query result set, which is one or more field names, along with optional sort direction indicators (`asc` for ascending, `desc` for descending). Multiple sort fields are separated by English commas. The Order By sort clause also supports specifying the sort field according to the position of the field in the Select clause. For example, `order by 1` means to sort according to the first field in the Select clause (ascending by default).
+
+The **return record quantity** is used to specify (limit) the maximum number of records that the query returns. The blockchain stores massive data, so we usually need to add a limit to the number of returned records to improve the efficiency of the query.
+
+Next, we will give examples to explain how to use the relevant parts of the query. Note that in SQL statements, we can add single-line comment explanations with `--`. We can also use `/*` at the beginning and `*/` at the end to mark multiple lines of content as comment explanations. Comment content will not be executed.
+
+**Specify the returned field list:**
+
+```sql
+select blockchain, contract_address, decimals, symbol   -- Specify the columns to be returned one by one
+from tokens.erc20
+limit 10
+```
+
+**Add filter conditions:**
+
+```sql
+select blockchain, contract_address, decimals, symbol
+from tokens.erc20
+where blockchain = 'ethereum'   -- Only return ERC20 token information from the Ethereum blockchain
+limit 10
+```
+
+**Use multiple filter conditions:**
+
+```sql
+select blockchain, contract_address, decimals, symbol
+from tokens.erc20
+where blockchain = 'ethereum'   -- Return ERC20 token information from the Ethereum blockchain
+    and symbol like 'E%'    -- The token symbol starts with the letter E
+```
+
+**Specify the sort field:**
+
+```sql
+select blockchain, contract_address, decimals, symbol
+from tokens.erc20
+where blockchain = 'ethereum'   -- Return ERC20 token information from the Ethereum blockchain
+    and symbol
+
+## USER
+Please continue
+
+## ASSISTANT
+I apologize for the inconvenience, but the text you provided is too long for a single translation request. I'll continue from where I left off:
+
+### Select Query Quick Start
+
+SQL queries in a broad sense include multiple types such as Insert, Delete, Update, and Select. In a narrow sense, SQL queries mainly refer to data retrieval using Select statements. Most of the time, blockchain data analysis can be done using just Select statements, so we will only introduce Select query statements here. In the following content, we will alternate between using the terms query, Query, and Select. Unless specifically stated, they all refer to data retrieval using Select statements to write Query.
+
+### Writing Your First Query
+
+The following SQL can query all ERC20 token information:
+
+```sql
+select * from tokens.erc20
+limit 10
+```
+
+### Introduction to Basic Syntax of Select Query Statements
+
+The structure of a typical SQL query statement is as follows:
+
+```sql
+select field list
+from data table
+where filter conditions
+order by sort field
+limit return record quantity
+```
+
+The **field list** can list the fields (data columns) that the query needs to return one by one, multiple fields are separated by English commas, for example, you can specify the field list to be returned by the query like this `contract_address, decimals, symbol`. You can also use the wildcard `*` to indicate the return of all fields in the data table. If the query uses multiple tables and a certain field exists in these tables at the same time, we need to use the `table_name.field_name` format to specify which table the field to be returned belongs to.
+
+The **data table** is specified in the format of `schema_name.table_name`, for example, `tokens.erc20`. We can use the `as alias_name` syntax to give the table an alias, for example: `from tokens.erc20 as t`. In this way, you can use the alias `t` to access the table `tokens.erc20` and its fields in the same query.
+
+The **filter conditions** are used to filter the returned data according to the specified conditions. For fields of different data types, the syntax of the applicable filter conditions varies. For string (`varchar`) type fields, you can use `=`, `like` and other conditions for filtering. Date and time (`datetime`) type fields can use `>=`, `<=`, `between ... and ...` and other conditions for filtering. When using the `like` condition, you can use the wildcard `%` to match one or more arbitrary characters. Multiple filter conditions can be connected with `and` (which means they must be met at the same time) or `or` (which means that any condition can be met).
+
+The **sort field** is used to specify the judgment basis for sorting the query result set, which is one or more field names, plus an optional sort direction indicator (`asc` indicates ascending order, `desc` indicates descending order). Multiple sort fields are separated by English commas. The Order By sort clause also supports specifying the sort field according to the position of the field in the Select clause. For example, `order by 1` means to sort by the first field that appears in the Select clause (ascending by default).
+
+The **return record quantity** is used to specify (limit) how many records that meet the conditions the query returns at most. The blockchain stores massive data, usually we need to add a limit to the number of returned records to improve the efficiency of the query.
+
+Next, we will give examples to explain how to use the relevant parts of the query. Note that in SQL statements, we can add single-line comment explanations with `--`. You can also use `/*` at the beginning and `*/` at the end to mark multiple lines of content as comment explanations. The comment content will not be executed.
+
+**Specify the returned field list:**
+
+```sql
+select blockchain, contract_address, decimals, symbol   -- Specify the columns to be returned one by one
+from tokens.erc20
+limit 10
+```
+
+**Add filter conditions:**
+
+```sql
+select blockchain, contract_address, decimals, symbol
+from tokens.erc20
+where blockchain = 'ethereum'   -- Only return ERC20 token information from the Ethereum blockchain
+limit 10
+```
+
+**Use multiple filter conditions:**
+
+```sql
+select blockchain, contract_address, decimals, symbol
+from tokens.erc20
+where blockchain = 'ethereum'   -- Return ERC20 token information from the Ethereum blockchain
+    and symbol like 'E%'    -- The token symbol starts with the letter E
+```
+
+**Specify sort fields:**
+
+```sql
+select blockchain, contract_address, decimals, symbol
+from tokens.erc20
+where blockchain = 'ethereum'   -- Return ERC20 token information from the Ethereum blockchain
+    and symbol like 'E%'    -- The token symbol starts with the letter E
+order by symbol asc -- Sort by token symbol in ascending order
+```
+
+**Specify multiple sort fields:**
+
+```sql
+select blockchain, contract_address, decimals, symbol
+from tokens.erc20
+where blockchain = 'ethereum'   -- Return ERC20 token information from the Ethereum blockchain
+    and symbol like 'E%'    -- The token symbol starts with the letter E
+order by decimals desc, symbol asc  -- First sort by the number of decimal places supported by the token in descending order, then sort by the token symbol in ascending order
+```
+
+**Use the Limit clause to limit the maximum number of records returned:**
+
+```sql
+select *
+from tokens.erc20
+limit 10
+```
+
+### Some Common Functions and Keywords in Select Queries
+
+#### As to Define Aliases
+
+Aliases can be defined for tables and fields using the "as" clause. Aliases are very useful when the table name (or field name) is long, contains special characters or keywords, or when you need to format the output field name. Aliases are often used in calculated fields, multi-table associations, subqueries, and other scenarios.
+
+```sql
+select t.contract_address as "Token Contract Address",
+    t.decimals as "Token Decimal Places",
+    t.symbol as "Token Symbol"
+from tokens.erc20 as t
+limit 10
+```
+In fact, for more concise writing, the `as` keyword can be omitted when defining aliases. You can directly follow the table name or field name with the alias, separated by a space. The following query is functionally identical to the previous one.
+
+```sql
+-- The as keyword can be omitted when defining aliases
+select t.contract_address "Token Contract Address",
+    t.decimals "Token Decimal Places",
+    t.symbol "Token Symbol"
+from tokens.erc20 t
+limit 10
+```
+
+#### Distinct for Selecting Unique Values
+
+By using the `distinct` keyword, we can filter out the unique values of the fields that appear in the Select clause list. When the Select clause contains multiple fields, the unique combinations of these fields are returned.
+
+```sql
+select distinct blockchain
+from tokens.erc20
+```
+
+#### Now to Get the Current System Date and Time
+
+Using `now()` can get the current system date and time. We can also use `current_date` to get the current system date, note that no parentheses are needed here.
+
+```sql
+select now(), current_date
+```
+
+#### Date_Trunc to Truncate Dates
+
+In the blockchain, the date and time fields are usually saved in the "year-month-day hour:minute:second" format. If you want to summarize by day, week, month, etc., you can use the `date_trunc()` function to convert the date first. For example: `date_trunc('day', block_time)` converts the value of block_time to a date value represented by "day", `date_trunc('month', block_time)` converts the value of block_time to a date value represented by "month".
+
+```sql
+select now(),
+    date_trunc('day', now()) as today,
+    date_trunc('month', now()) as current_month
+```
+
+#### Interval to Get Time Intervals
+
+Using syntax like `interval '2 days'`, we can specify a time interval. It supports various different time interval representations, such as: `'12 hours'`, `'7 days'`, `'3 months'`, `'1 year'`, etc. Time intervals are often used to add or subtract a specified interval from a date and time value to get a date range.
+
+```sql
+select now() as right_now, 
+    (now() - interval '2' hour) as two_hours_ago, 
+    (now() - interval '2' day) as two_days_ago,
+    (current_date - interval '1' year) as one_year_ago
+```
+
+#### Concat to Connect Strings
+
+We can use the `concat()` function to connect multiple strings together to get a new value. You can also use the more concise concatenation operator `||`.
+
+```sql
+select concat('Hello ', 'world!') as hello_world,
+    'Hello' || ' ' || 'world' || '!' as hello_world_again
+```
+
+#### Cast to Convert Field Data Types
+
+Some operations in SQL queries require the data types of related fields to be consistent, such as the concat() function requires all parameters to be string `varchar` type. If you need to connect different types of data, you can use the `cast()` function to forcibly convert to the required data type, such as: `cast(25 as string)` converts the number 25 to the string "25". You can also use the `data_type 'value string'` operator to complete the type conversion, such as: `integer '123'` converts the string to a numeric type.
+
+```sql
+select (cast(25 as varchar) || ' users') as user_counts,
+    integer '123' as intval,
+    timestamp '2023-04-28 20:00:00' as dt_time
+```
+
+#### Power to Calculate Exponentiation
+
+ERC20 tokens on the blockchain usually support many decimal places. Ethereum's official token ETH supports 18 decimal places. Due to the limitations of the related programming language, the token amount is usually stored as an integer. When used, it must be converted with the supported decimal places to get the correct amount. The `power()` function, or `pow()`, can be used for exponentiation operations to implement conversions. In Dune V2, you can use a concise form to represent 10 to the power of N, for example `1e18` is equivalent to `power(10, 18)`.
+
+```sql
+select 1.23 * power(10, 18) as raw_amount,
+    1230000000000000000 / pow(10, 18) as original_amount,
+    7890000 / 1e6 as usd_amount
+```
+
+### Advanced Select Queries
+
+#### Group By and Common Aggregate Functions
+
+SQL has some commonly used aggregate functions such as `count()` for counting, `sum()` for summing, `avg()` for averaging, `min()` for finding the minimum, and `max()` for finding the maximum. Apart from aggregating all data in a table, aggregate functions are often used in conjunction with the `group by` clause to group and aggregate statistics based on certain conditions. The syntax for the Group By clause is `group by field_name`, and multiple grouping fields can be specified as `group by field_name1, field_name2`. Similar to the Order By clause, you can also specify the grouping field by its position in the Select clause, which can make our SQL more concise. For example, `group by 1` means grouping by the first field, and `group by 1, 2` means grouping by both the first and second fields. Let's illustrate the usage of common aggregate functions with some examples.
+
+**Count the number of ERC20 token types supported by each blockchain:**
+
+```sql
+select blockchain, count(*) as token_count
+from tokens.erc20
+group by blockchain
+```
+
+**Count the total number, average, minimum, and maximum of token types supported by all blockchains:**
+
+```sql
+-- Here, a subquery is used to demonstrate related functions
+select count(*) as blockchain_count,
+    sum(token_count) as total_token_count,
+    avg(token_count) as average_token_count,
+    min(token_count) as min_token_count,
+    max(token_count) as max_token_count
+from (
+    select blockchain, count(*) as token_count
+    from tokens.erc20
+    group by blockchain
+)
+```
+
+#### Subqueries (Sub Query)
+
+A subquery is a query nested within another query. The subquery returns a complete dataset for the outer query (also called the parent or main query) to use for further querying. When we need to start from raw data and go through multiple steps of querying, associating, and aggregating to get the desired output, we can use subqueries. By putting the subquery in parentheses and assigning it an alias, we can use the subquery just like any other table.
+
+The previous example used a subquery `from ( subquery statement )`, so no separate example is given here.
+
+#### Joining Multiple Tables (Join)
+
+When we need to take data from related multiple tables, or take different data from the same table and connect them together, we need to use multiple table joins. The basic syntax for multiple table joins is: `from table_a inner join table_b on table_a.field_name = table_b.field_name`. Here, `table_a` and `table_b` can be different tables or the same table, and they can have different aliases.
+
+The following query joins `tokens.erc20` with itself to filter records that exist on both the Ethereum blockchain and the Binance blockchain and have the same token symbol:
+
+```sql
+select a.symbol,
+    a.decimals,
+    a.blockchain as blockchain_a,
+    a.contract_address as contract_address_a,
+    b.blockchain as blockchain_b,
+    b.contract_address as contract_address_b
+from tokens.erc20 a
+inner join tokens.erc20 b on a.symbol = b.symbol
+where a.blockchain = 'ethereum'
+    and b.blockchain = 'bnb'
+limit 100
+```
+
+#### Union
+
+When we need to merge records from different tables, or merge result sets containing different fields taken from the same table, we can use the `Union` or `Union All` clause. `Union` automatically removes duplicate records in the merged set, while `Union All` does not perform deduplication. For blockchain database tables containing massive data, deduplication can be quite time-consuming, so it is recommended to use `Union All` as much as possible to improve query efficiency.
+
+Because we try to keep things simple for now, the following SQL statement demonstrating union may seem meaningless. But don't worry, this is just to show the syntax. We will have more appropriate examples in the data dashboard section:
+
+```sql
+select contract_address, symbol, decimals
+from tokens.erc20
+where blockchain = 'ethereum'
+
+union all
+
+select contract_address, symbol, decimals
+from tokens.erc20
+where blockchain = 'bnb'
+
+limit 100
+```
+
+#### Case Statement
+
+With the Case statement, we can generate a different type of value based on the value of a field, usually to make the results more intuitive. For example, the ERC20 token table has a `decimals` field that stores the number of decimal places supported by various tokens. If we want to divide the tokens into high precision, medium precision, low precision, and no precision types based on the supported decimal places, we can use the Case statement for conversion.
+
+```sql
+select (case when decimals >= 10 then 'High precision'
+            when decimals >= 5 then 'Middle precision'
+            when decimals >= 1 then 'Low precision'
+            else 'No precision'
+        end) as precision_type,
+    count(*) as token_count
+from tokens.erc20
+group by 1
+order by 2 desc
+```
+
+#### CTE (Common Table Expressions)
+
+Common Table Expressions, or CTEs, are a good way to execute (and only execute once) a subquery within an SQL statement. The database will execute all WITH clauses and allow you to use their results anywhere in the subsequent query.
+
+The definition of a CTE is `with cte_name as ( sub_query )`, where `sub_query` is a subquery statement. We can also define multiple CTEs in the same Query, separated by commas. Following the order of definition, later CTEs can access and use earlier CTEs. In the "Query 6" in the subsequent data dashboard section, you can see an example of defining multiple CTEs. The previous subquery example is rewritten in CTE format:
+
+```sql
+with blockchain_token_count as (
+    select blockchain, count(*) as token_count
+    from tokens.erc20
+    group by blockchain
+)
+
+select count(*) as blockchain_count,
+    sum(token_count) as total_token_count,
+    avg(token_count) as average_token_count,
+    min(token_count) as min_token_count,
+    max(token_count) as max_token_count
+from blockchain_token_count
+```
+
+## Conclusion
+
+Congratulations! You've now familiarized yourself with all the knowledge needed to create your first Dune dashboard. In the next tutorial, we will create a Dune dashboard together.
+
+You can also learn more about the related content through the following links:
+- [Dune platform's official documentation](https://dune.com/docs/) (Dune)
+- [Dune beginner's guide](https://mirror.xyz/0xa741296A1E9DDc3D6Cf431B73C6225cFb5F6693a/iVzr5bGcGKKCzuvl902P05xo7fxc2qWfqfIHwmCXDI4) (Translated by Louis Wang, a member of SixDegreeLab)
+- [Dune Analytics zero-basic minimalist beginner's guide](https://mirror.xyz/gm365.eth/OE_CGx6BjCd-eQ441139sjsa3kTyUsmKVTclgMv09hY) (Written by Dune community user gm365)
+
+## Introduction to SixDegreeLab
+
+SixDegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional on-chain data team. Our mission is to provide users with accurate on-chain data charts, analysis, and insights, and we're committed to popularizing on-chain data analysis. By building communities, writing tutorials, and other means, we train on-chain data analysts, produce valuable analytical content, promote the construction of the data layer of the blockchain community, and cultivate talents for future vast blockchain data applications.
+
+You are welcome to visit [SixDegreeLab's Dune homepage](https://dune.com/sixdegree).
+
+This article is written by SixDegreeLab member Spring Zhang ([@superamscom](https://twitter.com/superamscom)). Due to limited knowledge, there may be shortcomings. If you find any mistakes, please feel free to correct them.
