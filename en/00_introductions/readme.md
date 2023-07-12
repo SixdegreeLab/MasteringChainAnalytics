@@ -165,29 +165,49 @@ and finally do data processing, visualization, and decision support.
 
 
 ## How to Do On-Chain Data Analysis
-Although data analysis platforms like Dune have done a lot of sorting work for us, we just need to use SQL-like syntax to extract the parts we need from the data table for construction. Most people's learning path I believe is to rush to "3 Days to Master SQL", after getting it down, they start to feel lost again, still don't know how to find the thread in the ball of wool. Why is this? The most important thing to learn in data analysis is to cultivate data thinking, and proficiency in programming languages is secondary.
+Although data analysis platforms like Dune have done a lot of sorting work for us,
+we just need to use SQL-like syntax to extract the parts we need from the data table for construction. 
+Most people's learning path I believe is to rush to "3 Days to Master SQL", after getting it down,
+they start to feel lost again, still don't know how to find the thread in the ball of wool. 
+Why is this? The most important thing to learn in data analysis is to cultivate data thinking,
+and proficiency in programming languages is secondary.
 
-**Data analysis provides a quantifiable perspective to ultimately support decision-making, analysis is a process, not an end. The simple steps are to clarify three questions and build data thinking:**
+**Data analysis provides a quantifiable perspective to ultimately support decision-making, 
+analysis is a process, not an end. The simple steps are to clarify three questions and build data thinking:**
 
 **1. What is my purpose?**
 
-Is it to determine whether a coin is a good time to buy now? Decide whether to add liquidity to AAVE to earn income? Or want to know if it's too late to enter Stepn now?
+Is it to determine whether a coin is a good time to buy now? 
+Decide whether to add liquidity to AAVE to earn income? 
+Or want to know if it's too late to enter Stepn now?
 
 **2. What is my strategy?**
 
-The strategy for buying coins is to follow Smart money, buy what they buy, enter when they enter, exit when they exit; observe if the protocol is operating well, the deposit rate is satisfactory, then put the temporarily immobile coins in to earn interest; Stepn is hot recently, if the momentum is still up, then I will participate in it.
+The strategy for buying coins is to follow Smart money, buy what they buy, enter when they enter, 
+exit when they exit; observe if the protocol is operating well, the deposit rate is satisfactory, 
+then put the temporarily immobile coins in to earn interest; Stepn is hot recently, 
+if the momentum is still up, then I will participate in it.
 
 **3. What data do I need to help me make decisions?**
 
-Need to monitor the holding movements of Smart money addresses, even consider the trading volume and holding distribution of tokens; want to check the protocol's TVL, outstanding debt amount, capital utilization rate, APR, etc.; consider daily new user numbers, growth trends, daily active user numbers, transaction numbers, player inflow and outflow situation, NFT market item sales situation.
+Need to monitor the holding movements of Smart money addresses, 
+even consider the trading volume and holding distribution of tokens; 
+want to check the protocol's TVL, outstanding debt amount, capital utilization rate, APR, etc.;
+consider daily new user numbers, growth trends, daily active user numbers, transaction numbers, 
+player inflow and outflow situation, NFT market item sales situation.
 
 ![image](images/10.jpg)
 
-The difficulty of these three questions increases gradually, the first two are easy to answer, it is difficult to think clearly about the third question, which requires a lot of learning and understanding, this is also the small threshold that distinguishes the level of data analysts. A good analyst should have the following three characteristics:
+The difficulty of these three questions increases gradually, the first two are easy to answer,
+it is difficult to think clearly about the third question, 
+which requires a lot of learning and understanding, 
+this is also the small threshold that distinguishes the level of data analysts. 
+A good analyst should have the following three characteristics:
 
 **1. Understanding and recognition of the track or protocol**
 
-That is, what track is being analyzed? What is the operating mechanism of this project? What data will it generate and what does each represent?
+That is, what track is being analyzed? What is the operating mechanism of this project? 
+What data will it generate and what does each represent?
 
 **2. The ability to abstract things**
 
@@ -199,27 +219,53 @@ Then go back to the previous point, find the corresponding data through your und
 
 **3. The ability to handle data**
 
-This includes getting data (where does the on-chain data come from), processing data (how to filter out the desired and filter out the irrelevant), and data visualization capabilities.
+This includes getting data (where does the on-chain data come from), 
+processing data (how to find the desired and filter out the irrelevant), 
+and data visualization capabilities.
 
 ![image](images/11.jpg)
 
 In general, data analysis is just a tool to support research, don't analyze for the sake of analysis.
-This process is first out of your desire to research a certain project, concept, or track, then learn and understand the operating mechanism of the project, abstract the quantitative analysis of the qualitative concept, and finally find data and do visualization.
+This process is first out of your desire to research a certain project, concept, or track, 
+then learn and understand the operating mechanism of the project, 
+abstract the quantitative analysis of the qualitative concept, 
+and finally find data and do visualization.
 
-The most important thing in data analysis is always data thinking. As for the last step of doing it yourself, it's just a matter of proficiency, which can be divided into two parts:
+The most important thing in data analysis is always data thinking. 
+As for the last step of doing it yourself, it's just a matter of proficiency, which can be divided into two parts:
 
-- Understanding of blockchain data structure. For example, in EVM chains, only EOA accounts can initiate transactions, but smart contracts can transfer ETH when called. These internal calls are recorded through the traces table, so when querying the table, querying transactions will miss internal call transactions.
-- Mastery of languages such as Python, SQL. Mastering the basic database language, whether it's getting data yourself or using a data platform, can be quite handy.
+- Understanding of blockchain data structure. For example, in EVM chains, 
+  only EOA accounts can initiate transactions, but smart contracts can transfer ETH when called. 
+  These internal calls are recorded in the `traces` table, 
+  so when querying the `transactions` table will miss internal call transactions.
+- Mastery of languages such as Python, SQL. Mastering the basic database language, 
+  whether it's getting data yourself or using a data platform, can be quite handy.
 
 ## Conclusion
 
-There are many online resources or tutorials about on-chain data analysis, but they are scattered and of varying quality. Web3 is an open university, but it's quite painful to spend a lot of energy looking for suitable textbooks, and most of the high-quality content is written in English, which poses a language barrier for domestic users.
+There are many online resources or tutorials about on-chain data analysis, 
+but they are scattered and of varying quality. Web3 is an open university, 
+but it's quite painful to spend a lot of energy looking for suitable textbooks, 
+and most of the high-quality content is written in English, 
+which poses a language barrier for Chinese users.
 
-Therefore, the Sixdegree team will launch a series of tutorials on "Becoming an On-Chain Data Analyst", application-oriented, combined with blockchain data structure and SQL syntax, to provide everyone with a set of introductory textbooks, to help more people master on-chain data analysis skills, maximize the use of blockchain data characteristics, to a certain extent eliminate information asymmetry. Build more in the bear market, becoming an on-chain data analyst starts here!
+Therefore, the Sixdegree team will launch a series of tutorials on "Becoming an On-Chain Data Analyst",
+application-oriented, combined with blockchain data structure and SQL syntax, 
+to provide everyone with a set of introductory textbooks, 
+to help more people master on-chain data analysis skills, 
+maximize the use of blockchain data characteristics, 
+to a certain extent eliminate information asymmetry. 
+Build more in the bear market, becoming an on-chain data analyst starts here!
 
 ## About Us
 
-SixDegreeLab is a professional on-chain data team, our mission is to provide users with accurate on-chain data charts, analysis, and insights, and is committed to popularizing on-chain data analysis. Through building a community, writing tutorials, and other ways, we train on-chain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, cultivate talents for the broad future of blockchain data applications, and welcome everyone to join the community for exchange!
+SixDegreeLab is a professional on-chain data team, 
+our mission is to provide users with accurate on-chain data charts, analysis, and insights, 
+and is committed to popularizing on-chain data analysis. By building a community, 
+writing tutorials, and other ways, we train on-chain data analysts, output valuable analysis content,
+promote the community to build the data layer of the blockchain, 
+cultivate talents for the broad future of blockchain data applications, 
+and welcome to join the community exchange!
 
 ## References
 1. [The Capital Efficiency Era of DeFi](https://blog.hashflow.com/the-capital-efficiency-era-of-defi-d8b3427feae4)
