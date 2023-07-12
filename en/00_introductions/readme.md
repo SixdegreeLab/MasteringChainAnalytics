@@ -1,4 +1,4 @@
-# Becoming an On-Chain Data Analyst #0 
+# #0 Becoming an On-Chain Data Analyst 
 ## TL;DR
 - The richness of on-chain data stems from the maturity of blockchain technology and the innovation of projects
 - Mastering the perspective of on-chain data helps to reduce information asymmetry, and adds an extra layer of protection when navigating the dark forest
@@ -11,34 +11,51 @@ Most people when first introduced to blockchain get this concept: blockchain is 
 ![image](images/01.jpg)
 
 **On-chain data is roughly divided into three categories:**
-1. Transaction data
+1. Transaction data.
 Such as sending and receiving addresses, transfer amount, address balance, etc.
 
-2. Block data
+2. Block data.
 For example, timestamps, miner fees, miner rewards, etc.
 
-3. Smart contract code
-That is, the business logic coded on the blockchain
+3. Smart contract code.
+That is, the business logic coded on the blockchain.
 
-On-chain data analysis is to extract the desired information from these three types of data for interpretation. From the perspective of the data stack, blockchain data products can be divided into data sources, data development tools, and data apps.
+On-chain data analysis is to extract the desired information from these three types of data for interpretation. 
+From the perspective of the data stack, blockchain data products can be divided into data sources, data development tools, and data apps.
 
 ![image](images/02.jpg)
 
 Flexible use of various data products will provide us with a new perspective in the crypto world.
 
-Although we always say that on-chain data is public and transparent, it is difficult for us to directly read those data, because a simple swap transaction on-chain may look like this:
+Although we always say that on-chain data is public and transparent, 
+it is difficult for us to directly read those data,
+because a simple swap transaction on-chain may look like this:
 
 ![image](images/03.jpg)
 
-We can see some raw on-chain data in the blockchain browser, but my question is how much is the UniswapV3 trading volume today, this does not solve my problem ah! What I want to see is the following picture:
+We can see some raw on-chain data in the blockchain browser, 
+but my question is how much is the UniswapV3 trading volume today, 
+this does not solve my problem! What I want to see is the following picture:
 
 ![image](images/04.jpg)
 
-The original on-chain data cannot give us the answer, we need to go through a series of data ingestion processes such as indexing (indexing), processing (processing), storage (storage), and then aggregate the corresponding data according to the question raised to get the answer to the question.
+The original on-chain data cannot give us the answer,
+we need to go through a series of data ingestion processes such as indexing, processing, storage
+and then aggregate the corresponding data according to the question raised 
+to get the answer to the question.
 
 ![image](images/05.jpg)
 
-To start from scratch, we may need to set up our own nodes to receive blockchain data and then process it, but this is obviously very time-consuming and laborious. Fortunately, there are many data platforms, such as Dune, Flipside, Footprint, they take the original on-chain data obtained by indexing, after a series of processing, stored in the data warehouse managed and updated by the platform, that is to say, the entire blockchain data is made into many relational data tables by them, what we need to do is to select some data we want from the table to build our analysis data. Further, there are Nansen, Messari, DeBank these data products, not only organize the data, but also package it according to the needs of the user, convenient for direct use.
+To start from scratch, we may need to set up our own nodes to receive blockchain data 
+and then process it, but this is obviously very time-consuming and laborious. 
+Fortunately, there are many data platforms, such as Dune, Flipside, Footprint, 
+they take the original on-chain data obtained by indexing, 
+after a series of processing, stored in the data warehouse managed and updated by the platform, 
+that is to say, the entire blockchain data is made into many relational data tables by them, 
+what we need to do is to select some data we want from the table to build our analysis data. 
+Further, there are Nansen, Messari, DeBank these data products, 
+not only organize the data, but also package it according to the needs of the user, 
+convenient for direct use.
 
 |Category | Application Example|
 |--------|:---------------:|
@@ -47,31 +64,105 @@ To start from scratch, we may need to set up our own nodes to receive blockchain
 |Data Node | Infura, Quick Node..|
 
 ## The Importance of On-Chain Data
-With the prosperity of the on-chain ecosystem, rich interactive behaviors have brought a huge amount of data. These on-chain data correspond to the flow of value on-chain, the analysis of these data and the insights and insights derived from the analysis become extremely valuable. Through the transparent and truthful on-chain data, we can infer the psychological state and expectations of traders, and even the market as a whole, to help us make more advantageous decisions, and can also provide a beacon of light for us in the dark forest, illuminating the way forward to protect ourselves.
+With the prosperity of the on-chain ecosystem, 
+rich interactive behaviors have brought a huge amount of data. 
+These on-chain data correspond to the flow of value on-chain, 
+the insights derived from the analysis become extremely valuable. 
+Through the transparent and truthful on-chain data,
+we can infer the psychological state and expectations of traders, 
+and even the market as a whole, to help us make more advantageous decisions, 
+and can also provide a beacon of light for us in the dark forest, 
+illuminating the way forward to protect ourselves.
 
-Take the familiar DeFi protocol liquidity mining as an example: you add liquidity to earn rewards, the pool increases depth, users enjoy lower slippage, everyone has a bright future, you securely lock your money in the contract. But one day, the black swan quietly arrives, smart money with insider information immediately retreats, and you are just an ordinary investor, by the time you see the negative news and think about withdrawing, the rewards in your hand are almost worthless, the severe impermanent loss makes it hard for you to break even, shouting blockchain scam.
+Take the familiar DeFi protocol liquidity mining as an example: 
+you add liquidity to earn rewards, the pool increases depth, 
+users enjoy lower slippage, everyone has a bright future, 
+you securely lock your money in the contract. One day, 
+the black swan quietly arrives, smart money with insider information immediately retreats, 
+and you are just an ordinary investor, by the time you see the negative news and think about withdrawing,
+the rewards in your hand are almost worthless, the severe impermanent loss makes it hard for you 
+to break even, shouting blockchain scam.
 
 ![image](images/06.jpg)
 
-But if you have a on-chain data perspective, you might find: the protocol's TVL suddenly drops, the token's dumping volume on Uniswap surges, in other words, smart people get the news or find something wrong, the liquidity in the pool is getting worse and money is running away, everyone is bearish on the token and selling like crazy, should I exit now?
+But if you have an on-chain data perspective, you might find: 
+the protocol's TVL suddenly drops, the token's dumping volume on Uniswap surges, in other words, 
+smart people get the news or find something wrong, 
+the liquidity in the pool is getting worse and money is running away, 
+everyone is bearish on the token and selling like crazy, should I exit now?
 
-Of course, this is just an abstract and simple example, but what I want to convey to you is: **Ordinary investors in the Crypto dark forest are always at a disadvantage in terms of information asymmetry.** But on-chain data is transparent and truthful. Why is everyone so obsessed with tracking Nansen's Smart Money? Because people with insider information won't tell you the news, but the information will be reflected in on-chain behavior, recorded truthfully, and all we have to do is carefully observe this data world, by capturing on-chain details, to some extent make up for the information gap.
+Of course, this is just an abstract and simple example, but what I want to convey to you is: 
+**Ordinary investors in the Crypto dark forest are always at a disadvantage 
+in terms of information asymmetry.** 
+But on-chain data is transparent and truthful. 
+Why is everyone so obsessed with tracking Nansen's Smart Money? 
+Because people with insider information won't tell you the news, 
+but the information will be reflected in on-chain behavior, recorded truthfully, 
+and all we have to do is carefully observe this data world, by capturing on-chain details, 
+to some extent make up for the information gap.
 
-After DeFi summer, we started to care about the TVL of the protocol; Axie exploded, we studied the daily increase in users; NFT rose, we studied the mint number; Ethereum's Gas soared, we observed which project was so hot. Did you notice? Our increasing understanding and sensitivity to on-chain data actually comes from the prosperous development of on-chain activities, in other words, **the importance of on-chain data comes from the maturity of blockchain technology and the boom of applications.** More and more on-chain projects give us enough rich interaction space, at the same time, with the maturity and wide application of SBT, OAT, everything on-chain becomes possible, which means that the future data will be enough to support every user's full on-chain portrait, by then we can tell better stories about DID, SocialFi.
+After DeFi summer, we started to care about the TVL of the protocol; 
+Axie exploded, we studied the daily increase in users; 
+NFT rose, we studied the mint number; 
+Ethereum's Gas soared, we observed which project was so hot. 
+Did you notice? Our increasing understanding and sensitivity to on-chain data 
+actually comes from the prosperous development of on-chain activities, in other words, 
+**the importance of on-chain data comes from the maturity of blockchain technology 
+and the boom of applications.** 
+More and more on-chain projects give us enough rich interaction space, at the same time, 
+with the maturity and wide application of SBT, OAT, everything on-chain becomes possible, 
+which means that the future data will be enough to support every user's full on-chain portrait, 
+by then we can tell better stories about DID, SocialFi.
 
 ## Who Will Do On-Chain Data Analysis
-For most users, mature data products are enough, and a good effect can be achieved by flexibly combining multiple data tools. For example, using Nansen to help users track the real-time movements of whales; using Token Terminal to view the income of various protocols; NFT data monitoring platforms are even more varied.
-These "finished" data products, while low-threshold and easy to use, also have a bottleneck that cannot meet high customization requirements.
+For most users, mature data products are enough, 
+and a good effect can be achieved by flexibly combining multiple data tools. 
+For example, using Nansen to help users track the real-time movements of whales; 
+using Token Terminal to view the income of various protocols; 
+NFT data monitoring platforms are even more varied.
+These "finished" data products, while low-threshold and easy to use, 
+also have a bottleneck that cannot meet high customization requirements.
 
 ![image](images/07.jpg)
 
-For example, you discover through https://ultrasound.money/ that the gas consumption on Ethereum suddenly rises, driven by this XEN that you've never heard of. You keenly realize that this could be an early opportunity! Through a Twitter search, you learn that XEN uses a PoP (Proof of Participation) mining mechanism. Participants in XEN mining own all the XEN tokens they mine. As the number of participants increases, the difficulty of mining increases, and the supply decreases. You want to understand the participation situation of everyone, just relying on gas consumption is not enough, you also want to know the number of participants, trends, how long do participants choose to lock? At the same time, you also find that it seems to have no witch protection? Pay a gas fee to participate, how many scientists are rushing in? Do I still have profits? When you analyze this, you urgently need data to support your "rush or not" decision, but because it's early, there's no analysis of it in the data app, and the data app is also unlikely to monitor and analyze every protocol. This is why, despite the existence of many data products, we still need to be able to write some data analysis ourselves: existing products are difficult to meet customized needs.
+For example, you discover through https://ultrasound.money/ 
+that the gas consumption on Ethereum suddenly rises, 
+driven by this XEN that you've never heard of. 
+You keenly realize that this could be an early opportunity! 
+Through a Twitter search, you learn that XEN uses a PoP (Proof of Participation) mining mechanism. 
+Participants in XEN mining own all the XEN tokens they mine. 
+As the number of participants increases, the difficulty of mining increases, and the supply decreases. 
+You want to understand the participation situation of everyone, 
+just relying on gas consumption is not enough, 
+you also want to know the number of participants, trends, how long do participants choose to lock? 
+At the same time, you also find that it seems to have no sybil protection? 
+Pay a gas fee to participate, how many scientists are rushing in? 
+Do I still have profits? When you analyze this, 
+you urgently need data to support your "rush or not" decision, 
+but because it's early, there's no analysis of it in the data app,
+and the data app is also unlikely to monitor and analyze every protocol. 
+This is why, despite the existence of many data products, 
+we still need to be able to write some data analysis ourselves: 
+existing products are difficult to meet customized needs.
+
 
 ![image](images/08.jpg)
+
+
+Through my own data analysis: https://dune.com/sixdegree/xen-crypto-overview, 
+I found out that most people choose short-term pledges, and nearly 70% are new wallets, 
+indicating that they have been exploited by everyone, 
+so I understand that the short-term selling pressure will be very large, 
+so if I want to choose to participate, I will choose the shortest pledge time and sell 
+as soon as possible, to see who runs faster.
+At this point, you have completed the entire process of on-chain data analysis: 
+discover the project, study the project mechanism, abstract the standard for evaluating the project, 
+and finally do data processing, visualization, and decision support.
+
+
 ![image](images/09.jpg)
 
-Through your own data analysis: https://dune.com/sixdegree/xen-crypto-overview, I found out that most people choose short-term pledges, and nearly 70% are new wallets, indicating that they have been exploited by everyone, so I understand that the short-term selling pressure will be very large, so if I want to choose to participate, I will choose the shortest pledge time and sell as soon as possible, to see who runs faster.
-At this point, you have completed the entire process of on-chain data analysis: discover the project, study the project mechanism, abstract the standard for evaluating the project, and finally do data processing, visualization, and decision support.
+
 
 ## How to Do On-Chain Data Analysis
 Although data analysis platforms like Dune have done a lot of sorting work for us, we just need to use SQL-like syntax to extract the parts we need from the data table for construction. Most people's learning path I believe is to rush to "3 Days to Master SQL", after getting it down, they start to feel lost again, still don't know how to find the thread in the ball of wool. Why is this? The most important thing to learn in data analysis is to cultivate data thinking, and proficiency in programming languages is secondary.
