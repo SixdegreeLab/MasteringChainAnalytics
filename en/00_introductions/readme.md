@@ -245,9 +245,7 @@ As for the last step of doing it yourself, it's just a matter of proficiency, wh
 
 There are many online resources or tutorials about on-chain data analysis, 
 but they are scattered and of varying quality. Web3 is an open university, 
-but it's quite painful to spend a lot of energy looking for suitable textbooks, 
-and most of the high-quality content is written in English, 
-which poses a language barrier for Chinese users.
+but it's quite painful to spend a lot of energy looking for suitable textbooks.
 
 Therefore, the Sixdegree team will launch a series of tutorials on "Becoming an On-Chain Data Analyst",
 application-oriented, combined with blockchain data structure and SQL syntax, 
