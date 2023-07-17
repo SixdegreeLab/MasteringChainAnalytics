@@ -1,4 +1,3 @@
-## ASSISTANT
 # Getting Started with Data Analysis
 
 ## 0. Introduction
@@ -7,9 +6,13 @@ Our tutorial is heavily focused on practical application, written in conjunction
 
 ## 1. Introduction to the Dune Platform
 
-[Dune](https://dune.com/) is a powerful blockchain data analysis platform that provides raw blockchain data and parsed data in the form of an SQL database. By using SQL queries, we can quickly search and extract various blockchain information from Dune's database, then convert it into intuitive visual charts to gain insights. The data dashboard (Dashboard) on Dune is composed of various widgets (Widget). These widgets can be visual charts or text boxes generated from Query query results, and you can also embed images, links, etc. in the text box. The query (Query) is the main data source of the Dune data panel. We write SQL statements, execute queries, generate visual charts on the result set, and then add the charts to the corresponding data dashboard.
+[Dune](https://dune.com/) is a powerful blockchain data analysis platform that provides raw blockchain data 
+and parsed data in the form of an SQL database. By using SQL queries, we can quickly search 
+and extract various blockchain information from Dune's database, then convert it into intuitive visual charts to gain insights.
+The data dashboard on Dune is composed of various widgets. These widgets can be visual charts or text boxes generated from query results, and you can also embed images, links, etc. in the text box. 
+The query is the main data source of the Dune data panel. We write SQL statements, execute queries, generate visual charts on the result set, and then add the charts to the corresponding data dashboard.
 
-The general process of using Dune to process data can be summarized as: Write SQL queries to display data -> Visualize query results -> Assemble visual charts in the data dashboard -> Adjust and beautify the data dashboard. For the use of the Dune platform, you can check its [official documentation](https://dune.com/docs/). The Chinese version of the latest Dune documentation is currently being translated and sorted out, and you can find the V1 version of the [Dune Chinese documentation](https://docs.dune.com/v/chinese/) here.
+The general process of using Dune to process data can be summarized as: Write SQL queries to display data -> Visualize query results -> Assemble visual charts in the data dashboard -> Adjust and beautify the data dashboard. For the use of the Dune platform, you can check its [official documentation](https://dune.com/docs/).
 
 ## 2. Basic Knowledge of Databases
 
@@ -23,9 +26,9 @@ Before we start writing the first SQL query needed for our data dashboard, we ne
 
 **Data Table**: A data table consists of the table name, fields within the table, and the records in the table. The data table is the primary object we access when writing SQL queries. Dune stores data from different blockchains in various data tables under different schemas for our querying purposes. When writing a query using a data table, we use the format `schema_name.table_name` to specify the name of the data table to be used in the query. For instance, `ethereum.transactions` represents the `transactions` table under the `ethereum` schema, i.e., the Ethereum transaction table. The data table name within the same schema must be unique, but data tables with the same name can exist under multiple different schemas simultaneously. For example, both `ethereum.transactions` and `bnb.transactions` tables exist in V2.
 
-**Data Column**: Also known as a field (Field), sometimes simply referred to as a "column", it is the basic unit of data storage in a data table. Each data table contains one or more columns, each storing different types of data. When writing a query, we can return all columns or only return the required data columns. Typically, returning only the minimum required data can enhance the efficiency of the query.
+**Data Column**: Also known as a field, sometimes simply referred to as a "column", it is the basic unit of data storage in a data table. Each data table contains one or more columns, each storing different types of data. When writing a query, we can return all columns or only return the required data columns. Typically, returning only the minimum required data can enhance the efficiency of the query.
 
-**Data Row**: Also known as a record (Record). Each record includes data from multiple columns defined by the data table. The result of executing an SQL query is one or more records. The record set output by the query is often also referred to as the result set (Results).
+**Data Row**: Also known as a record. Each record includes data from multiple columns defined by the data table. The result of executing an SQL query is one or more records. The record set output by the query is often also referred to as the result set.
 
 ### Data Tables Used in This Tutorial
 
@@ -36,13 +39,18 @@ The structure of the ERC20 token table `tokens.erc20` is as follows:
 | **Column Name**                 | **Data Type**   | **Description**                                    |
 | ----------------------- | ------------- | ------------------------------------------ |
 | blockchain              | string        | The name of the blockchain to which the token belongs                           |
-| contract\\_address       | string        | The contract address of the token                                |
+| contract_address       | string        | The contract address of the token                                |
 | decimals                | integer       | The number of decimal places supported by the token                             |
 | symbol                  | string        | The symbol of the token                                    |
 
 ## Quick Start to SQL Queries
 
-The broad sense of SQL query statement types includes Insert, Delete, Update, Select, and many other types. The narrow sense of SQL queries mainly refers to data retrieval using Select statements. Most of the time, on-chain data analysis only needs to use Select statements to complete the work, so we only introduce Select query statements here. In the following content, we will alternate the use of queries, Query, Select and other vocabulary, unless otherwise specified, all refer to the use of Select statements to write Query for data retrieval.
+The broad sense of SQL query statement types includes Insert, Delete, Update, Select, and many other types.
+The narrow sense of SQL queries mainly refers to data retrieval using Select statements. 
+Most of the time, on-chain data analysis only needs to use Select statements to complete the work, 
+so we only introduce Select query statements here. In the following content, 
+we will alternate the use of Query, Select and other vocabulary, unless otherwise specified,
+all refer to the use of Select statements to write Query for data retrieval.
 
 ### Write the First Query
 
@@ -58,11 +66,11 @@ limit 10
 The structure of a typical SQL query statement is as follows:
 
 ```sql
-select field list
-from data table
-where filter condition
-order by sort field
-limit return record quantity
+select {field list}
+from {data table}
+where {filter condition}
+order by {sort field}
+limit {return record quantity}
 ```
 
 The **field list** can list the fields (data columns) that the query needs to return one by one, multiple fields are separated by English commas, for example, you can specify the field list returned by the query as `contract_address, decimals, symbol`. You can also use the wildcard `*` to indicate the return of all fields in the data table. If the query uses multiple tables and a certain field exists in these tables at the same time, we need to use the `table_name.field_name` format to specify which table the returned field belongs to.
@@ -76,83 +84,6 @@ The **sort field** is used to specify the basis for sorting the query result set
 The **return record quantity** is used to specify (limit) the maximum number of records that the query returns. The blockchain stores massive data, so we usually need to add a limit to the number of returned records to improve the efficiency of the query.
 
 Next, we will give examples to explain how to use the relevant parts of the query. Note that in SQL statements, we can add single-line comment explanations with `--`. We can also use `/*` at the beginning and `*/` at the end to mark multiple lines of content as comment explanations. Comment content will not be executed.
-
-**Specify the returned field list:**
-
-```sql
-select blockchain, contract_address, decimals, symbol   -- Specify the columns to be returned one by one
-from tokens.erc20
-limit 10
-```
-
-**Add filter conditions:**
-
-```sql
-select blockchain, contract_address, decimals, symbol
-from tokens.erc20
-where blockchain = 'ethereum'   -- Only return ERC20 token information from the Ethereum blockchain
-limit 10
-```
-
-**Use multiple filter conditions:**
-
-```sql
-select blockchain, contract_address, decimals, symbol
-from tokens.erc20
-where blockchain = 'ethereum'   -- Return ERC20 token information from the Ethereum blockchain
-    and symbol like 'E%'    -- The token symbol starts with the letter E
-```
-
-**Specify the sort field:**
-
-```sql
-select blockchain, contract_address, decimals, symbol
-from tokens.erc20
-where blockchain = 'ethereum'   -- Return ERC20 token information from the Ethereum blockchain
-    and symbol
-
-## USER
-Please continue
-
-## ASSISTANT
-I apologize for the inconvenience, but the text you provided is too long for a single translation request. I'll continue from where I left off:
-
-### Select Query Quick Start
-
-SQL queries in a broad sense include multiple types such as Insert, Delete, Update, and Select. In a narrow sense, SQL queries mainly refer to data retrieval using Select statements. Most of the time, blockchain data analysis can be done using just Select statements, so we will only introduce Select query statements here. In the following content, we will alternate between using the terms query, Query, and Select. Unless specifically stated, they all refer to data retrieval using Select statements to write Query.
-
-### Writing Your First Query
-
-The following SQL can query all ERC20 token information:
-
-```sql
-select * from tokens.erc20
-limit 10
-```
-
-### Introduction to Basic Syntax of Select Query Statements
-
-The structure of a typical SQL query statement is as follows:
-
-```sql
-select field list
-from data table
-where filter conditions
-order by sort field
-limit return record quantity
-```
-
-The **field list** can list the fields (data columns) that the query needs to return one by one, multiple fields are separated by English commas, for example, you can specify the field list to be returned by the query like this `contract_address, decimals, symbol`. You can also use the wildcard `*` to indicate the return of all fields in the data table. If the query uses multiple tables and a certain field exists in these tables at the same time, we need to use the `table_name.field_name` format to specify which table the field to be returned belongs to.
-
-The **data table** is specified in the format of `schema_name.table_name`, for example, `tokens.erc20`. We can use the `as alias_name` syntax to give the table an alias, for example: `from tokens.erc20 as t`. In this way, you can use the alias `t` to access the table `tokens.erc20` and its fields in the same query.
-
-The **filter conditions** are used to filter the returned data according to the specified conditions. For fields of different data types, the syntax of the applicable filter conditions varies. For string (`varchar`) type fields, you can use `=`, `like` and other conditions for filtering. Date and time (`datetime`) type fields can use `>=`, `<=`, `between ... and ...` and other conditions for filtering. When using the `like` condition, you can use the wildcard `%` to match one or more arbitrary characters. Multiple filter conditions can be connected with `and` (which means they must be met at the same time) or `or` (which means that any condition can be met).
-
-The **sort field** is used to specify the judgment basis for sorting the query result set, which is one or more field names, plus an optional sort direction indicator (`asc` indicates ascending order, `desc` indicates descending order). Multiple sort fields are separated by English commas. The Order By sort clause also supports specifying the sort field according to the position of the field in the Select clause. For example, `order by 1` means to sort by the first field that appears in the Select clause (ascending by default).
-
-The **return record quantity** is used to specify (limit) how many records that meet the conditions the query returns at most. The blockchain stores massive data, usually we need to add a limit to the number of returned records to improve the efficiency of the query.
-
-Next, we will give examples to explain how to use the relevant parts of the query. Note that in SQL statements, we can add single-line comment explanations with `--`. You can also use `/*` at the beginning and `*/` at the end to mark multiple lines of content as comment explanations. The comment content will not be executed.
 
 **Specify the returned field list:**
 
@@ -249,7 +180,7 @@ Using `now()` can get the current system date and time. We can also use `current
 select now(), current_date
 ```
 
-#### Date_Trunc to Truncate Dates
+#### date_trunc to Truncate Dates
 
 In the blockchain, the date and time fields are usually saved in the "year-month-day hour:minute:second" format. If you want to summarize by day, week, month, etc., you can use the `date_trunc()` function to convert the date first. For example: `date_trunc('day', block_time)` converts the value of block_time to a date value represented by "day", `date_trunc('month', block_time)` converts the value of block_time to a date value represented by "month".
 
@@ -261,7 +192,7 @@ select now(),
 
 #### Interval to Get Time Intervals
 
-Using syntax like `interval '2 days'`, we can specify a time interval. It supports various different time interval representations, such as: `'12 hours'`, `'7 days'`, `'3 months'`, `'1 year'`, etc. Time intervals are often used to add or subtract a specified interval from a date and time value to get a date range.
+Using syntax like `interval '2' day`, we can specify a time interval. It supports various different time interval representations, such as: `'12' hour`, `'7' day`, `'3' month`, `'1' year`, etc. Time intervals are often used to add or subtract a specified interval from a date and time value to get a date range.
 
 ```sql
 select now() as right_now, 

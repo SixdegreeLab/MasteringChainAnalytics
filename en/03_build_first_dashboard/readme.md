@@ -63,10 +63,8 @@ First, log in to the [Dune website](https://dune.com/). Then, click on "My Creat
 
 ### Adding Query Charts
 
-A newly created data dashboard has no content, and the preview page will display "This dashboard is empty." We can convert the result of the total pool count from the previous step, into a visual chart and add it to the data dashboard. Open the "My Creations" page in a new browser tab: [https://dune.com/browse/queries/authored](https://dune.com/browse/queries/authored), and find the saved "Query 1" query. Click on its name to enter the editing page. Since the query has already been saved and executed, you can click the "New visualization" button to create a new visualization chart. For a single numerical query result, the counter visualization type is usually used. From the "Select visualization type" dropdown list, choose "Counter" and click the "Add Visualization" button. Then, you can give the chart a name and modify the Title value from the default "Counter" to "Total Number of Liquidity Pools". Finally, click "Add to dashboard" in the dialog box, and
-
-## ASSISTANT
- then click the "Add" button next to the corresponding data dashboard to add this counter chart to the data dashboard.
+A newly created data dashboard has no content, and the preview page will display "This dashboard is empty." We can convert the result of the total pool count from the previous step, into a visual chart and add it to the data dashboard. Open the "My Creations" page in a new browser tab: [https://dune.com/browse/queries/authored](https://dune.com/browse/queries/authored), and find the saved "Query 1" query. Click on its name to enter the editing page. Since the query has already been saved and executed, you can click the "New visualization" button to create a new visualization chart. For a single numerical query result, the counter visualization type is usually used. From the "Select visualization type" dropdown list, choose "Counter" and click the "Add Visualization" button. Then, you can give the chart a name and modify the Title value from the default "Counter" to "Total Number of Liquidity Pools". Finally, click "Add to dashboard" in the dialog box, and 
+then click the "Add" button next to the corresponding data dashboard to add this counter chart to the data dashboard.
 
 Now we can go back to the data dashboard page. After refreshing the page, you will see the newly added visualization chart. Click the "Edit" button in the upper right corner of the page to edit the data dashboard, including adjusting the size and position of each chart, adding text components, etc. Below is a screenshot of the counter chart for "Total Number of Liquidity Pools" after adjusting the height.
 
@@ -293,7 +291,7 @@ After reading this tutorial, I hope you will try it out for yourself. Uniswap wa
 
 Based on the tutorial content, create a data dashboard with at least 5 queries for any DEX. The naming format for the dashboard should be "SixdegreeAssignment1-YourName," such as "SixdegreeAssignment1-Spring." This format makes it easier for everyone to learn from each other and helps us monitor the quality of the tutorials. To encourage active participation in creating dashboards, we will keep a record of the completion and quality of the homework. In the future, we will provide rewards, including but not limited to Dune community identities, physical merchandise, free API quotas, POAPs, memberships to various collaborative data products, job recommendations for blockchain data analysis, priority registration for community offline activities, and other incentives from the SixDegree community.
 
-Keep up the good work! Feel free to share the links to your data dashboards in the Dune WeChat group or Dune's Chinese Discord channel.
+Keep up the good work! Feel free to share the links to your data dashboards in the Dune WeChat group or Dune's Discord channel.
 
 ## About SixDegreeLab
 
