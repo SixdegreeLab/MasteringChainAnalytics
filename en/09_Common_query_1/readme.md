@@ -1,4 +1,4 @@
-# Common query 1: ERC20 token price query
+# Common query part1: ERC20 token price queries
 
 In daily data analysis, we often receive some common needs, such as tracking the price changes of an ERC20 token, querying the balance of various ERC20 tokens held by a certain address, etc. In the help documentation of the Dune platform, [Some helpful data dashboards](https://dune.com/docs/reference/wizard-tools/helpful-dashboards/) and [Utility queries](https://dune.com/docs/reference/wizard-tools/utility-queries/) sections give some examples, you can refer to them. In this tutorial, we combine some typical needs that we encounter in our daily life, and sort out some query cases for you.
 
