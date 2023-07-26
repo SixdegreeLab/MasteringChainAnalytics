@@ -14,10 +14,10 @@ There are several types of datasets on Dune:
 - **User Generated Tables**: Currently, this function is not available on Dune V2, users can only upload a custom data tables through Spellbook GitHub repository.
 
 On the Query page , we can select or search for the required dataset through the left sidebar. The interface for this section is shown below:
-![](img/image_01.png)
+![](img/5-1.jpg)
 The text box in the middle of the image can be used to search for corresponding schemas or data tables. For example, entering `erc721` will filter out all Spells and Decoded projects tables whose names contain this string. The red box above the image is used to select the dataset to be used, "v2 Dune SQL" displayed in it is what we usually refer to as the "Dune SQL engine". Dune will fully transition to the Dune SQL engine in the second half of 2023, so for now, everyone only needs to be familiar with the syntax of Dune SQL.
 The red box at the bottom shows several categories of dataset currently supported by the Dune V2 engine. Click on the bold dataset category name will take you to the next level to browse the various data schemas and table names in that category. After that, you can also see a drop-down list with a default option of "All Chains", which can be used to filter the data schemas and tables on specified blockchain . When enter table level, clicking on the table name can expand to view the list of fields in the table. Clicking the "》" icon to the right of the table name will insert the table name (in the format of `schema_name.table_name`) into the query editor at the cursor position. While browsing in a hierarchical manner, you can also enter keywords to further search and filter at the current level. Different types of data tables have different levels of depth. The following picture shows an example of browsing decoded data tables.
-![](img/image_03.png)
+![](img/5-2.jpg)
 
 ## Raw data
 
@@ -30,7 +30,7 @@ A block is the basic component of a blockchain. A block contains multiple transa
 ### ethereum.transactions
 
 The `ethereum.transactions` table stores the details of every transaction that occurred on the blockchain (including both successful and failed transactions). The structure of the transaction table in Ethereum is shown below:
-![](img/image_02.png)
+![](img/5-3.jpg)
 
 The most commonly used fields in the transaction table include `block_time` (or `block_number`), `from`, `to`, `value`, `hash`, `success`,etc. The Dune V2 engine uses a columnar database where data in each table is stored by column. Column-stored tables cannot use indexes in the traditional sense, but rely on metadata with "min/max values" to optimize queries. For numeric or datetime columns, it's easy to calculate min/max values for a set of values. In contrast, for string columns with variable lengths, it's hard to efficiently compute min/max values. This makes string queries less efficient in the V2 engine. So we typically need to combine filters on datetime or numeric columns to improve query performance. As mentioned, the `block_time` and `block_number` fields exist in almost all data tables (under different names), so we should make full use of them for filtering to ensure efficient query execution. You can check [how the Dune V2 query engine works](https://dune.com/docs/query/#changes-in-how-the-database-works) to learn more details.
 
@@ -53,7 +53,7 @@ The main fields are `block_time`, `block_number`, `tx_hash`, `contract_address`,
 - `data` stores the hexadecimal encoded combination of unindexed event parameters , in string format starting with `0x`. Each parameter takes up 64 characters, with 0-padding on the left if less than 64 bits. When we need to decode the data, we should split it into groups of 64 characters starting from the 3rd character, based on this structure. Then we can further process each group to convert into the actual data types (address, number, string etc.)
 
 Here is a sample query that decode the ethereum.logs table directly: https://dune.com/queries/1510688. You can copy a tx_hash value from the query results and visit Etherscan, then switch to the "Logs" tab for comparison. Below is an example screenshot from Etherscan:
-![](img/image_04.png)
+![](img/5-4.jpg)
 
 ## Decoded Projects
 
