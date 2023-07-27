@@ -324,8 +324,8 @@ Here is an actual case: [https://dune.com/queries/1130354](https://dune.com/quer
 
 ## SixDegreeLab introduction
 
-SixDegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)）is a professional on-chain data team dedicated to providing accurate on-chain data charts, analysis, and insights to users. Our mission is to popularize on-chain data analysis and foster a community of on-chain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
+SixDegreeLab([@SixdegreeLab](https://twitter.com/sixdegreelab))is a professional on-chain data team dedicated to providing accurate on-chain data charts, analysis, and insights to users. Our mission is to popularize on-chain data analysis and foster a community of on-chain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
 
-Feel free to visit[SixDegreeLab's Dune homepage](https://dune.com/sixdegree)。
+Feel free to visit[SixDegreeLab's Dune homepage](https://dune.com/sixdegree).
 
 Due to our limitations, mistakes may occur. If you come across any errors, kindly point them out, and we appreciate your feedback.
