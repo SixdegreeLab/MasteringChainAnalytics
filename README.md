@@ -1,43 +1,43 @@
 # Mastering Chain Analytics
-本教程是一个面向区块链爱好者的系列教程，帮助新手用户从零开始学习区块链数据分析，成为一名链上数据分析师。
+
+This is a series tutorials for blockchain analysis enthusiasts, helping new users learn blockchain data analysis from scratch and become an on-chain data analyst master.
+
+# table of contents
 
 
-- **简介**
-    * [简介](README.md)
-    * [#0 成为链上数据分析师](00_introductions/readme.md)
 
-- **入门教程**
+# 中文目录
+## 入门教程
+- [#0 成为链上数据分析师](zh/ch00/ch00-become-chain-analyst.md)
+- [#1 Dune平台简介](zh/ch01/ch01-dune-platform-introduction.md)
+- [#2 数据分析新手上路](zh/ch02/ch02-quickstart.md)
+- [#3 创建第一个Dune数据看板](zh/ch03/ch03-build-first-dashboard.md)
+- [#4 熟悉数据表](zh/ch04/ch04-understanding-tables.md)
+- [#5 SQL基础（一）](zh/ch05/ch05-sql-basics-part1.md)
+- [#6 SQL基础（二）](zh/ch06/ch06-sql-basics-part2.md)
+- [#7 实践案例：制作Lens的数据看板（一）](zh/ch07/ch07-practice-build-lens-dashboard-part1.md)
+- [#8 实践案例：制作Lens的数据看板（二）](zh/ch08/ch08-practice-build-lens-dashboard-part2.md)
 
-  * [#1 Dune平台简介](01_platform/dune.md)
-  * [#2 数据分析新手上路](02_get_started/readme.md)
-  * [#3 创建第一个Dune数据看板](03_build_first_dashboard/readme.md)
-  * [#4 熟悉数据表](04_data_tables/readme.md)
-  * [#5 SQL基础（一）](05_sql_syntax/sql_syntax_1.md)
-  * [#6 实践案例：制作Lens Protocol的数据看板（一）](06_pratical_case_lens_protocol/readme.md)
-  * [#7 实践案例：制作Lens Protocol的数据看板（二）](06_pratical_case_lens_protocol/lens_part2.md)
-  * [#8 SQL基础（二）](05_sql_syntax/sql_syntax_2.md)
+## 中级教程
+- [#9 常见查询一：ERC20代币价格](zh/ch09/ch09-useful-queries-part1.md)
+- [#10 常见查询二：代币的持有者、总供应量、账户余额](zh/ch10/ch10-useful-queries-part2.md)
+- [#11 常见查询三：自定义数据、数字序列、数组、JSON等](zh/ch11/ch11-useful-queries-part3.md)
+- [#12 NFT数据分析](zh/ch12/ch12-nft-analysis.md)
+- [#13 借贷协议数据分析](zh/ch13/ch13-lending-analysis.md)
+- [#14 DeFi数据分析](zh/ch14/ch14-defi-analysis.md)
+- [#15 Dune SQL 查询引擎入门](zh/ch15/ch15-dunesql-introduction.md)
+- [#16 Polygon区块链概况分析](zh/ch16/ch16-blockchain-analysis-polygon.md)
+- [#17 MEV数据分析——以Uniswap为例](zh/ch17/ch17-mev-analysis-uniswap.md)
+- [#18 Uniswap多链数据对比分析](zh/ch18/ch18-uniswap-multichain-analysis.md)
+- [#19 各类常见指标分析](zh/ch19/ch19-useful-metrics.md)
 
-- **中级教程**
+## 中级教程
+- [#20 区块链网络分析](zh/ch20/ch20-network-analysis.md)
+- [#21 BTC数据分析-以指标CDD为例](zh/ch21/ch21-btc-analysis.md)
+- [#22 如何构建魔法表（Spellbook）](zh/ch22/ch22-how-to-build-spellbook.md)
+- [#23 使用Dune API创建应用程序](zh/ch23/ch23-how-to-build-app-use-dune-api.md)
 
-  * [#9 常见查询一：ERC20代币价格](07_common_query_samples/readme.md)
-  * [#10 常见查询二：代币的持有者、总供应量、账户余额](07_common_query_samples/common_queries_part2.md)
-  * [#11 常见查询三：自定义数据、数字序列、数组、JSON等](07_common_query_samples/common_queries_part3.md)
-  * [#12 NFT数据分析](08_nft_analysis/readme.md)
-  * [#13 借贷协议数据分析](09_Lending_Analysis/readme.md)
-  * [#14 DeFi数据分析](10_defi/readme.md)
-  * [#15 Dune SQL 查询引擎入门](11_dune_sql/readme.md)
-  * [#16 Polygon区块链概况分析](13_polygon/readme.md)
-  * [#17 MEV数据分析——以Uniswap为例](14_MEV_UniswapV3/readme.md)
-  * [#18 Uniswap 多链数据对比分析](15_uniswap_multichain/readme.md)
-  * [#19 各类常见指标分析（一）](19_common_index/readme.md)
 
-- **高级教程**
+## About Us
 
-  * [#20 区块链网络分析](12_Network_Analytics/Network_Analytics.md)
-  * [#21 如何设计Dashboard - 以BTC指标CDD为例](21_how_to_design_a_dashboard/readme.md)
-  * [#22 如何构建魔法表（Spell）](22_cast_a_spell/readme.md)
-  * [#23 使用Dune API创建应用程序](23_app_with_dune_api/readme.md)
-
-## 关于我们
-[SixdegreeLab](https://twitter.com/SixdegreeLab)是专业的链上数据团队，我们的使命是为用户提供准确的链上数据图表、分析以及洞见，并致力于普及链上数据分析。通过建立社区、编写教程等方式，培养链上数据分析师，输出有价值的分析内容，推动社区构建区块链的数据层，为未来广阔的区块链数据应用培养人才。
-
+[SixdegreeLab](https://twitter.com/SixdegreeLab) are a group of on-chain data enthusiasts. Our mission is to provide users with accurate on-chain data charts, analysis, and insights, and we are committed to popularizing on-chain data analysis. By establishing a community, writing tutorials, etc., train data analysts on the chain, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad blockchain data application in the future.
