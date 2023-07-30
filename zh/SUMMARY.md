@@ -1,5 +1,5 @@
 
-* [简介](README.md)
+* [简介](readmd.md)
 - [#0 成为链上数据分析师](ch00/ch00-become-chain-analyst.md)
 
 ## 入门教程
