@@ -31,7 +31,7 @@
   - [#18 Uniswap多链数据对比分析](ch18/ch18-uniswap-multichain-analysis.md)
   - [#19 各类常见指标分析](ch19/ch19-useful-metrics.md)
 
-- **高级教程	**
+- **高级教程**
   - [#20 区块链网络分析](ch20/ch20-network-analysis.md)
   - [#21 BTC数据分析-以指标CDD为例](ch21/ch21-btc-analysis.md)
   - [#22 如何构建魔法表（Spellbook）](ch22/ch22-how-to-build-spellbook.md)
