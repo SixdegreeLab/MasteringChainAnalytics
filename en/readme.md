@@ -1,3 +1,13 @@
+# Mastering Chain Analytics
+
+Online Book: 
+- En: [Mastering Chain Analytics](https://sixdegreelab.gitbook.io/mastering-chain-analytics/)
+- Zh: [精通区块链数据分析](https://sixdegreelab.gitbook.io/mastering-chain-analytics/)
+
+This is a series tutorials for blockchain analysis enthusiasts, helping new users learn blockchain data analysis from scratch and become an on-chain data analyst master.
+
+# Table of content
+
 ## Introduction
 - [Intro](readme.md)
 - [#0 become chain analyst](ch00/ch00-become-chain-analyst.md)
@@ -33,3 +43,12 @@
 - [#23 how to build app use dune api](ch23/ch23-how-to-build-app-use-dune-api.md)
 api.md)
  
+
+
+## About Us
+
+[SixdegreeLab](https://twitter.com/SixdegreeLab) are a group of on-chain data enthusiasts. Our mission is to provide users with accurate on-chain data charts, analysis, and insights, and we are committed to popularizing on-chain data analysis. By establishing a community, writing tutorials, etc., train data analysts on the chain, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad blockchain data application in the future.
+
+- website: [sixdegree.xyz](https://sixdegree.xyz)
+- twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- dune: [dune.com/sixdegree](https://dune.com/sixdegree)
