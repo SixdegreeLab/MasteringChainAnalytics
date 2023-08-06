@@ -73,7 +73,7 @@ yarn dev
 
 基于 Next.js, CSS framework 使用 tailwindcss，fetcher 使用 Axios，前端数据操作使用 dexie，后端数据操作使用 prisma。
 
-```
+``` bash
 $ yarn create next-app
 $ yarn add tailwindcss autoprefixer postcss prisma -D
 $ yarn add axios dexie dexie-react-hooks @prisma/client
@@ -81,7 +81,7 @@ $ yarn add axios dexie dexie-react-hooks @prisma/client
 
 ### 初始化 Schema
 
-```
+``` bash
 $ yarn prisma init --datasource-provider sqlite
 $ vim prisma/schema.prisma
 generator client {
@@ -107,7 +107,7 @@ $ yarn prisma generate
 ### 封装API调用
 
 增加 lib/dune.ts, 封装 Dune API 执行的三个步骤：
-```
+``` javascript
 export const executeQuery = async (id: string, parameters: any) => {
   // 用 hash 生成当前执行的 query key, 检查并获取 sqlite 中是否有对应 execution_id。记得做好缓存过期处理
   // ...
@@ -129,7 +129,7 @@ export const executeResults = async (id: string) => {
 
 与 Next.js 项目部署方式一致，这儿已将 DB 初始化放到 package.json
 
-```
+``` json
   "scripts": {
     "dev": "prisma generate && prisma migrate dev && next dev",
     "build": "prisma generate && prisma migrate deploy && next build",
