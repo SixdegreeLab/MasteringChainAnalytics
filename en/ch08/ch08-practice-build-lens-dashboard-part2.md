@@ -215,12 +215,12 @@ Lens comment data is similar to post data, which are stored in the `LensHub_call
 ``` sql
 select call_block_time,
     call_tx_hash,
-    output_0 as comment_id, -- 评论编号
-    json_value(vars, 'lax $.profileId') as profile_id_from, -- 评论者的Profile ID
-    json_value(vars, 'lax $.contentURI') as content_url, -- 评论内容链接
-    json_value(vars, 'lax $.pubIdPointed') as publication_id_pointed, -- 被评论的Publication ID
-    json_value(vars, 'lax $.profileIdPointed') as profile_id_pointed, -- 被评论的创作者的Profile ID
-    json_value(vars, 'lax $.profileIdPointed') || '-' || json_value(vars, 'lax $.pubIdPointed') as unique_publication_id  -- 组合生成唯一编号
+    output_0 as comment_id, -- comment id
+    json_value(vars, 'lax $.profileId') as profile_id_from, -- Profile ID of the comment
+    json_value(vars, 'lax $.contentURI') as content_url, -- comment content link
+    json_value(vars, 'lax $.pubIdPointed') as publication_id_pointed, -- Commented Publication ID
+    json_value(vars, 'lax $.profileIdPointed') as profile_id_pointed, -- Profile ID of Creator who were commented on
+    json_value(vars, 'lax $.profileIdPointed') || '-' || json_value(vars, 'lax $.pubIdPointed') as unique_publication_id  -- combine to generate unique id
 from lens_polygon.LensHub_call_comment
 where call_success = true
 limit 10
@@ -282,8 +282,8 @@ select call_block_time,
     cast(c.profileId as varchar) || '-' || cast(c.pubId as varchar) as unique_publication_id,
     c.output_0 as collection_id
 from lens_polygon.LensHub_call_collect c
-inner join polygon.transactions t on c.call_tx_hash = t.hash -- 关联交易表获取用户地址
-where call_block_time >= date('2022-05-18') -- Lens合约的发布日期，提升查询效率
+inner join polygon.transactions t on c.call_tx_hash = t.hash -- join the transaction table to get user address
+where call_block_time >= date('2022-05-18') -- filter by Lens Contract deployed date to improve the query speed
     and block_time >= date('2022-05-18')
     and c.call_success = true
 limit 10

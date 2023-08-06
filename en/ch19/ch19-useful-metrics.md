@@ -32,8 +32,7 @@ The calculation logic for TVL is relatively straightforward. We need to count al
 
 To get the token balances for each pair, we first need to organize all transaction details:
 
-```
-sqlCopy code
+``` sql
 WITH token_pairs AS (
     SELECT 
         COALESCE(k1.symbol, 'AGI') || '-' || COALESCE(k2.symbol, 'AGI') AS pair_name,

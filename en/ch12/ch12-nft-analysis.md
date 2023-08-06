@@ -20,7 +20,11 @@ With the development of NFT, other standard NFT have been derived:
 - SBT: Non-transferable Token
 - ERC-3235: Semi-fungible token, each token is different, and supports settlement
 
-![](img/ERC-Standard.jpeg)
+|          | ERC20                                                | ERC721                                                                     | ERC1155                                                                                                                                    | ERC3535                                                                                                                                                                                                                                                                                                                                                               |
+|----------|------------------------------------------------------|----------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **features** | fungible tokens(each single token is same as others) | non-fungible tokens(each single token is unique, no one is same as others) | representing fungible, semi-fungible, and non-fungible tokens.                                                                             | Semi-Fungible Token                                                                                                                                                                                                                                                                                                                                                   |
+| **esamples** | address A transfer 100ETH to address B               | address A transfer an laser eye BAYC to address.(not glassed or others)    | address A transfer 5 bottles of potion in a game. Not other equipment.  each of the 5 bottles of potion is same. but we can +/- 5 bottles. | A DeFi protocol gives user A a $100 1-year bond, numbered 001. The bond can be split into 2 $50 bonds, numbered 002 and 003, which user A then transfers to holders B and C. The bond can be split into 2 $50 bonds, numbered 002 and 003. The 003 bond can in turn be split into another $20 for the 003 bond, at which point 002 is worth $30 and 003 is worth $70. |
+| **scenario** | cryptocurrency                                       | Digital Collections                                                        | In-Game Assets                                                                                                                             | Financial Assets/Contracts                                                                                                                                                                                                                                                                                                                                            |
 
 ## Contract description
 
@@ -194,9 +198,9 @@ Reference Links: https://dune.com/queries/1660139
 ``` sql
 with total_volume as(
     SELECT
-        sum(amount_original) as "Total Trade Volume(ETH)", --总成交量ETH
-        sum(amount_usd) as "Total Trade Volume(USD)",      --总成交量USD
-        count(amount_original) as "Total Trade Tx"         --总交易笔数
+        sum(amount_original) as "Total Trade Volume(ETH)", 
+        sum(amount_usd) as "Total Trade Volume(USD)",      
+        count(amount_original) as "Total Trade Tx"     
     FROM nft.trades
     WHERE nft_contract_address = 0xed5af388653567af2f388e6224dc7c4b3241c544
         -- AND currency_symbol IN ('ETH', 'WETH') 
@@ -204,10 +208,10 @@ with total_volume as(
 
 total_fee as (
     select 
-        sum(royalty_fee_amount) as "Total Royalty Fee(ETH)",      --总版权税ETH
-        sum(royalty_fee_amount_usd) as "Total Royalty Fee(USD)",  --总版权税USD
-        sum(platform_fee_amount) as "Total Platform Fee(ETH)",    --总平台抽成ETH
-        sum(platform_fee_amount_usd) as "Total Platform Fee(USD)" --总平台抽成USD
+        sum(royalty_fee_amount) as "Total Royalty Fee(ETH)",   
+        sum(royalty_fee_amount_usd) as "Total Royalty Fee(USD)", 
+        sum(platform_fee_amount) as "Total Platform Fee(ETH)",   
+        sum(platform_fee_amount_usd) as "Total Platform Fee(USD)" 
     from nft.fees 
     WHERE nft_contract_address = 0xed5af388653567af2f388e6224dc7c4b3241c544
     -- AND royalty_fee_currency_symbol IN ('ETH', 'WETH') 

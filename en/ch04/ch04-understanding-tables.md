@@ -14,9 +14,12 @@ There are several types of datasets on Dune:
 - **User Generated Tables**: Currently, this function is not available on Dune V2, users can only upload a custom data tables through Spellbook GitHub repository.
 
 On the Query page , we can select or search for the required dataset through the left sidebar. The interface for this section is shown below:
+
 ![](img/5-1.jpg)
+
 The text box in the middle of the image can be used to search for corresponding schemas or data tables. For example, entering `erc721` will filter out all Spells and Decoded projects tables whose names contain this string. The red box above the image is used to select the dataset to be used, "v2 Dune SQL" displayed in it is what we usually refer to as the "Dune SQL engine". Dune will fully transition to the Dune SQL engine in the second half of 2023, so for now, everyone only needs to be familiar with the syntax of Dune SQL.
 The red box at the bottom shows several categories of dataset currently supported by the Dune V2 engine. Click on the bold dataset category name will take you to the next level to browse the various data schemas and table names in that category. After that, you can also see a drop-down list with a default option of "All Chains", which can be used to filter the data schemas and tables on specified blockchain . When enter table level, clicking on the table name can expand to view the list of fields in the table. Clicking the "》" icon to the right of the table name will insert the table name (in the format of `schema_name.table_name`) into the query editor at the cursor position. While browsing in a hierarchical manner, you can also enter keywords to further search and filter at the current level. Different types of data tables have different levels of depth. The following picture shows an example of browsing decoded data tables.
+
 ![](img/5-2.jpg)
 
 ## Raw data
@@ -30,7 +33,38 @@ A block is the basic component of a blockchain. A block contains multiple transa
 ### ethereum.transactions
 
 The `ethereum.transactions` table stores the details of every transaction that occurred on the blockchain (including both successful and failed transactions). The structure of the transaction table in Ethereum is shown below:
-![](img/5-3.jpg)
+
+|  **Column**            |  **Data type**   |  **Description**                                                   |
+| -------------------------- | :-----------: | ---------------------------------------------------------------- |
+| `block_time`               | _timestamptz_ | The time when the block was mined that includes this transaction |
+| `block_number`             | _int8_        | The length of the blockchain in blocks                     |
+| `value`                      | _numeric_     | The amount of `[chain_gas_token]` sent in this transaction in `wei`. Note that ERC20 tokens do not show up here |
+| `gas_limit`                | _numeric_     | The gas limit in `wei` (ArbGas for Arbitrum) |
+| `gas_price`                | _numeric_     | The gas price in `wei`                                    |
+| `gas_used`                 | _numeric_     | The gas consumed by the transaction in `wei`              |
+| `max_fee_per_gas`          | _numeric_     | The maximum fee per gas the transaction sender is willing to pay total (introduced by [EIP1559](https://eips.ethereum.org/EIPS/eip-1559)) |
+| `max_priority_fee_per_gas` | _numeric_     | Maximum fee per gas the transaction sender is willing to give to miners to incentivize them to include their transaction (introduced by [EIP1559](https://eips.ethereum.org/EIPS/eip-1559)) |
+| `priority_fee_per_gas`     | _numeric_     | The priority fee paid out to the miner for this transaction (introduced by [EIP1559](https://eips.ethereum.org/EIPS/eip-1559)) |
+| `nonce`                    | _numeric_     | The transaction nonce, unique to that wallet               |
+| `index`                    | _numeric_     | The transactions index position in the block               |
+| `success`                  | _boolean_     | A true/false value that shows if the transaction succeeded |
+| `from`                     | _bytea_       | Address of the sender                                      |
+| `to`                       | _bytea_       | Address of the receiver. `null` when its a contract creation transaction |
+| `block_hash`               | _bytea_       | A unique identifier for that block                         |
+| `data`                     | _bytea_       | Can either be empty, a hex encoded message or instructions for a smart contract call |
+| `hash`                     | _bytea_       | The hash of the transaction                                |
+| `type`                     | _text_        | The type of the transaction: `Legacy`, `AccessList`, or `DynamicFee` |
+| `access_list`              | _jsonb_       | A list of addresses and storage keys the transaction intends to access. See [EIP2930](https://eips.ethereum.org/EIPS/eip-2930). Applicable if the transaction is of type `AccessList` or `DynamicFee` |
+| `effective_gas_price` | _numeric_      | [Arbitrum and Avalanche C-Chain only] The gas price this transaction paid in `wei` (Arbitrum) or `nanoavax` (Avalanche) |
+| `gas_used_for_l1` | _numeric_ | [Arbitrum only] The gas consumed by the L1 resources used for this transaction in ArbGas |
+| `l1_gas_used` | _numeric_ | [Optimism only] The costs to send the input `calldata` to L1 |
+| `l1_gas_price` | _numeric_ | [Optimism only] The gas price on L1 |
+| `l1_fee` | _numeric_ | [Optimism only] The amount in wei paid on L1  |
+| `l1_fee_scalar` | _numeric_ | [Optimism only] Variable parameter that makes sure that gas costs on L1 get covered + profits |
+| `l1_block_number` | _numeric_ | [Optimism only] The block_number of the block in which this transaction got batch settled on L1 |
+| `l1_timestamp` | _numeric_ | [Optimism only] The timestamp of the block in which this transaction got batch settled on L1 |
+| `l1_tx_origin` | _numeric_ | [Optimism only] ?? |
+
 
 The most commonly used fields in the transaction table include `block_time` (or `block_number`), `from`, `to`, `value`, `hash`, `success`,etc. The Dune V2 engine uses a columnar database where data in each table is stored by column. Column-stored tables cannot use indexes in the traditional sense, but rely on metadata with "min/max values" to optimize queries. For numeric or datetime columns, it's easy to calculate min/max values for a set of values. In contrast, for string columns with variable lengths, it's hard to efficiently compute min/max values. This makes string queries less efficient in the V2 engine. So we typically need to combine filters on datetime or numeric columns to improve query performance. As mentioned, the `block_time` and `block_number` fields exist in almost all data tables (under different names), so we should make full use of them for filtering to ensure efficient query execution. You can check [how the Dune V2 query engine works](https://dune.com/docs/query/#changes-in-how-the-database-works) to learn more details.
 
@@ -54,6 +88,7 @@ The main fields are `block_time`, `block_number`, `tx_hash`, `contract_address`,
 
 Here is a sample query that decode the ethereum.logs table directly: https://dune.com/queries/1510688. You can copy a tx_hash value from the query results and visit Etherscan, then switch to the "Logs" tab for comparison. Below is an example screenshot from Etherscan:
 ![](img/5-4.jpg)
+
 
 ## Decoded Projects
 

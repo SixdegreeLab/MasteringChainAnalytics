@@ -187,7 +187,7 @@ order by 1
 - Aggregation by groups (`group by`)
   The syntax for aggregation by groups is `group by`. As the name suggests, it groups first then aggregates, and needs to be used together with aggregate functions.
 
-![](img/group%20by%20case.webp)
+![](img/group-by-case.png)
 
 Let's say the table above shows household expenses (3 people) for the first 2 months of 2020. If you just use `sum`, you would only get the total of 12900. If you want to get the 2 types of aggregated data on the right, you need to use group by (group by `Person` or group by `Month`).
 
@@ -252,7 +252,7 @@ left join -- Join transactions_info with price_info, using left join
   - Join condition (on)
 - The most commonly used are join and left join. Take these two examples to explain the specific usage
 
-![](img/query-2.webp)
+![](img/query-2.png)
 
 ```
 - join: Joins two tables based on the join condition (on), taking the intersection

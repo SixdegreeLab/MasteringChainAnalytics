@@ -52,7 +52,7 @@ Allows the user to input a pool address (prompting the user to copy it from the 
 
 ## Development Environment Setup
 
-```
+``` bash
 Copy code
 yarn dev
 ```
@@ -73,7 +73,7 @@ $ yarn add axios dexie dexie-react-hooks @prisma/client
 
 ### Initialize Schema
 
-```
+``` bash
 $ yarn prisma init --datasource-provider sqlite
 $ vim prisma/schema.prisma
 generator client {
@@ -100,7 +100,7 @@ $ yarn prisma generate
 
 Add `lib/dune.ts` to encapsulate the three steps of executing the Dune API:
 
-```
+``` javascript
 export const executeQuery = async (id: string, parameters: any) => {
   // Generate a hash for the current execution query key, check and get the corresponding execution_id from sqlite. Remember to handle cache expiration.
   // ...
@@ -123,7 +123,7 @@ In the `pages` directory, add a recursive function to check if `data.result` nod
 
 The deployment process is similar to a Next.js project. The initialization of the database is already placed in `package.json`:
 
-```
+``` json
 "scripts": {
   "dev": "prisma generate && prisma migrate dev && next dev",
   "build": "prisma generate && prisma migrate deploy && next build",

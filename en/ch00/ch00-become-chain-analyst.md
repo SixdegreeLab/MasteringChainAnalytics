@@ -8,7 +8,7 @@
 ## What is On-Chain Data
 Most people when first introduced to blockchain get this concept: blockchain is a public, tamper-proof ledger, all transfers, transaction records are transparent and trustworthy. However, this function is not all of blockchain, it is just the initial point of departure from the "peer-to-peer electronic cash system", that is, the "ledger". With the development of smart contracts, blockchain is actually becoming a large database, the following diagram compares the architecture of traditional web2 and web3 applications: smart contracts replace the backend, and blockchain also takes on some of the functions of the database. More and more on-chain projects are emerging, our interactions on-chain are becoming more frequent, such as how much liquidity we added in DeFi protocols, which NFTs we minted, and even which social accounts we follow can be recorded on-chain, all our interactions with blockchain will be recorded in this database, these records belong to on-chain data.
 
-![image](img/01.jpg)
+![image](img/01.png)
 
 **On-chain data is roughly divided into three categories:**
 1. Transaction data.
@@ -31,13 +31,13 @@ Although we always say that on-chain data is public and transparent,
 it is difficult for us to directly read those data,
 because a simple swap transaction on-chain may look like this:
 
-![image](img/03.jpg)
+![image](img/03.png)
 
 We can see some raw on-chain data in the blockchain browser, 
 but my question is how much is the UniswapV3 trading volume today, 
 this does not solve my problem! What I want to see is the following picture:
 
-![image](img/04.jpg)
+![image](img/04.png)
 
 The original on-chain data cannot give us the answer,
 we need to go through a series of data ingestion processes such as indexing, processing, storage

@@ -13,10 +13,10 @@ The `now()` function is used to get the date and time of the current system.Note
 The  `current_date()` function is used to get the current date (without the hours, minutes and seconds part).When filtering data by date and time, we often need to combine these functions and use relevant date functions to obtain the exact date or time. The `current_date()` function is equivalent to using `date_trunc('day', now())`, which extracts the day value from the result of `now()`. You can also omit the parentheses of `current_date()` and write it as `current_date` directly.
 
 ``` sql
-select now() -- 当前系统日期和时间
-    ,current_date() -- 当前系统日期
-    ,current_date   -- 可以省略括号
-    ,date_trunc('day', now()) -- 与current_date相同
+select now() -- current datetime
+    ,current_date() -- current date
+    ,current_date   -- current date
+    ,date_trunc('day', now()) -- same as current_date
 ```
     
 ### 2.DateAdd(), Date_Add(), Date_Sub() and DateDiff() functions
@@ -30,13 +30,13 @@ The function `datediff(endDate, startDate)` returns the number of days between t
 The SQL example is as follows:
 
 ``` sql
-select date_add('MONTH', 2, current_date) -- 当前日期加2个月后的日期
-    ,date_add('HOUR', 12, now()) -- 当前日期时间加12小时
-    ,date_add('DAY', -2, current_date) -- 当前日期减去2天
-    ,date_add('DAY', 2, current_date) -- 当前日期加上2天
-    ,date_add('DAY', -5, current_date) -- 当前日期加上-5天，相当于减去5天
-    ,date_diff('DAY', date('2022-11-22'), date('2022-11-25')) -- 结束日期早于开始日期，返回负值
-    ,date_diff('DAY', date('2022-11-25'), date('2022-11-22')) -- 结束日期晚于开始日期，返回正值
+select date_add('MONTH', 2, current_date) -- Add 2 months to current date
+    ,date_add('HOUR', 12, now()) -- Add 12 hours to current date
+    ,date_add('DAY', -2, current_date) -- Subtract 2 days to current date 
+    ,date_add('DAY', 2, current_date) -- Add 2 days to current date
+    ,date_add('DAY', -5, current_date) -- Subtract 5 days to current date 
+    ,date_diff('DAY', date('2022-11-22'), date('2022-11-25')) -- the difference between two date, return negtivate value
+    ,date_diff('DAY', date('2022-11-25'), date('2022-11-22'))  -- the difference between two date, return positive value
 ```
 
 ### 3.INTERVAL type
@@ -44,9 +44,9 @@ select date_add('MONTH', 2, current_date) -- 当前日期加2个月后的日期
 Interval is a datatype that represents an interval of time in specified datetime units. The time interval represented by Interval is very convenient to use, avoiding being troubled by the previous date functions with similar names and similar functions.
 
 ``` sql
-select now() - interval '2' hour -- 2个小时之前
-    ,current_date - interval '7' day -- 7天之前
-    ,now() + interval '1' month -- 一个月之后的当前时刻
+select now() - interval '2' hour -- 2 hours ago
+    ,current_date - interval '7' day -- 7 days ago
+    ,now() + interval '1' month -- 1 month after now
 ```
 
 For a description of more date-time related functions, see [Date and time functions and operators](https://trino.io/docs/current/functions/datetime.html)
@@ -59,14 +59,14 @@ When conditional logic needs to be applied, the `case` statement can be used. Th
 We have used the CASE statement many times in the "Lens Practice Case: Creator Profile Domain Name Analysis" section. Some of the code excerpts are as follows:
 
 ``` sql
--- ...省略部分代码...
+-- ...skip some code...
 
 profiles_summary as (
     select (
             case
-                when length(short_name) >= 20 then 20 -- 域名长度大于20时，视为20对待
-                else length(short_name) -- 域名长度小于20，直接使用其长度值
-            end) as name_length, -- 将case语句评估返回的结果命名为一个新的字段
+                when length(short_name) >= 20 then 20 -- if the length of profile name greater than 20, then set to 20
+                else length(short_name) -- if the length of profile name less than 20, use the original length
+            end) as name_length, -- rename case column to a new name
         handle_type,
         count(*) as name_count
     from profile_created
@@ -76,13 +76,13 @@ profiles_summary as (
 profiles_total as (
     select count(*) as total_profile_count,
         sum(case
-                when handle_type = 'Pure Digits' then 1 -- 类型值等于给定值，返回1
-                else 0  -- 类型值不等于给定值，返回 0
+                when handle_type = 'Pure Digits' then 1 -- if the handle_type equal to 'Pure Digits', return 1
+                else 0  -- else return 0
             end
         ) as pure_digit_profile_count,
         sum(case 
-                when handle_type = 'Pure Letters' then 1  -- 类型值等于给定值，返回1
-                else 0  -- 类型值不等于给定值，返回 0
+                when handle_type = 'Pure Letters' then 1 
+                else 0  
             end
         ) as pure_letter_profile_count
     from profile_created
@@ -101,8 +101,8 @@ Related links for the above example query:
 The function `if(cond, expr1, expr2)` returns one of two expressions, depending on whether the condition evaluates to true or false. If the condition evaluates to a true value, the first expression is returned, and if it evaluates to a false value, the second expression is returned.
 
 ``` sql
-select if(1 < 2, 'a', 'b') -- 条件评估结果为真，返回第一个表达式
-    ,if('a' = 'A', 'case-insensitive', 'case-sensitive') -- 字符串值区分大小写
+select if(1 < 2, 'a', 'b') -- if the condition result is true, return 'a', else return 'b'
+    ,if('a' = 'A', 'case-insensitive', 'case-sensitive') 
  ```
 
 ## Common functions for string processing
@@ -116,8 +116,8 @@ When there are certain situations where we have to work with the original data t
 The function `concat(expr1, expr2 [, ...])` strings multiple expressions together. ) concatenates multiple expressions together and is often used to link strings. The operator `||` has the same function as Concat.
 
 ``` sql
-select concat('a', ' ', 'b', ' c') -- 连接多个字符串
-    , 'a' || ' ' || 'b' || ' c' -- 与concat()功能相同
+select concat('a', ' ', 'b', ' c') -- concat multi string
+    , 'a' || ' ' || 'b' || ' c' -- same as concat
 ```
 
 3. Right() function
@@ -129,18 +129,18 @@ Note that in Dune SQL, directly using the `right()` function may return a syntax
 The following is a comprehensive example of using the above functions. This example decodes the cross-chain to Arbitrum records from the `logs` table, using several methods comprehensively:
 
 ``` sql
-select date_trunc('day', block_time) as block_date, --截取日期
-    concat('0x', "right"(substring(cast(data as varchar), 3 + 64 * 2, 64), 40)) as address, -- 提取data中的第3部分转换为用户地址，从第3个字符开始，每64位为一组
-    concat('0x', "right"(substring(cast(data as varchar), 3 + 64 * 3, 64), 40)) as token, -- 提取data中的第4部分转换为用户地址
-    concat('0x', substring(substring(cast(data as varchar), 3 + 64 * 3, 64), -40, 40)) as same_token, -- 提取data中的第4部分转换为用户地址
-    substring(cast(data as varchar), 3 + 64 * 4, 64) as hex_amount, -- 提取data中的第5部分
-    bytearray_to_uint256(bytearray_substring(data, 1 + 32 * 4, 32)) as amount, -- 提取data中的第5部分，转换为10进制数值
+select date_trunc('day', block_time) as block_date, --truncate a timestamp to day
+    concat('0x', "right"(substring(cast(data as varchar), 3 + 64 * 2, 64), 40)) as address, -- Extract the third part of the data column and convert it into an address, starting from the third character, each 64 characters as a group.
+    concat('0x', "right"(substring(cast(data as varchar), 3 + 64 * 3, 64), 40)) as token, -- Extract part 4 of data and convert it to address
+    concat('0x', substring(substring(cast(data as varchar), 3 + 64 * 3, 64), -40, 40)) as same_token, -- Extract part 4 of data and convert it to address
+    substring(cast(data as varchar), 3 + 64 * 4, 64) as hex_amount, -- Extract part 5 of data column
+    bytearray_to_uint256(bytearray_substring(data, 1 + 32 * 4, 32)) as amount, -- Extract part 5 of data column and convert it to decimal
     tx_hash
 from ethereum.logs
 where contract_address = 0x5427fefa711eff984124bfbb1ab6fbf5e3da1820   -- Celer Network: cBridge V2 
     and topic0 = 0x89d8051e597ab4178a863a5190407b98abfeff406aa8db90c59af76612e58f01  -- Send
-    and substring(cast(data as varchar), 3 + 64 * 5, 64) = '000000000000000000000000000000000000000000000000000000000000a4b1'   -- 42161，直接判断16进制值
-    and substring(cast(data as varchar), 3 + 64 * 3, 64) = '000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' -- WETH，直接判断16进制值
+    and substring(cast(data as varchar), 3 + 64 * 5, 64) = '000000000000000000000000000000000000000000000000000000000000a4b1'   -- 42161
+    and substring(cast(data as varchar), 3 + 64 * 3, 64) = '000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' -- WETH
     and block_time >= now() - interval '30' day
 limit 10
 ```
@@ -198,8 +198,8 @@ pool_summary as (
 
 select block_date,
     pool_count,
-    lag(pool_count, 1) over (order by block_date) as pool_count_previous, -- 使用Lag()函数获取前一天的值
-    pool_count - (lag(pool_count, 1) over (order by block_date)) as pool_count_diff -- 相减得到变化值
+    lag(pool_count, 1) over (order by block_date) as pool_count_previous, -- use the lag function to get previous day
+    pool_count - (lag(pool_count, 1) over (order by block_date)) as pool_count_diff -- Subtract to get the change value
 from pool_summary
 order by block_date
 ```
@@ -212,7 +212,7 @@ The Lead() function proves to be a valuable tool when we wish to perform "forwar
 
 ``` sql
 with post_data as (
-    -- 获取原始发帖详细数据，请参考完整SQL链接
+    -- To obtain the detailed data of the original post, please refer to the Dune SQL link
 ),
 
 top_post_profiles as (
@@ -224,11 +224,11 @@ top_post_profiles as (
     limit 50
 )
 
-select row_number() over (order by post_count desc) as rank_id, -- 生成连续行号，用来表示排名
+select row_number() over (order by post_count desc) as rank_id, -- Generate consecutive numbers to indicate ranking
     profile_id,
     post_count,
-    lead(post_count, 1) over (order by post_count desc) as post_count_next, -- 获取下一行的发帖数据
-    post_count - (lead(post_count, 1) over (order by post_count desc)) as post_count_diff -- 计算当前行和下一行的发帖数量差
+    lead(post_count, 1) over (order by post_count desc) as post_count_next, -- Get the post data of the next line
+    post_count - (lead(post_count, 1) over (order by post_count desc)) as post_count_diff -- Calculate the difference between the number of posts in the current row and the next row
 from top_post_profiles
 order by post_count desc
 ```
@@ -245,11 +245,11 @@ Row_Number() is a powerful window function of the ranking type, primarily used t
 
 ``` sql
 with latest_token_price as (
-    select date_trunc('hour', minute) as price_date, -- 按小时分组计算
+    select date_trunc('hour', minute) as price_date, -- group by hour
         contract_address,
         symbol,
         decimals,
-        avg(price) as price -- 计算平均价格
+        avg(price) as price -- Calculate average price
     from prices.usd
     where contract_address in (
         0xdac17f958d2ee523a2206206994597c13d831ec7,
@@ -258,7 +258,7 @@ with latest_token_price as (
         0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48,
         0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9
     )
-    and minute > now() - interval '1' day -- 取最后一天内的数据，确保即使数据有延迟也工作良好
+    and minute > now() - interval '1' day -- Fetch data within the last day to make sure it works well even if the data is delayed
     group by 1, 2, 3, 4
 ),
 
@@ -268,7 +268,7 @@ latest_token_price_row_num as (
         symbol,
         decimals,
         price,
-        row_number() over (partition by contract_address order by price_date desc) as row_num -- 按分区单独生成行号
+        row_number() over (partition by contract_address order by price_date desc) as row_num -- Generate row numbers by contract_address
     from latest_token_price
 )
 
@@ -277,7 +277,7 @@ select contract_address,
     decimals,
     price
 from latest_token_price_row_num
-where row_num = 1 -- 按行号筛选出每个token最新的平均价格
+where row_num = 1 -- Filter out the latest average price of each token by row number 1
 ```
 
 The above query results are shown in the figure below:

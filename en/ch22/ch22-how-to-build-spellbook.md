@@ -31,7 +31,7 @@ Dune provides more detailed instructions in their online documentation:[Spell gu
 
 Before you start building the magic table, you need to do some essential preparation work, including familiarizing yourself with the basic usage of the dbt tool, getting acquainted with basic GitHub operations (you must have a GitHub account), and setting up your local working environment. Detailed requirements and instructions for environment setup can be found here:
 
-[💻 Prepare prerequisites and set up Spellbook dbt](https://dune.com/docs/zh/spellbook/how-to-cast-a-spell/1-do-some-prerequisites and-set-up-Spellbook-dbt/)
+[💻 Prepare prerequisites and set up Spellbook dbt](https://dune.com/docs/spellbook/1-do-some-prerequisites%20and-set-up-Spellbook-dbt/)
 
 For more information about DBT:
 
