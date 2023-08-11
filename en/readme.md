@@ -2,7 +2,7 @@
 
 This is a series tutorials for blockchain analysis enthusiasts, helping new users learn blockchain data analysis from scratch and become an on-chain data analyst master.
 
-# Table of content
+# Table of contents
 
 - **Introduction**
   - [Introduction](readme.md)
