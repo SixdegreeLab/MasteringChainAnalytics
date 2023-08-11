@@ -73,7 +73,7 @@ order by {sort field}
 limit {return record quantity}
 ```
 
-The **field list** can list the fields (data columns) that the query needs to return one by one, multiple fields are separated by English commas, for example, you can specify the field list returned by the query as `contract_address, decimals, symbol`. You can also use the wildcard `*` to indicate the return of all fields in the data table. If the query uses multiple tables and a certain field exists in these tables at the same time, we need to use the `table_name.field_name` format to specify which table the returned field belongs to.
+The **field list** can list the fields (data columns) that the query needs to return one by one, where multiple fields are separated by English commas. For example, you can specify the field list returned by the query as `contract_address`, `decimals`, `symbol`. You can also use the wildcard `*` to indicate the return of all fields in the data table. If the query uses multiple tables and a certain field exists in these tables at the same time, we need to use the `table_name.field_name` format to specify which table the returned field belongs to.
 
 The **data table** is specified in the format `schema_name.table_name`, for example, `tokens.erc20`. We can use the syntax `as alias_name` to assign an alias to the table, for example: `from tokens.erc20 as t`. In this way, the alias `t` can be used to access the table `tokens.erc20` and its fields in the same query.
 

@@ -2,7 +2,7 @@
 
 ## Background Information
 
-[NFT(Non-Fungable Token)](https://ethereum.org/zh/nft/) Non-Fungable token is a kind of standard token follow [ERC721] (https://eips.ethereum.org/EIPS/eip-721) . compared to follow ERC20 standard in terms of fungable tokens, Traditionally, the most typical characteristics of NFT are that each token is indivisible, irreplaceable, and unique. The common uses of NFT are:
+[NFT(Non-Fungable Token)](https://ethereum.org/zh/nft/) Non-Fungable token is a kind of standard token follow [ERC721](https://eips.ethereum.org/EIPS/eip-721) . compared to follow ERC20 standard in terms of fungable tokens, Traditionally, the most typical characteristics of NFT are that each token is indivisible, irreplaceable, and unique. The common uses of NFT are:
 
 
 - Digital art/collections

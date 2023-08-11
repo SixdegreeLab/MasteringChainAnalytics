@@ -7,18 +7,18 @@ Currently, the structure of the basic datasets provided by several data platform
 
 There are several types of datasets on Dune:
 
-- **Raw**: Stored unedited blockchain data, including data tables such as `blocks`, `transactions`, and `traces`. These raw data tables contain the most original on-chain data and can be used for flexible data analysis.
-- **Decoded Projects**: Stored the decoded calls and events made to smart contracts . For example, tables related to Uniswap V3 and Opensea Seaport . Dune uses the ABI of smart contracts and the interface of standardized token smart contracts (ERC20, ERC721, etc.) to decode data and save the data of each event or method call separately to a data table.
-- **Spells**:Spells also called Abstractions in Dune V1, is built and maintained by Dune and community through Spellbook GitHub repository, and is compiled using dbt. These data tables are typically more convenient and efficient to use.
-- **Community**:This data is provided by selected third party organizations that stream their data directly to Dune. Currently there are two community datasets, `flashbots` and `reservoir`.
-- **User Generated Tables**: Currently, this function is not available on Dune V2, users can only upload a custom data tables through Spellbook GitHub repository.
+- **Raw**: stored raw blockchain data, including data tables such as `blocks`, `transactions`, and `traces`. These raw data tables contain the most original on-chain data and can be used for flexible data analysis.
+- **Decoded Projects**: stored the decoded calls and events made to smart contracts. For example, tables related to Uniswap V3 and Opensea Seaport. Dune uses the ABI of smart contracts and the interface of standardized token smart contracts (ERC20, ERC721, etc.) to decode data and save the data of each event or method call separately to a data table.
+- **Spells**: spells also called Abstractions in Dune V1, is built and maintained by Dune and community through Spellbook GitHub repository, and is compiled using dbt. These data tables are typically more convenient and efficient to use.
+- **Community**: this data is provided by selected third party organizations that stream their data directly to Dune. Currently there are two community datasets, `flashbots` and `reservoir`.
+- **User Generated Tables**: currently, this function is not available on Dune V2, users can only upload a custom data tables through Spellbook GitHub repository.
 
-On the Query page , we can select or search for the required dataset through the left sidebar. The interface for this section is shown below:
+On the Query page, we can select or search for the required dataset through the left sidebar. The interface for this section is shown below:
 
 ![](img/5-1.jpg)
 
 The text box in the middle of the image can be used to search for corresponding schemas or data tables. For example, entering `erc721` will filter out all Spells and Decoded projects tables whose names contain this string. The red box above the image is used to select the dataset to be used, "v2 Dune SQL" displayed in it is what we usually refer to as the "Dune SQL engine". Dune will fully transition to the Dune SQL engine in the second half of 2023, so for now, everyone only needs to be familiar with the syntax of Dune SQL.
-The red box at the bottom shows several categories of dataset currently supported by the Dune V2 engine. Click on the bold dataset category name will take you to the next level to browse the various data schemas and table names in that category. After that, you can also see a drop-down list with a default option of "All Chains", which can be used to filter the data schemas and tables on specified blockchain . When enter table level, clicking on the table name can expand to view the list of fields in the table. Clicking the "》" icon to the right of the table name will insert the table name (in the format of `schema_name.table_name`) into the query editor at the cursor position. While browsing in a hierarchical manner, you can also enter keywords to further search and filter at the current level. Different types of data tables have different levels of depth. The following picture shows an example of browsing decoded data tables.
+The red box at the bottom shows several categories of dataset currently supported by the Dune V2 engine. Click on the bold dataset category name will take you to the next level to browse the various data schemas and table names in that category. After that, you can also see a drop-down list with a default option of "All Chains", which can be used to filter the data schemas and tables on specified blockchain. When enter table level, clicking on the table name can expand to view the list of fields in the table.  Clicking the ">>" icon to the right of the table name will insert the table name (in the format of `schema_name.table_name`) into the query editor at the cursor position. While browsing in a hierarchical manner, you can also enter keywords to further search and filter at the current level. Different types of data tables have different levels of depth. The following picture shows an example of browsing decoded data tables.
 
 ![](img/5-2.jpg)
 
@@ -28,7 +28,7 @@ Typical raw data tables in a blockchain include: `Blocks`,`Transactions`,`Traces
 
 ### ethereum.blocks
 
-A block is the basic component of a blockchain. A block contains multiple transactions.The `ethereum.block` records information about each generated block, including the block timestamp, block number, block hash, difficulty, gas used, etc.Apart from analyzing the overall blockchain's block generation status, gas usage, etc. we generally don't need to pay close attention to or directly use the block table. The most important information is the block timestamp and block number, which are saved in almost all other data tables under different field names.
+A block is the basic component of a blockchain. A block contains multiple transactions. The ethereum.block records information about each generated block, including the block timestamp, block number, block hash, difficulty, gas used, etc. Apart from analyzing the overall blockchain's block generation status, gas usage, etc., we generally don't need to pay close attention to or directly use the block table. The most important information is the block timestamp and block number, which are saved in almost all other data tables under different field names.
 
 ### ethereum.transactions
 

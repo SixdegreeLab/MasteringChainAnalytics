@@ -13,41 +13,37 @@ Users can write SQL statements on the platform, filter out the data they need
 from the blockchain database parsed by Dune, and generate corresponding charts 
 to form a dashboard.
 
-All query examples and related queries (except for complete data dashboards 
-and third-party account queries) in this tutorial have been tested 
-and passed using the Dune SQL query engine. Dune has announced that 
-it will fully transition to the Dune SQL engine within 2023, 
-so everyone can directly learn the syntax of Dune SQL.
+All query examples and related queriesn in this tutorial - except for complete data dashboards and third-party account queries - have been tested and passed using the Dune SQL query engine. Dune has announced that it will fully transition to the Dune SQL engine within 2023, so that everyone can directly learn the syntax of Dune SQL.
 
-## Page Introduction
+## Webpage Introduction
 
 After registering on the Dune platform, the main interface of the platform is as follows,
 with specific functions:
 
-- **Discover**: Show various trends on the platform
-  - **Dashboard**: Displays the most followed dashboards. 
+- **Discover**: show various trends on the platform
+  - **Dashboard**: displays the most followed dashboards. 
     On this page, you can search for keywords of interest in the search box 
     in the upper left corner/right side. This is the most important part.
     You can click on a dashboard to view other people's dashboards.
-  - Queries: Displays the most followed queries. On this page, 
+  - Queries: displays the most followed queries. On this page, 
     you can search for keywords of interest in the search box in the 
     upper left corner/right side.
-  - Wizards: Ranking of users with the highest collection volume on the platform.
-  - Teams: Ranking of teams with the highest collection volume on the platform.
+  - Wizards: ranking of users with the highest collection volume on the platform.
+  - Teams: ranking of teams with the highest collection volume on the platform.
 - Favorites:
-  - Dashboard: Your favorite dashboards, which can be searched in the search box 
+  - Dashboard: your favorite dashboards, which can be searched in the search box 
     on the right.
-  - Queries: Your favorite queries, which can be searched in the search box on the right.
+  - Queries: your favorite queries, which can be searched in the search box on the right.
 - **My Creations**:
-  - Dashboard: Dashboards you created, which can be searched in the search box 
+  - Dashboard: dashboards you created, which can be searched in the search box 
     on the right. If you have a team, the dashboard can be among different teams.
-  - Queries: Queries you created, which can be searched in the search box on the right.
-  - Contracts: Contracts you submitted for parsing, which can be searched 
+  - Queries: queries you created, which can be searched in the search box on the right.
+  - Contracts: contracts you submitted for parsing, which can be searched 
     in the search box on the right.
-- **New Query**: Create a new query.
-- Others
-  - Docs: Link to the help documentation.
-  - Discord: Link to the community discussion group.
+- **New Query**: create a new query.
+- **Others**:
+  - Docs: link to the help documentation.
+  - Discord: link to the community discussion group.
 
 ![](img/main-page.png)
 

@@ -4,14 +4,11 @@
 
 ### 1. What is a data warehouse?
 
-Speak English, a data warehouse is a structured storage of data for statistical purposes. The storage carrier is [**data tables**]. A series of [**data tables**] grouped together for one or multiple subjects is called a data warehouse.
-Note:
-The data here can be result data (e.g. daily trading volume of a trading pair on Uniswap since its launch)
-It can also be process data (every transaction record of a trading pair on Uniswap since launch: who initiated it, trading A for B, transaction time, tx_hash, amount...).
+Simply put, a data warehouse is a structured storage of data for statistical purposes. The storage carrier is [**data tables**].  A series of [**data tables**] grouped together for one or multiple subjects is called a data warehouse. Note: the data here can be result data (e.g. daily trading volume of a trading pair on Uniswap since its launch) It can also be process data (every transaction record of a trading pair on Uniswap since launch: who initiated it, trading A for B, transaction time, tx_hash, amount, etc.).
 
 **2. What is SQL?**
 
-Let's say you want some crispy Nestle chocolate bars, but you can't go out right now. So you ask someone to run the errand for you: "I need a box of chocolate bars, the brand is Nestle." The errand runner goes to the supermarket, buys the chocolate and delivers it to your home.
+Let's say you want some crispy Nestle chocolate bars, but you can't go out right now. So you ask someone to run the errand for you: "I need a box of chocolate bars, the brand is Nestle". The errand runner goes to the supermarket, buys the chocolate and delivers it to your home.
 Similarly, SQL is like the sentence you spoke, Dune Analytics is the errand runner. It allows you to converse with the data warehouse and retrieve data from it. The most basic structure or syntax of SQL has 3 components, almost all SQL will contain these 3 parts:
 
 **select**: Which fields to retrieve?
@@ -84,7 +81,7 @@ order by block_time -- Sort by block_time in ascending order,desc for descending
 
 ### 2. Aggregate Functions
 
-**Case 2**: The table contains detailed data, I don't want to see the specifics, I just want to understand the overview through some aggregated stats.
+**Case 2**: the table contains detailed data. I don't want to see the specifics, I just want to understand the overview through some aggregated stats.
 
 #### SQL
 
@@ -184,7 +181,7 @@ order by 1
 
 ##### Syntax Explanation
 
-- Aggregation by groups (`group by`)
+- Aggregation by groups (`group by`):
   The syntax for aggregation by groups is `group by`. As the name suggests, it groups first then aggregates, and needs to be used together with aggregate functions.
 
 ![](img/group-by-case.png)
@@ -195,7 +192,7 @@ Let's say the table above shows household expenses (3 people) for the first 2 mo
 
 **Case 4**: I want to look at Sun's transfers behavior from the perspective of USD value of ETH transferred out.
 
-#### 4.1 The transfers show ETH's amount, I want to see the USD value for each transfer
+#### 4.1 The transfers show ETH's amount and I want to see the USD value for each transfer
 
 ##### SQL
 
@@ -323,4 +320,4 @@ order by 1
 
 - Subquery (with as)
   - with as can be used to construct a subquery, turning the result of some SQL into a 'virtual table' (similar to a view or subquery). The subsequent SQL can then directly retrieve data from this 'virtual table'.
-  - Through with as, the readability of SQL logic can be improved, and multiple nesting can also be avoided.
+  - Through with as, the readability of SQL logic can be improved, and multiple nestings can also be avoided.

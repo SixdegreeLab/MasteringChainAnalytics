@@ -1,10 +1,10 @@
 # Practice case: Making Lens Protocol's data dashboard (II)
 
-In the first part of this tutorial, we introduced the Lens protocol to you, and made a preliminary dashboard for it, analyzing the total number of transactions and total users, the number of transactions and the number of unique users by day, creators Profile data analysis, Lens domain name analysis, registered domain name search and other related content. Let's go ahead and add new queries and visualizations to this dashboard. We will analyze and add the following content: Create multiple profiles with the same address, follow data, post data, comment data, collection data, mirror data, comprehensive operation of profiles, and comprehensive operation of regular user addresses.
+In the first part of this tutorial, we introduced the Lens protocol to you, and made a preliminary dashboard for it, analyzing the total number of transactions and total users, the number of transactions and the number of unique users by day, creators Profile data analysis, Lens domain name analysis, registered domain name search and other related content. Let's go ahead and add new queries and visualizations to this dashboard. We will analyze and add the following content: create multiple profiles with the same address, follow data, post data, comment data, collection data, mirror data, comprehensive operation of profiles, and comprehensive operation of regular user addresses.
 
 ## Create multiple Profiles with the same address
 
-The Lens protocol allows multiple Profiles to be created for a single address.We can write a query to count the data distribution of addresses with multiple profiles created.In the following query, we first use CTE `profile_created` to obtain the data details of all created profiles, and then use `multiple_profiles_addresses` to count the number of profiles created for each address. Finally, we use a CASE statement to return aggregated statistics by sorting each address by the number of profiles created.
+The Lens protocol allows multiple Profiles to be created for a single address. We can write a query to count the data distribution of addresses with multiple profiles created. In the following query, we first use CTE profile_created to obtain the data details of all created profiles, and then use multiple_profiles_addresses to count the number of profiles created for each address. Finally, we use a CASE statement to return aggregated statistics by sorting each address by the number of profiles created.
 
 ``` sql
 with profile_created as (
@@ -272,7 +272,7 @@ Reference link for the above query on Dune:
 
 ## Profiles Collections data analysis
 
-Lens collection data is also stored in the two tables `LensHub_call_collect` and `LensHub_call_collectWithSig` respectively. Unlike comments or mirror data, collecting a Publication does not require the collector to have his own Lens Profile. That is to say, any address (user) can bookmark Publications under other Profiles. So we need to track the specific collection operation through the address of the collector. What's special is that the collector's address data is not saved in the `LensHub_call_collect` table, but the `LensHub_call_collectWithSig` table has this data. We need to link the `LensHub_call_collect` table to the transactions table to obtain the user address of the current operation collection. The SQL example is as follows:
+Lens collection data is also stored in the two tables `LensHub_call_collect` and `LensHub_call_collectWithSig` respectively. Unlike comment or mirror data, collecting a Publication does not require the collector to have his own Lens Profile. That is to say, any address (user) can bookmark Publications under other Profiles. So we need to track the specific collection operation through the address of the collector. What's special is that the collector's address data is not saved in the `LensHub_call_collect` table, but the `LensHub_call_collectWithSig` table has this data. We need to link the `LensHub_call_collect` table to the transactions table to obtain the user address of the current operation collection. The SQL example is as follows:
 
 ``` sql
 select call_block_time,
