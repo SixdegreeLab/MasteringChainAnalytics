@@ -7,7 +7,7 @@ Currently, the structure of the basic datasets provided by several data platform
 
 There are several types of datasets on Dune:
 
-- **Raw**: stored raw blockchain data, including data tables such as `blocks`, `transactions`, and `traces`. These raw data tables contain the most original on-chain data and can be used for flexible data analysis.
+- **Raw**: stored raw blockchain data, including data tables such as `blocks`, `transactions`, and `traces`. These raw data tables contain the most original Onchain data and can be used for flexible data analysis.
 - **Decoded Projects**: stored the decoded calls and events made to smart contracts. For example, tables related to Uniswap V3 and Opensea Seaport. Dune uses the ABI of smart contracts and the interface of standardized token smart contracts (ERC20, ERC721, etc.) to decode data and save the data of each event or method call separately to a data table.
 - **Spells**: spells also called Abstractions in Dune V1, is built and maintained by Dune and community through Spellbook GitHub repository, and is compiled using dbt. These data tables are typically more convenient and efficient to use.
 - **Community**: this data is provided by selected third party organizations that stream their data directly to Dune. Currently there are two community datasets, `flashbots` and `reservoir`.

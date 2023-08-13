@@ -1,13 +1,13 @@
 
 # 18 Uniswap Multi-Chain Data Comparative Analysis
 
-Uniswap is one of the leading decentralized exchanges (DEX) in the DeFi space. The Uniswap smart contract was initially deployed on the Ethereum blockchain in 2018, and it has since expanded to other chains such as Arbitrum, Optimism, Polygon, and Celo in 2021 and 2022. It continues to gain momentum with a new proposal to deploy on the Binance Smart Chain (BNB). In this article, we will explore how to analyze the performance of Uniswap across multiple chains in 2022. Please note that Celo chain is not included in this analysis as it is not currently supported by Dune.
+Uniswap is one of the leading decentralized exchanges (DEX) in the DeFi space. The Uniswap smart contract was initially deployed on the Ethereum blockchain in 2018. It has since expanded to other chains such as Arbitrum, Optimism, Polygon, and Celo in 2021 and 2022. It continues to gain momentum with a new proposal to deploy on the Binance Smart Chain (BNB). In this article, we will explore how to analyze the performance of Uniswap across multiple chains in 2022. Please note that Celo chain is not included in this analysis as it is not currently supported by Dune.
 
 Dashboard for this tutorial: [Uniswap V3 Performance In 2022 Multichains](https://dune.com/sixdegree/uniswap-v3-performance-in-2022-multi-chains)<a id="jump_8"></a>
 
 All queries in this tutorial are executed using the Dune SQL.
 
-Interestingly, during the completion of this tutorial, the Uniswap Foundation launched a new round of bounty program, focusing on analyzing Uniswap's performance across multiple chains on January 25, 2023. This tutorial hopes to provide some insights and ideas, and participants can further expand on these queries to participate in the bounty program. We wish you the best of luck in earning the generous rewards. You can find more information about the Unigrants program and the [Bounty #21 - Uniswap Multichain](https://unigrants.notion.site/Bounty-21-Uniswap-Multichain-b1edc714fe1949779530e920701fd617)<a id="jump_8"></a> here.
+Interestingly, during the completion of this tutorial, the Uniswap Foundation launched a new round of bounty program, focusing on analyzing Uniswap's performance across multiple chains on January 25, 2023. This tutorial hopes to provide some insights and ideas; participants can further expand on these queries to participate in the bounty program. We wish you the best of luck in earning the generous rewards. You can find more information about the Unigrants program and the [Bounty #21 - Uniswap Multichain](https://unigrants.notion.site/Bounty-21-Uniswap-Multichain-b1edc714fe1949779530e920701fd617)<a id="jump_8"></a> here.
 
 ## Key Content of Multi-Chain Data Analysis
 
@@ -83,7 +83,7 @@ order by 1, 2
 
 Here, we summarize all transaction data from 2022 based on date and blockchains. We also output the cumulative data based on the date. It's important to note that the cumulative user count in this aggregation is not an accurate representation of "cumulative unique user count" since the same user can make transactions on different dates. We will explain how to calculate the unique user count separately in later queries.
 
-Since our goal is to analyze the data performance across different chains, we can focus on the specific values as well as their proportions. Proportional analysis allows us to visually observe the trends of different chains over time. With this in mind, we generate the following charts: Line Chart for daily transaction volume, Bar Chart for daily transaction count and daily unique user count, Area Chart for cumulative transaction volume, transaction count, and unique user count, and another Area Chart to display the percentage contribution of each daily transaction data. The resulting charts, when added to the dashboard, will appear as follows:
+Since our goal is to analyze the data performance across different chains, we can focus on the specific values as well as their proportions. Proportional analysis allows us to visually observe the trends of different chains over time. With this in mind, we generate the following charts: Line Chart for daily transaction volume, Bar Chart for daily transaction count/daily unique user count, Area Chart for cumulative transaction volume as well as transaction count/unique user count, and another Area Chart to display the percentage contribution of each daily transaction data. The resulting charts, when added to the dashboard, will appear as follows:
 
 ![image_02.png](img/image_02.png)
 
@@ -400,14 +400,14 @@ group by 1
 
 The explanation of the above query is as follows:
 
-* CTE `pool_created_detail`: Retrieves data for all created liquidity pools across different chains.
-* CTE `token_transfer_detail`: Filters out token transfer data for all Uniswap liquidity pools by joining the `evt_Transfer` table with `pool_created_detail`.
+* CTE `pool_created_detail`: retrieves data for all created liquidity pools across different chains.
+* CTE `token_transfer_detail`: filters out token transfer data for all Uniswap liquidity pools by joining the `evt_Transfer` table with `pool_created_detail`.
 * CTE `token_list`: Filters out the list of tokens used in all trading pairs.
-* CTE `latest_token_price`: Calculates the current prices of these tokens. Since the price data in `prices.usd` may have a time delay, we first retrieve data from the past 1 day and then use `row_number() over (partition by contract_address order by minute desc)` to calculate the row number and return only the rows with a row number of 1, which represents the latest price records for each token.
-* CTE `token_transfer_detail_amount`: Joins `token_transfer_detail` with `latest_token_price` to calculate the USD value of token transfers.
+* CTE `latest_token_price`: calculates the current prices of these tokens. Since the price data in `prices.usd` may have a time delay, we first retrieve data from the past 1 day and then use `row_number() over (partition by contract_address order by minute desc)` to calculate the row number and return only the rows with a row number of 1, which represents the latest price records for each token.
+* CTE `token_transfer_detail_amount`: joins `token_transfer_detail` with `latest_token_price` to calculate the USD value of token transfers.
 * The final output query summarizes the current TVL for each blockchain and the total TVL across all chains.
 
-Generates a Pie Chart and a Counter chart respectively. Adds them to the dashboard, resulting in the following display:
+Generate a Pie Chart and a Counter chart respectively. Adds them to the dashboard, resulting in the following display:
 
 ![image_07.png](img/image_07.png)
 
@@ -459,7 +459,7 @@ where block_date >= date('2022-01-01')
 order by 1, 2
 ```
 
-We discovered that there are some abnormal data on the Optimism chain, so we added the condition abs(amount_usd) < 1e9 in the above query to exclude them. Generate an Area Chart for this query. Add it to the dashboard, and the display is as follows:
+We discovered that there is some abnormal data on the Optimism chain, so we added the condition `abs(amount_usd) < 1e9` in the above query to exclude them. Generate an Area Chart for this query. Add it to the dashboard and the display is as follows:
 
 ![image_08.png](img/image_08.png)
 
@@ -522,7 +522,7 @@ Query link:
 
 ## SixdegreeLab introduction
 
-SixdegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)<a id="jump_8"></a>）is a professional on-chain data team dedicated to providing accurate on-chain data charts, analysis, and insights to users. Our mission is to popularize on-chain data analysis and foster a community of on-chain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
+SixdegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)<a id="jump_8"></a>）is a professional Onchain data team dedicated to providing accurate Onchain data charts, analysis, and insights to users. Our mission is to popularize Onchain data analysis and foster a community of Onchain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
 
 Feel free to visit [SixdegreeLab's Dune homepage](https://dune.com/sixdegree)<a id="jump_8"></a>.
 

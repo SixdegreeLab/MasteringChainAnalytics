@@ -5,16 +5,16 @@ Dune platform has been developing rapidly and currently supports 10 mainstream b
 
 Polygon's motto is "Bringing Ethereum to Everyone." Polygon believes that everyone can use Web3. It is a decentralized Ethereum scaling platform that enables developers to build scalable and user-friendly DApps with low transaction fees without compromising security.
 
-Dashboard for this tutorial: [Polygon Chain Overview](https://dune.com/sixdegree/polygon-chain-overview)<a id="jump_8"></a>
+Dashboard for this tutorial: [Polygon Chain Overview](https://dune.com/sixdegree/polygOnchain-overview)<a id="jump_8"></a>
 
 ## Contents of the Blockchain Overview Analysis
 
 Our goal is to comprehensively analyze the entire Polygon Chain to understand its current development status. The analysis includes:
 
-* **Block Analysis**: Total number of blocks, blocks mined per minute, total gas consumption, average gas consumption, daily (monthly) trend of block generation quantity, etc.
-* **Transaction and User Analysis**: Total transaction volume, total number of users, transaction quantity per block, comparison of successful and failed transactions, daily (monthly) trend of transaction quantity, daily (monthly) trend of active users, daily (monthly) trend of new users, comparison of new users and active users, etc.
-* **Native Token MATIC Analysis**: Total circulation supply, holder analysis, top holders, price trend, etc.
-* **Smart Contract Analysis**: Total deployed smart contracts, daily (monthly) trend of new contract deployments, comparison of transaction volume for the most popular smart contracts, and analysis of development trends.
+* **Block Analysis**: total number of blocks, blocks mined per minute, total gas consumption, average gas consumption, daily (monthly) trend of block generation quantity, etc.
+* **Transaction and User Analysis**: total transaction volume, total number of users, transaction quantity per block, comparison of successful and failed transactions, daily (monthly) trend of transaction quantity, daily (monthly) trend of active users, daily (monthly) trend of new users, comparison of new users and active users, etc.
+* **Native Token MATIC Analysis**: total circulation supply, holder analysis, top holders, price trend, etc.
+* **Smart Contract Analysis**: total deployed smart contracts, daily (monthly) trend of new contract deployments, comparison of transaction volume for the most popular smart contracts, and analysis of development trends.
 
 ## Block and Gas Consumption Analysis
 
@@ -191,8 +191,8 @@ FORK this daily user statistics query, adjust the date to monthly statistics usi
 
 For these two queries, we can add the following visualizations:
 
-1. Bar Chart: Display the daily (or monthly) count of active users and new users. Since the proportion of new users is relatively low, set it to use the secondary Y-axis.
-2. Area Chart: Compare the proportion of new users and existing users.
+1. Bar Chart: display the daily (or monthly) count of active users and new users. Since the proportion of new users is relatively low, set it to use the secondary Y-axis.
+2. Area Chart: compare the proportion of new users and existing users.
 
 Adding these visualizations to the dashboard will result in the following display:
 
@@ -226,7 +226,7 @@ Query link:
 
 ### Addresses with the highest holdings of the MATIC token
 
-Addresses with the highest holdings of the MATIC token are of interest to us, as they often have the potential to influence the token's price movements. The following query retrieves the top 1000 addresses. MATIC is the native token of the Polygon chain, and the details of its transfers are stored in the `polygon.traces` table. Please note that we haven't differentiated between contract and non-contract addresses in this query. Due to the low transaction gas fees on Polygon, we have omitted the calculation of gas consumption for performance reasons.
+Addresses with the highest holdings of the MATIC token are of interest to us, as they often have the potential to influence the token's price movements. The following query retrieves the top 1000 addresses. `MATIC` is the native token of the Polygon chain and the details of its transfers are stored in the `polygon.traces` table.  Please note that we haven't differentiated between contract and non-contract addresses in this query. Due to the low transaction gas fees on Polygon, we have omitted the calculation of gas consumption for performance reasons.
 
 ``` sql
 with polygon_transfer_raw as (
@@ -253,7 +253,7 @@ order by 2 desc
 limit 1000
 ```
 
-Considerations in the above query: The `value` in the `polygon.traces` is of type `uint256`, which is a custom type in Dune SQL. If you directly compare it with the numerical value 0, you will encounter a type mismatch error that prevents comparison. Therefore, we use syntax like `uint256 '0'` to convert the value 0 into the same type for comparison. Alternatively, you can use type conversion functions like `cast(0 as uint256)`. You can also convert the `value` to double, decimal, bigint, or other types before comparison, but in such cases, be mindful of potential data overflow issues.
+Considerations in the above query: the `value` in the `polygon.traces` is of type `uint256`, which is a custom type in Dune SQL. If you directly compare it with the numerical value 0, you will encounter a type mismatch error that prevents comparison. Therefore, we use syntax like `uint256 '0'` to convert the value 0 into the same type for comparison. Alternatively, you can use type conversion functions like `cast(0 as uint256)`. You can also convert the `value` to double, decimal, bigint, or other types before comparison, but in such cases, be mindful of potential data overflow issues.
 
 We can further analyze the distribution of MATIC token holdings among the top 1000 addresses based on the above query. We can fork the previous query and make slight modifications to achieve this.
 
@@ -332,7 +332,7 @@ from polygon_contracts
 order by block_date
 ```
 
-Similarly, we can adjust the date to monthly, and calculate the count of newly created and suicided contracts on a monthly basis.
+Similarly, we can adjust the date to monthly and calculate the count of newly created and suicided contracts on a monthly basis.
 
 The above queries generate Bar Chart and Area Chart respectively. After adding them to the dashboard, the resulting display is as follows:
 
@@ -397,9 +397,9 @@ order by 1, 2
 
 We first query the top 20 smart contracts with the highest historical transaction volume. Then, we calculate the daily transaction volume for these smart contracts. We add three different types of visualizations for the query:
 
-1. Bar Chart: Displays the daily transaction volume for different smart contracts, stacked together.
-2. Area Chart: Displays the daily transaction volume for different smart contracts, stacked together. We set "Normalize to percentage" to adjust the chart to display in percentages.
-3. Pie Chart: Compares the cumulative transaction volume percentages for these top 20 smart contracts.
+1. Bar Chart: displays the daily transaction volume for different smart contracts, stacked together.
+2. Area Chart: displays the daily transaction volume for different smart contracts, stacked together. We set "Normalize to percentage" to adjust the chart to display in percentages.
+3. Pie Chart: compares the cumulative transaction volume percentages for these top 20 smart contracts.
 
 After adding these charts to the dashboard, the result is shown in the following:
 
@@ -440,7 +440,7 @@ So far, SixdegreeLab has completed overview analyses for multiple blockchains, w
 
 ## SixdegreeLab introduction
 
-SixdegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)<a id="jump_8"></a>）is a professional on-chain data team dedicated to providing accurate on-chain data charts, analysis, and insights to users. Our mission is to popularize on-chain data analysis and foster a community of on-chain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
+SixdegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)<a id="jump_8"></a>）is a professional Onchain data team dedicated to providing accurate Onchain data charts, analysis, and insights to users. Our mission is to popularize Onchain data analysis and foster a community of Onchain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
 
 Feel free to visit [SixdegreeLab's Dune homepage](https://dune.com/sixdegree)<a id="jump_8"></a>.
 

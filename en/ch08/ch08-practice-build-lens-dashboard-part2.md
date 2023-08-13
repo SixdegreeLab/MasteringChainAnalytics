@@ -499,7 +499,7 @@ Please continue to improve your own Lens protocol data dashboard based on the co
 
 ## Introduction of SixdegreeLab
 
-SixdegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)） is a professional on-chain data team, our mission is to provide users with accurate on-chain data charts, analyses, and insights, and we are committed to popularising on-chain data analysis. Through building communities and writing tutorials, we train on-chain data analysts, output valuable analysis content, promote the community to build the data layer of blockchain, and cultivate talents for the future broad blockchain data application.
+SixdegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)） is a professional Onchain data team, our mission is to provide users with accurate Onchain data charts, analyses, and insights, and we are committed to popularising Onchain data analysis. Through building communities and writing tutorials, we train Onchain data analysts, output valuable analysis content, promote the community to build the data layer of blockchain, and cultivate talents for the future broad blockchain data application.
 
 Welcome to [SixdegreeLab's Dune homepage](https://dune.com/sixdegree).
 

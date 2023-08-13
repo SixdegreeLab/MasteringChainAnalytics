@@ -357,10 +357,11 @@ So far, we have completed the analysis of the basic overview of the Lens protoco
 
 Please combine the tutorial content to create your own Lens protocol data dashboard, and try new query analysis by referring to the content prompted in the "Main analysis content of the data dashboard". Please actively practice, create data dashboards and share them with the community. We will record the completion and quality of the homework, and then retroactively provide certain rewards for everyone, including but not limited to Dune community identity, peripheral objects, API free quota, POAP, various cooperative data product members, and blockchain data analysis Job opportunity recommendation, priority registration qualification for community offline activities, and other Sixdegree community incentives, etc.
 
-## Introduction of SixdegreeLab
+## About Us
 
-SixdegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)） is a professional on-chain data team, our mission is to provide users with accurate on-chain data charts, analyses, and insights, and we are committed to popularising on-chain data analysis. Through building communities and writing tutorials, we train on-chain data analysts, output valuable analysis content, promote the community to build the data layer of blockchain, and cultivate talents for the future broad blockchain data application.
+`Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
 
-Welcome to [SixdegreeLab's Dune homepage](https://dune.com/sixdegree).
-
-Due to the limitations of the level, shortcomings are inevitable. If you find any errors, please correct them.
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)

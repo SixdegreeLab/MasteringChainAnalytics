@@ -6,7 +6,7 @@ Decentralized Finance (DeFi) is a financial innovation of blockchain. Through th
 
 ### Significance of Lending Protocols
 
-Lending protocols are the banks of DeFi. In traditional banks, users can deposit money to receive interest, or they can borrow money and return it with interest. Similarly, in DeFi's lending protocols, users can deposit or borrow money, but the difference is that there is no centralized custody institution. Instead, users interact directly with the lending protocol's smart contracts, and the operation of the code ensures everything goes smoothly. In CeFi lending, loan guarantees are divided into credit, warranty, and collateralized loans. Banks have a low risk preference, and collateralized loans are the most common among all types of loans. Thanks to the construction of big data credit systems, credit lending is becoming more common, though it requires a lot of scrutiny and certification.
+Lending protocols are the banks of DeFi. With traditional banks, users can deposit money to receive interest, or they can borrow money and return it with interest. Similarly, in DeFi's lending protocols, users can deposit or borrow money, but the difference is that there is no centralized custody institution. Instead, users interact directly with the lending protocol's smart contracts, and the operation of the code ensures everything goes smoothly. In CeFi lending, loan guarantees are divided into credit, warranty, and collateralized loans. Banks have a low risk preference, and collateralized loans are the most common among all types of loans. Thanks to the construction of big data credit systems, credit lending is becoming more common, though it requires a lot of scrutiny and certification.
 
 ![](img/bank.jpeg)
 
@@ -14,21 +14,21 @@ Lending in DeFi is anonymous and trustless. In terms of the model, it is basical
 
 1. Demand for trading activities: This includes arbitrage, leverage, and market-making activities. For example, market makers need to borrow funds to meet a large number of transactions; buying tokens on DEX can only go long, but you can short through borrowing; you can even continuously increase leverage by circular loans through collateralized assets (collateralize ETH to borrow USDC to buy ETH, then collateralize again to borrow and buy again).
 
-2. Passive income: Idle funds/tokens holders can earn extra income by lending assets during the process of holding tokens.
+2. Passive income: idle funds/tokens holders can earn extra income by lending assets during the process of holding tokens.
 
-3. Token incentives: In addition to liquidity mining, leading DeFi protocols have launched staking services based on their native tokens. Token holders can stake to earn more native tokens. Token incentives face all participants of the lending protocol, and borrowers can earn token rewards through interaction, using the tokens obtained from transactions to repay part of the debt.
+3. Token incentives: in addition to liquidity mining, leading DeFi protocols have launched staking services based on their native tokens. Token holders can stake to earn more native tokens. Token incentives face all participants of the lending protocol, and borrowers can earn token rewards through interaction, using the tokens obtained from transactions to repay part of the debt.
 
 Compared with traditional mortgage loans such as homes and vehicles, which require human verification of asset ownership and human effort and time for asset auctions in case of default, the pawnshop model in DeFi only needs to stop collateral when the collateral rate is too low, and the liquidation of assets can end the loan contract.
 
 ### Operating Model of Lending Protocols
 
-In the case of collateralized borrowing on the blockchain, how much tokens can be borrowed, when to liquidate, are all set by a series of parameters in the smart contract.
+In the case of collateralized borrowing on the blockchain, how many tokens can be borrowed and when to liquidate are all set by a series of parameters in the smart contract.
 
 ![](img/loan.png)
 
-Max LTV (Loan to Value): This determines the maximum ratio of debt to the value of the collateral at the time of borrowing.
+Max LTV (Loan to Value): this determines the maximum ratio of debt to the value of the collateral at the time of borrowing.
 
-Liquidation Threshold: This is a criterion for determining liquidation. Liquidation occurs when the ratio of debt to the value of the collateral rises to this level.
+Liquidation Threshold: this is a criterion for determining liquidation. Liquidation occurs when the ratio of debt to the value of the collateral rises to this level.
 
 Liquidation Penalty: This is the penalty percentage that needs to be deducted from the collateral when liquidation occurs.
 
@@ -40,13 +40,13 @@ The price fluctuation of crypto assets can often be quite volatile. The over-col
 
 When the collateralized assets or the borrowed assets experience significant fluctuations to a certain extent, lending protocols need to perform liquidation to avoid bad debts. 
 Let's take AAVE as an example to see how the lending protocol carries out liquidation. 
-First, let's introduce a concept called the Health Factor. The Health Factor is related to the account's collateral and loan amount, indicating the possibility of insolvency. How to calculate the Health Factor?
+First, let's introduce a concept called the Health Factor. The Health Factor is related to the account's collateral and loan amount, indicating the possibility of insolvency. So how do we calculate the Health Factor?
 
 1. Check the liquidation line (Liquidation Threshold) of the collateral. For example, the Liquidation Threshold for USDC at this moment is 0.89.
 
 ![](img/hf1.png)
 
-2. Health Factor = Collateral Amount * Liquidation Threshold / Loaned Assets. For this moment, 5794 * 0.89 / 4929 = 1.046;
+2. `Health Factor` = `Collateral Amount` * `Liquidation Threshold` / `Loaned Assets`. In this casde, `5794 * 0.89 / 4929 = 1.046`;
 
 ![](img/hf2.png)
 
@@ -62,7 +62,7 @@ Interestingly, although the idea of over-collateralization seems very reliable, 
 
 ![](img/crv1.jpg)
 
-From CoinGecko and blockchain explorers, we can see that the circulating supply of CRV tokens is only 637 million, and the amount of CRV borrowed by the whale exceeds that held by all external account holders. For example, as of November 25th, there were only 42.12 million CRV in the Aave contract, and the 8th largest CRV holder, Binance 14, only held 20.21 million CRV. 
+From CoinGecko and blockchain explorers, we can see that the circulating supply of CRV tokens is only 637 million and the amount of CRV borrowed by the whale exceeds that held by all external account holders. For example, as of November 25th, there were only 42.12 million CRV in the Aave contract, and the 8th largest CRV holder, Binance 14, only held 20.21 million CRV. 
 
 ![](img/crv2.png)
 
@@ -72,22 +72,22 @@ To summarize, most lending protocols currently use over-collateralization, and w
 
 
 ## Key Indicators to Focus On
-After understanding the business logic of on-chain lending protocols, we can start analyzing. Next, we will list some indicators commonly used to evaluate lending protocols. It should be noted that although the flow of funds in smart contracts only goes in and out, the meanings they represent are different and need to be judged in conjunction with smart contracts and blockchain explorers.
+After understanding the business logic of Onchain lending protocols, we can start analyzing. Next, we will list some indicators commonly used to evaluate lending protocols. It should be noted that although the flow of funds in smart contracts only goes in and out, the meanings they represent are different and need to be judged in conjunction with smart contracts and blockchain explorers.
 
-### 1.Total Value Locked (TVL)
+### 1. Total Value Locked (TVL)
 This indicates how much money is locked in the lending protocol's smart contract. TVL represents the liquidity of the protocol. Looking at the data from [defillama](https://defillama.com/protocols/lending), the total lending market TVL exceeds $10B, and the top five's TVL totals approximately $9.5B, with AAVE alone accounting for $3.9B. 
 
 ![](img/tvl.png)
 
 Taking AAVE V3 on Arbitrum as an example, let's look at how to query [TVL](https://dune.com/queries/1042816/1798270).
 
-The basic idea is: In the AAVE smart contract, the amount of money defined as 'Supply' is subtracted from the 'Withdraw' funds, which equates to the total value locked in the contract. If you open [Arbscan](https://arbiscan.io/address/0x794a61358d6845594f94dc1db02a252b5b4814ad) and find an [AAVE transaction](https://arbiscan.io/tx/0x6b8069b62dc762e81b41651538d211f9a1a33009bcb41798e673d715867b2f29#eventlog), you can open the log and see that topic0 = '0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61' corresponds to the 'Supply' action in the smart contract.
+The basic idea is: in the AAVE smart contract, the amount of money defined as `Supply` is subtracted from the `Withdraw` funds, which equates to the total value locked in the contract. If you open [Arbscan](https://arbiscan.io/address/0x794a61358d6845594f94dc1db02a252b5b4814ad) and find an [AAVE transaction](https://arbiscan.io/tx/0x6b8069b62dc762e81b41651538d211f9a1a33009bcb41798e673d715867b2f29#eventlog), you can open the log and see that `topic0 = 0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61` corresponds to the `Supply` action in the smart contract.
 
 ![](img/arbscan1.png)
 
 ![](img/tvl2.png)
 
-Similarly, topic0 = '0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7' corresponds to the 'Withdraw' action (Note: in Dune, topic1 refers to what is known as topic0 in etherscan). In Dune, you select transactions sent to the AAVE V3 contract from the Arbitrum log table, and define the "Deposit" and "Withdraw" actions based on the topic (action_type). Deposits are positive, withdrawals are negative, and their sum is the amount of tokens locked in the contract. Use the `bytearray_ltrim(topic1)` function to get the address of the transferred token, and use the `bytearray_to_uint256(bytearray_substring(data, 1 + 32, 32))` function to get the quantity of the transferred token (not priced in USD).
+Similarly, `topic0 = 0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7` corresponds to the `Withdraw` action (note: in Dune, `topic1` refers to what is known as topic0 in etherscan). In Dune, you select transactions sent to the AAVE V3 contract from the Arbitrum log table, and define the `Deposit` and `Withdraw` actions based on the topic (action_type). Deposits are positive, withdrawals are negative, and their sum is the amount of tokens locked in the contract. Use the `bytearray_ltrim(topic1)` function to get the address of the transferred token, and use the `bytearray_to_uint256(bytearray_substring(data, 1 + 32, 32))` function to get the quantity of the transferred token (not priced in USD).
 
 ``` sql
 with aave_v3_transactions as (
@@ -199,7 +199,7 @@ from daily_liquidity_change
 
 Reference: https://dune.com/queries/1037796/1798021.
 
-### 2.Outstanding Loans
+### 2. Outstanding Loans
 
 This refers to the amount of money that has been loaned out and has not yet been repaid. Similar to calculating TVL, refer to the data from the blockchain explorer, find the contract function corresponding to topic0(1), and subtract the repaid ('Repay') from the borrowed ('Borrow').
 
@@ -234,7 +234,7 @@ limit 100
 ```
 
 
-### 3.Capital Efficiency (Utilization Ratio)
+### 3. Capital Efficiency (Utilization Ratio)
 
 Simply put, it refers to how much of the money deposited into the protocol has been truly utilized (borrowed). Currently, the capital efficiency of AAVE V3 on Arbitrum is around 30%, at a low leverage level. Compared to the bull market in 2021, the fund utilization rate was between 40%-80%.
 
@@ -242,9 +242,9 @@ Simply put, it refers to how much of the money deposited into the protocol has b
 
 ![](img/ur.jpg)
 
-### 4.Detailed Categories
+### 4. Detailed Categories
 
-Including the composition of assets locked in the contract and user behavior distribution. Reference: https://dune.com/queries/1026402/1771390。
+Including the composition of assets locked in the contract and user behavior distribution. Reference: https://dune.com/queries/1026402/1771390.
 
 ![](img/4.1.png)
 
@@ -252,7 +252,7 @@ The top three assets in AAVE's liquidity pool on Arbitrum are WETH (37.6%), USDC
 
 ![](img/4.2.png)
 
-### 5.Basic Indicators
+### 5. Basic Indicators
 
 Some basic protocol analysis indicators, such as the number of users, the number of transactions, and daily change situations. Reference: https://dune.com/queries/1026141/1771147.
 
@@ -282,7 +282,7 @@ https://dune.com/datanut/Compound-Maker-and-Aave-Deposits-Loans-LTV
 
 ## Introduction to SixdegreeLab
 
-SixdegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional on-chain data team. Our mission is to provide users with accurate on-chain data charts, analysis, and insights, and we are committed to popularizing on-chain data analysis. Through building communities, writing tutorials, and other methods, we are training on-chain data analysts, outputting valuable analysis content, and promoting the construction of the data layer of the blockchain by the community, thereby cultivating talents for the vast future blockchain data applications.
+SixdegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional Onchain data team. Our mission is to provide users with accurate Onchain data charts, analysis, and insights, and we are committed to popularizing Onchain data analysis. Through building communities, writing tutorials, and other methods, we are training Onchain data analysts, outputting valuable analysis content, and promoting the construction of the data layer of the blockchain by the community, thereby cultivating talents for the vast future blockchain data applications.
 
 Feel free to visit the [SixdegreeLab Dune homepage](https://dune.com/sixdegree).
 

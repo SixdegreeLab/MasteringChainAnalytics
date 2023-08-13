@@ -1,5 +1,5 @@
 # 14 DeFi Data Analysis
-DeFi refers to Decentralized Finance，which should be the most active field in current blockchain. When we exchange one ERC20 token for another, we can use DeFi to facilitate the exchange. DEX is Decentralized Exchange. Uniswap, PancakeSwap, CurveFi, and others are popular DEXs. In this tutorial, we will explore the analysis methods of DeFi projects using the data on the Ethereum blockchain as a case.
+DeFi refers to Decentralized Finance, which should be the most active field in current blockchain. When we exchange one ERC20 token for another, we can use DeFi to facilitate the exchange. DEX is Decentralized Exchange. Uniswap, PancakeSwap, CurveFi, and others are popular DEXs. In this tutorial, we will explore the analysis methods of DeFi projects using the data on the Ethereum blockchain as a case.
 
 The dashboard for this tutorial please refer [DeFi Analysis Tutorial](https://dune.com/sixdegree/defi-analysis-tutorial)<a id="jump_8"></a>.
 
@@ -35,7 +35,7 @@ limit 1
 
 ## Comprehensive Analysis of the DeFi Industry
 ### Overview of DeFi
-As above-mentioned, the Spells aggregates transaction data from over a dozen mainstream DeFi projects, including Uniswap. Let's first take a look at its overview. Considering its educational purposes, we will limit our queries to recent data as an example.
+As mentioned above, the Spells aggregates transaction data from over a dozen mainstream DeFi projects, including Uniswap. Let's first take a look at its overview. Considering its educational purposes, we will limit our queries to recent data as an example.
 
 ``` sql 
 select block_date,
@@ -48,7 +48,7 @@ group by 1
 order by 1
 ```
 
-Using the afoementioned query, you can obtain the daily transaction count and the number of unique users. The internal logic of DeFi is complex, and the "taker" stores the recipient of the transaction. Using it could reflect the true number of unique users. Additionally, the above-mentioned query is modified to calculate the cumulative transaction count per day, the count of new users per day and its cumulative value, as well as the total transaction count and the number of users. The modified SQL query is as follows:
+Using the afoementioned query, you can obtain the daily transaction count and the number of unique users. The internal logic of DeFi is complex and the `taker` stores the recipient of the transaction. Using it could reflect the true number of unique users. Additionally, the above-mentioned query is modified to calculate the cumulative transaction count per day, the count of new users per day and its cumulative value, as well as the total transaction count and the number of users. The modified SQL query is as follows:
 
 ``` sql
 with trade_summary as (
@@ -142,7 +142,7 @@ group by 1, 2
 order by 1, 2
 ```
 
-Here, we merely compare the number of active users, transaction count, and transaction amount. Bar charts and pie charts for different fields in the result set are added in the dashboard. You may have noticed that our queries are aggregated by both day and project.When creating a Pie Chart, if we select only the "Project" as the X Column and choose "trade_count" as Y Column 1, without selecting any fields for Group By, the trade_count values for each day will automatically be accumulated together, and the total value will be displayed in the pie chart. Considering that, we don't need to write a separate query to generate the pie chart, which is considered an application technique. The dashboard shows as the following :
+Here, we merely compare the number of active users, transaction count, and transaction amount. Bar charts and pie charts for different fields in the result set are added in the dashboard. You may have noticed that our queries are aggregated by both day and project. When creating a Pie Chart, if we select only the `Project` as the X Column and choose `trade_count` as Y Column 1, without selecting any fields for Group By, the trade_count values for each day will automatically be accumulated together, and the total value will be displayed in the pie chart. Considering this, we don't need to write a separate query to generate the pie chart, which is considered an application technique. The dashboard shows as the following :
 
 ![image_03.png](img/image_03.png)
 
@@ -357,7 +357,7 @@ Dashboard Example:
 * [Uniswap V3 On Optimism Liquidity Mining Program Performance](https://dune.com/springzhang/uniswap-optimism-liquidity-mining-program-performance)<a id="jump_8"></a>
 
 ## SixdegreeLab introduction
-SixdegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)<a id="jump_8"></a>）is a professional on-chain data team dedicated to providing accurate on-chain data charts, analysis, and insights to users. Our mission is to popularize on-chain data analysis and foster a community of on-chain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
+SixdegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)<a id="jump_8"></a>）is a professional Onchain data team dedicated to providing accurate Onchain data charts, analysis, and insights to users. Our mission is to popularize Onchain data analysis and foster a community of Onchain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
 
 Feel free to visit [SixdegreeLab's Dune homepage](https://dune.com/sixdegree)<a id="jump_8"></a>.
 

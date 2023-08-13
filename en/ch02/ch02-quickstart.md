@@ -2,7 +2,7 @@
 
 ## 0. Introduction
 
-Our tutorial is heavily focused on practical application, written in conjunction with the scenarios and needs of daily on-chain data analysis. This article will explain the SQL basics you need to understand before starting to create data dashboards. This tutorial is beginner-friendly, primarily aimed at novice users who wish to learn data analysis. We assume that you have no prior experience in writing SQL queries. Users who have SQL experience but are not familiar with the Dune platform can also quickly browse this tutorial. This tutorial mainly includes an introduction to the Dune platform, a quick start to SQL queries, and more. In the next tutorial, we will write queries together, create visual charts, and use these charts to create data dashboards. We believe that as long as you have confidence and follow our tutorial to practice, you can also create high-quality data dashboards, taking the first step towards becoming an on-chain data analyst.
+Our tutorial is heavily focused on practical application, written in conjunction with the scenarios and needs of daily Onchain data analysis. This article will explain the SQL basics you need to understand before starting to create data dashboards. This tutorial is beginner-friendly, primarily aimed at novice users who wish to learn data analysis. We assume that you have no prior experience in writing SQL queries. Users who have SQL experience but are not familiar with the Dune platform can also quickly browse this tutorial. This tutorial mainly includes an introduction to the Dune platform, a quick start to SQL queries, and more. In the next tutorial, we will write queries together, create visual charts, and use these charts to create data dashboards. We believe that as long as you have confidence and follow our tutorial to practice, you can also create high-quality data dashboards, taking the first step towards becoming an Onchain data analyst.
 
 ## 1. Introduction to the Dune Platform
 
@@ -47,7 +47,7 @@ The structure of the ERC20 token table `tokens.erc20` is as follows:
 
 The broad sense of SQL query statement types includes Insert, Delete, Update, Select, and many other types.
 The narrow sense of SQL queries mainly refers to data retrieval using Select statements. 
-Most of the time, on-chain data analysis only needs to use Select statements to complete the work, 
+Most of the time, Onchain data analysis only needs to use Select statements to complete the work, 
 so we only introduce Select query statements here. In the following content, 
 we will alternate the use of Query, Select and other vocabulary, unless otherwise specified,
 all refer to the use of Select statements to write Query for data retrieval.
@@ -352,10 +352,12 @@ You can also learn more about the related content through the following links:
 - [Dune beginner's guide](https://mirror.xyz/0xa741296A1E9DDc3D6Cf431B73C6225cFb5F6693a/iVzr5bGcGKKCzuvl902P05xo7fxc2qWfqfIHwmCXDI4) (Translated by Louis Wang, a member of SixdegreeLab)
 - [Dune Analytics zero-basic minimalist beginner's guide](https://mirror.xyz/gm365.eth/OE_CGx6BjCd-eQ441139sjsa3kTyUsmKVTclgMv09hY) (Written by Dune community user gm365)
 
-## Introduction to SixdegreeLab
 
-SixdegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional on-chain data team. Our mission is to provide users with accurate on-chain data charts, analysis, and insights, and we're committed to popularizing on-chain data analysis. By building communities, writing tutorials, and other means, we train on-chain data analysts, produce valuable analytical content, promote the construction of the data layer of the blockchain community, and cultivate talents for future vast blockchain data applications.
+## About Us
 
-You are welcome to visit [SixdegreeLab's Dune homepage](https://dune.com/sixdegree).
+`Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
 
-This article is written by SixdegreeLab member Spring Zhang ([@superamscom](https://twitter.com/superamscom)). Due to limited knowledge, there may be shortcomings. If you find any mistakes, please feel free to correct them.
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)

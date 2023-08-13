@@ -1,37 +1,37 @@
 # Designing a Dashboard - Using the BTC CDD (Coin Day Destroyed) as an Example
 ## I. Introduction to the BTC CDD
 
-### 1.Explanation of the Indicator
+### 1. Explanation of the Indicator
 
-CDD stands for Coin Day Destroyed. It is an improved version of the Transaction Volume, with the improvement aimed at considering time in evaluating on-chain activities (Transfers). For tokens that have been in a HODL (Hold On for Dear Life) status for a long time (not transferred to other wallets), a larger weight is given to their movements.
+CDD stands for Coin Day Destroyed. It is an improved version of the Transaction Volume, with the improvement aimed at considering time in evaluating Onchain activities (Transfers). For tokens that have been in a HODL (Hold On for Dear Life) status for a long time (not transferred to other wallets), a larger weight is given to their movements.
 
 Here we introduce a new concept called Coin Day. `Coin Day = Token Quantity * Number of days the Token is in HODL status`.
 
-All BTC on-chain accumulates Coin Days every day. If a portion of BTC moves (from Wallet A to Wallet B), the accumulated Coin Days for this portion will be destroyed, which is the so-called Coin Day Destroyed.     
+All BTC Onchain accumulates Coin Days every day. If a portion of BTC moves (from Wallet A to Wallet B), the accumulated Coin Days for this portion will be destroyed, which is the so-called Coin Day Destroyed.     
 
 ![historical_trend.png](img/historical_trend.png)    
 
 # Designing a Dashboard - Using the BTC CDD (Coin Day Destroyed) as an Example
 ## I. Introduction to the BTC CDD
 
-### 1.Explanation of the Indicator
+### 1. Explanation of the Indicator
 
-CDD stands for Coin Day Destroyed. It is an improved version of the Transaction Volume, with the improvement aimed at considering time in evaluating on-chain activities (Transfers). For tokens that have been in a HODL (Hold On for Dear Life) status for a long time (not transferred to other wallets), a larger weight is given to their movements.
+CDD stands for Coin Day Destroyed. It is an improved version of the Transaction Volume, with the improvement aimed at considering time in evaluating Onchain activities (Transfers). For tokens that have been in a HODL (Hold On for Dear Life) status for a long time (not transferred to other wallets), a larger weight is given to their movements.
 
 Here we introduce a new concept called Coin Day. `Coin Day = Token Quantity * Number of days the Token is in HODL status`.
 
-All BTC on-chain accumulates Coin Days every day. If a portion of BTC moves (from Wallet A to Wallet B), the accumulated Coin Days for this portion will be destroyed, which is the so-called Coin Day Destroyed.     
+All BTC Onchain accumulates Coin Days every day. If a portion of BTC moves (from Wallet A to Wallet B), the accumulated Coin Days for this portion will be destroyed, which is the so-called Coin Day Destroyed.     
 
 ![historical_trend.png](img/historical_trend.png)    
 
 
-### 2.Underlying Logic
+### 2. Underlying Logic
 
 All indicators are designed to better depict the conditions we want to reflect. In the case of this indicator, it aims to reflect the behavior of long-term holders. From this perspective, it can be considered a Smart Money type of indicator. People tend to think that long-term holders are early participants in BTC, and thus, they have a better and more experienced understanding of BTC and the market. If their tokens (long-term HODL) move, it may very well be that some changes in the market have prompted them to take action (in many cases, this means moving to an exchange or selling through OTC, but there are other scenarios as well, so it can't be generalized).
 
-If you frequently use Glassnode, you'll find that many indicators on Glassnode are designed based on the above logic, which can be considered one of the most important underlying logics in the current BTC on-chain data analysis.
+If you frequently use Glassnode, you'll find that many indicators on Glassnode are designed based on the above logic, which can be considered one of the most important underlying logics in the current BTC Onchain data analysis.
 
-### 3.UTXO Mechanism
+### 3. UTXO Mechanism
 
 Here we need to introduce a basic knowledge about BTC: the UTXO mechanism. Understanding it will help you understand how to use the several tables about BTC on Dune to complete the above calculation.
 
@@ -46,24 +46,24 @@ If you can roughly understand the concepts of Input, Output, and UTXO, it's easy
 
 ### 2.1 bitcoin.inputs
 
-- Explanation: Contains all data related to Input, i.e., for each address, each BTC expenditure/transfer
+- Explanation: contains all data related to Input, i.e., for each address, each BTC expenditure/transfer
 - Key Fields
-  - `address`：Wallet address
-  - `block_time`：The time when this transfer Transaction occurred
-  - `tx_id`：The Tx ID of this transfer Transaction
-  - `value`：The BTC amount included in this transfer Transaction
-  - `spent_tx_id`：The output that generated this Input (Which incoming payment was used for this expenditure)
+  - `address`：wallet address
+  - `block_time`：the time when this transfer Transaction occurred
+  - `tx_id`：the Tx ID of this transfer Transaction
+  - `value`：the BTC amount included in this transfer Transaction
+  - `spent_tx_id`：the output that generated this Input (Which incoming payment was used for this expenditure)
     
 ![input_info.png](img/input_info.png)       
 
 ### 2.2 bitcoin.outputs
 
-- Explanation: Contains all data related to Output, i.e., for each address, each BTC incoming record.
+- Explanation: contains all data related to Output, i.e., for each address, each BTC incoming record.
 - Key Fields
-  - `address`：Wallet address
-  - `block_time`：The time when this incoming Transaction occurred
-  - `tx_id`：The Tx id of this incoming Transaction
-  - `value`：The BTC amount included in this incoming Transaction
+  - `address`：wallet address
+  - `block_time`：the time when this incoming Transaction occurred
+  - `tx_id`：the Tx id of this incoming Transaction
+  - `value`：the BTC amount included in this incoming Transaction
   
 ![output_info.png](img/output_info.png)    
 
@@ -88,7 +88,7 @@ When the indicators in `[a]` change, we analyze the cause of the change, or in o
 
 We can discuss the analysis of fluctuations. In my view, analyzing fluctuations is about decomposition. In general, a fluctuation in an indicator can be decomposed from two angles. Here, taking the daily burning quantity of Ethereum as an example, suppose that the destruction of Ethereum increased by 30% one day, how should we analyze it?
 
-**1.Process of the thing's formation**
+**1. Process of the thing's formation**
 
 `Today's ETH burning = Total gas fee consumed today * Burn rate`
 
@@ -100,11 +100,11 @@ We can discuss the analysis of fluctuations. In my view, analyzing fluctuations 
 ![funnel_info.png](img/funnel_info.png)    
 
 
-**2.Characteristics of the thing itself**
+**2. Characteristics of the thing itself**
 
-- Time: Distinguish by hour to see which hour of the 24 hours had an increase in gas fee consumption or if it was a general increase across all hours.
-- Space: If the IP of each initiating wallet could be obtained, we could see whether gas fee consumption in a certain country increased significantly (not possible in practice).
-- Other characteristics: Whether it was the gas fee consumption of EOA addresses or contract addresses that increased.
+- Time: distinguish by hour to see which hour of the 24 hours had an increase in gas fee consumption or if it was a general increase across all hours.
+- Space: if the IP of each initiating wallet could be obtained, we could see whether gas fee consumption in a certain country increased significantly (not possible in practice).
+- Other characteristics: whether it was the gas fee consumption of EOA addresses or contract addresses that increased.
   - If it's an EOA address, whether it was caused by Bot or ordinary EOA addresses; if it's ordinary EOA addresses, whether it was caused by whales or ordinary wallets.
   - If it's a contract address, which type of project (Defi, Gamefi, etc.) had an increase in contract gas fee consumption; if it's a Gamefi project, which specific contract caused it.
 
@@ -120,7 +120,7 @@ First, we need a chart to reflect the overall situation. Since there's only the 
 
 ![historical_trend.png](img/historical_trend.png)    
 
-However, the time period of this chart is too long, and it's difficult to clearly see recent changes in CDD from this chart. Therefore, I've added a trend for the recent period.
+However, the time period of this chart is too long and it's difficult to clearly see recent changes in CDD from this chart. Therefore, I've added a trend for the recent period.
 
 ![recent_trend.png](img/recent_trend.png)     
 
@@ -130,15 +130,15 @@ P.S. Here, you can still see a significant CDD abnormality before this round of 
 
 Here, I only decomposed along three dimensions:
 
-- Decomposition by time (hour), this way I know roughly when the indicator abnormality occurred. [Statistics for the latest day]  
+- Decomposition by time (hour): this way, I know roughly when the indicator abnormality occurred. [Statistics for the latest day].
 
 ![hour.png](img/hour.png)    
 
-- Decomposition by the wallet address initiating the transaction, this way I know what caused the indicator abnormality: whether it was caused by a single wallet or multiple wallets, whether it was a small portion of old coins or a large number of new coins. [Statistics for the latest day] 
+- Decomposition by the wallet address initiating the transaction: this way, I know what caused the indicator abnormality and whether it was caused by a single wallet or multiple wallets, as well as whether it was a small portion of old coins or a large number of new coins. [Statistics for the latest day].
 
 ![wallet.png](img/wallet.png)    
 
-- Decomposition down to the very fine granularity of the Transaction_ID, this way I know specifically which transactions caused the abnormality, and can verify this in the blockchain browser. [Statistics for the latest day]  
+- Decomposition down to the very fine granularity of the Transaction_ID: this way, I know specifically which transactions caused the abnormality and can verify this in the blockchain browser. [Statistics for the latest day].
 
 ![transaction.png](img/transaction.png)    
 
@@ -148,7 +148,7 @@ Here, I only decomposed along three dimensions:
 
 ### 3. Completion
 
-And just like that, a dashboard for monitoring CDD is complete. The final effect is that you can conveniently see the historical trend and recent changes of the indicator. If an abnormality occurs one day, you can quickly pinpoint the time of the abnormality and the associated wallets, and the specific transaction_id aids further analysis.
+And just like that, a dashboard for monitoring CDD is complete. The final effect is that you can conveniently see the historical trend and recent changes of the indicator. If an abnormality occurs one day, you can quickly pinpoint the time of the abnormality and the associated wallets, as well as the specific transaction_id aids further analysis.
 
 ![overview.png](img/overview.png)    
 
@@ -164,7 +164,7 @@ If you're interested, you can fork the Dashboard and try to implement it yoursel
 
 ## Introduction to SixDegreeLab
 
-SixDegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional on-chain data team. Our mission is to provide users with accurate on-chain data charts, analysis, and insights, and we are committed to popularizing on-chain data analysis. Through building communities, writing tutorials, and other methods, we are training on-chain data analysts, outputting valuable analysis content, and promoting the construction of the data layer of the blockchain by the community, thereby cultivating talents for the vast future blockchain data applications.
+SixDegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional Onchain data team. Our mission is to provide users with accurate Onchain data charts, analysis, and insights, and we are committed to popularizing Onchain data analysis. Through building communities, writing tutorials, and other methods, we are training Onchain data analysts, outputting valuable analysis content, and promoting the construction of the data layer of the blockchain by the community, thereby cultivating talents for the vast future blockchain data applications.
 
 Feel free to visit the [SixDegreeLab Dune homepage](https://dune.com/sixdegree).
 

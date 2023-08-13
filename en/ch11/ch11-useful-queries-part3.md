@@ -1,10 +1,10 @@
-# Common query part3: custom data, number sequence, array, JSON, etc
+# Useful query part3: custom data, number sequence, array, JSON, etc
 
-In the first two parts of common queries, we introduce some common query methods such as price query, holder, and holding balance of ERC20 tokens, respectively. In this section, we'll look at some other common queries.
+In the first two parts of common queries, we introduced some common query methods such as price query, holder, and holding balance of ERC20 tokens. In this section, we'll look at some other common queries.
 
 ##  Custom data table using CTE
 
-Dune V2 does not currently support user-custom tables and views. For some data from external sources or a small amount of manually curated data, we can consider using CTE to generate a custom list of data within the query. It can support custom CTE tables with thousands of rows with only a few fields, and that they will execute successfully as long as they do not exceed the maximum size of the Dune query request. There are two ways to customize CTE tables: 
+Dune V2 does not currently support user-custom tables and views. For some data from external sources or a small amount of manually curated data, we can consider using CTE to generate a custom list of data within the query. It can support custom CTE tables with thousands of rows with only a few fields and that they will execute successfully as long as they do not exceed the maximum size of the Dune query request. There are two ways to customize CTE tables: 
 
 Example of the first syntax: 
 ``` sql
@@ -50,13 +50,13 @@ Example link to the above query:
 - [https://dune.com/queries/781862](https://dune.com/queries/781862)
 - [https://dune.com/queries/1650640](https://dune.com/queries/1650640)
 
-Due to the limitations mentioned earlier, the execution may not succeed when there are too many rows, and you need to duplicate the same CTE code for every query, which is relatively inconvenient. For large amounts of data, multiple times, long-term use, etc., you should still consider generating the spells table by submitting spellbook PR.
+Due to the limitations mentioned earlier, the execution may not succeed when there are too many rows. You will need to duplicate the same CTE code for every query, which is relatively inconvenient. For large amounts of data, multiple times, long-term use, etc., you should still consider generating the spells table by submitting spellbook PR.
 
 ## Decode data from the logs
 
 Earlier in calculating the price of ERC20 tokens, we saw an example of calculating the price from logs. Let's look at another example where we need to decode data directly from logs. When the smart contract is not decoded by Dune, or the decode table for the corresponding event is not generated because the ABI data used during decoding is incomplete, we may need to decode the query data directly from the logs. Taking the Lens protocol as an example, we found that in the Lens smart contract source code ([Lens Core](https://github.com/lens-protocol/core)), almost every operation has generated event logs. However, there are only a few event-related tables in Dune's decoded data. Further investigation revealed that the ABI used during decoding was missing the definition of these events. Although we can regenerate or get the Lens team to get the full ABI and submit it to Dune to parse again, the main point here is how to extract data from the undecoded logs.
 
-In the Lens smart contract source code, we see the `FollowNFTTransferred` event definition, [code] link (https://github.com/lens-protocol/core/blob/main/contracts/libraries/Events.sol#L347). There is also a `Followed` event in the code, but decoding is complicated by the array argument, so we'll use the previous event as an example. From the event name, we can infer that when a user follows a Lens Profile, a FollowNFT will be generated and transferred to the follower's address. So we can find a transaction record of interest, let's look at the logs inside, example transaction:[https://polygonscan.com/tx/0x30311c3eb32300c8e7e173c20a6d9c279c99d19334be8684038757e92545f8cf](https://polygonscan.com/tx/0x30311c3eb32300c8e7e173c20a6d9c279c99d19334be8684038757e92545f8cf)。opening the transaction Logs page in our browser and switch to the "Logs" TAB, we can see that there are four event logs in total. For some events, the blockchain browser can display the original event name. The Lens transaction we're looking at doesn't show the original name, so how do we know which one corresponds to the `FollowNFTTransferred` event log? Here we can use third-party tools to compare by generating the keccak256 hash of the event definition. [Keccak - 256] (https://emn178.github.io/online-tools/keccak_256.html) this page can generate online Keccak - 256 hash value. Let's clean up the definition of the `FollowNFTTransferred` event in the source code to a minified mode (remove parameter names, remove Spaces), Get ` FollowNFTTransferred (uint256 uint256, address, the address, uint256) `, then paste it to Keccak - 256 tool page, The generated hash value for ` 4996ad2257e7db44908136c43128cc10ca988096f67dc6bb0bcee11d151368fb `. (The latest Dune parse table already has the full event table for the Lens project, here is just for example purposes)
+In the Lens smart contract source code, we see the `FollowNFTTransferred` event definition, [code link](https://github.com/lens-protocol/core/blob/main/contracts/libraries/Events.sol#L347). There is also a `Followed` event in the code, but decoding is complicated by the array argument, so we'll use the previous event as an example. From the event name, we can infer that when a user follows a Lens Profile, a FollowNFT will be generated and transferred to the follower's address. We can  then find a transaction record of interest. Let's look at the logs inside for the following transaction:[https://polygonscan.com/tx/0x30311c3eb32300c8e7e173c20a6d9c279c99d19334be8684038757e92545f8cf](https://polygonscan.com/tx/0x30311c3eb32300c8e7e173c20a6d9c279c99d19334be8684038757e92545f8cf). The transaction Logs page in our browser and switch to the "Logs" TAB, so we can see that there are four event logs in total. In certain instances, the blockchain browser can display the original event name. The Lens transaction we're looking at doesn't show the original name, so how do we know which one corresponds to the `FollowNFTTransferred` event log? Here we can use third-party tools to compare by generating the keccak256 hash of the event definition. [Keccak - 256](https://emn178.github.io/online-tools/keccak_256.html) this page can generate online Keccak - 256 hash value. Let's clean up the definition of the `FollowNFTTransferred` event in the source code to a minified mode (remove parameter names, remove Spaces), Get ` FollowNFTTransferred (uint256 uint256, address, the address, uint256) `, then paste it to Keccak - 256 tool page, The generated hash value for ` 4996ad2257e7db44908136c43128cc10ca988096f67dc6bb0bcee11d151368fb `. (The latest Dune parse table already has the full event table for the Lens project, here is just for example purposes)
 
 ![image_08.png](img/image_08.png)
 
@@ -86,7 +86,7 @@ Example link to the above query:
 
 ## Use sequences of numbers to simplify queries
 
-When studying NFT projects, we may want to analyze the distribution of prices of all transactions for a given NFT project during a certain time period, i.e., how many transactions were recorded in each price range. We typically set the minimum and maximum transaction prices (either by input or by querying the transaction data and handling outliers), divide the range into N ranges, and count the number of transactions in each range. Here is an example of a query that is simple in logic but cumbersome in comparison:
+When studying NFT projects, we may want to analyze the distribution of prices of all transactions for a given NFT project during a certain time period (i.e., how many transactions were recorded in each price range). We typically set the minimum and maximum transaction prices (either by input or by querying the transaction data and handling outliers), divide the range into N ranges, and count the number of transactions in each range. Here is an example of a query that is simple in logic but cumbersome in comparison:
 
 ``` sql
 -- nft Position cost distribution
@@ -218,7 +218,7 @@ Example link to the above query:
 
 ## Read data from Array and Struct fields
 
-Some smart contracts emit event logs using array parameters, and the data table generated by Dune after decoding is also stored in arrays. The Solana blockchain's raw transaction tables make heavy use of arrays to store data. Some data is stored in structs, or we need to borrow them when we want to extract the data (see below for an example). Let's look at how to access the data stored in array fields and struct fields.
+Some smart contracts emit event logs using array parameters and the data table generated by Dune after decoding is also stored in arrays. The Solana blockchain's raw transaction tables make heavy use of arrays to store data. Some data is stored in structs, or we need to borrow them when we want to extract the data (see below for an example). Let's look at how to access the data stored in array fields and struct fields.
 
 ``` sql
 select tokens, deltas, evt_tx_hash
@@ -304,7 +304,7 @@ Dune SQL (Trino) For detailed help on JSON functions, check out: https://trino.i
 
 ## SixdegreeLab introduction
 
-SixdegreeLab([@SixdegreeLab](https://twitter.com/sixdegreelab))is a professional on-chain data team dedicated to providing accurate on-chain data charts, analysis, and insights to users. Our mission is to popularize on-chain data analysis and foster a community of on-chain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
+SixdegreeLab([@SixdegreeLab](https://twitter.com/sixdegreelab))is a professional Onchain data team dedicated to providing accurate Onchain data charts, analysis, and insights to users. Our mission is to popularize Onchain data analysis and foster a community of Onchain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
 
 Feel free to visit[SixdegreeLab's Dune homepage](https://dune.com/sixdegree).
 

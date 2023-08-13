@@ -8,7 +8,7 @@ we need a platform that does not require a large amount of development work
 and can access various data. Among these data development tools, 
 the most convenient is the Dune platform.
 
-[Dune](https://dune.com/) is an on-chain data analysis platform. 
+[Dune](https://dune.com/) is an Onchain data analysis platform. 
 Users can write SQL statements on the platform, filter out the data they need 
 from the blockchain database parsed by Dune, and generate corresponding charts 
 to form a dashboard.
@@ -144,3 +144,14 @@ Each visualization widget can be dragged and resized.
   - [Build Your Dune V1 Analytics Dashboard from 0 to 1 (Basic)](https://mirror.xyz/0xbi.eth/6cbedGOx0GwZdvuxHeyTAgn333jaT34y-2qryvh8Fio)
   - [Build Your Dune V1 Analytics Dashboard from 0 to 1 (Practical)](https://mirror.xyz/0xbi.eth/603BIaKXn7s2_7A84oayY_Fn5XUPh6zDsv2OlQTdzCg)
   - [Build Your Dune V1 Analytics Dashboard from 0 to 1 (Common Table Structures)](https://mirror.xyz/0xbi.eth/uSr336PzXtqMuE_LPBewbJ1CHN2oUs40-TDET2rnkqU)
+
+
+## About Us
+
+`Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
+
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Email: [contact@sixdegree.xyz](mailto:contact@sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)

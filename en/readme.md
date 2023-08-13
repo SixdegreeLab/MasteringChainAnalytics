@@ -1,6 +1,6 @@
 # Mastering Chain Analytics
 
-This is a series tutorials for blockchain analysis enthusiasts, helping new users learn blockchain data analysis from scratch and become an on-chain data analyst master.
+This is a series tutorials for blockchain analysis enthusiasts, helping new users learn blockchain data analysis from scratch and become an Onchain data analyst master.
 
 # Table of contents
 
@@ -38,7 +38,7 @@ This is a series tutorials for blockchain analysis enthusiasts, helping new user
 
 ## About Us
 
-[SixdegreeLab](https://twitter.com/SixdegreeLab) are a group of on-chain data enthusiasts. Our mission is to provide users with accurate on-chain data charts, analysis, and insights, and we are committed to popularizing on-chain data analysis. By establishing a community, writing tutorials, etc., train data analysts on the chain, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad blockchain data application in the future.
+[SixdegreeLab](https://twitter.com/SixdegreeLab) are a group of Onchain data enthusiasts. Our mission is to provide users with accurate Onchain data charts, analysis, and insights, and we are committed to popularizing Onchain data analysis. By establishing a community, writing tutorials, etc., train data analysts on the chain, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad blockchain data application in the future.
 
 - website: [sixdegree.xyz](https://sixdegree.xyz)
 - twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)

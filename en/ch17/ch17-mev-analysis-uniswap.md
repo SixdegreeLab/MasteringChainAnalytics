@@ -2,31 +2,31 @@
 
 ## What is MEV?
 
-The concept of MEV (miner-extractable value) first appeared in the Flashboy 2.0 article in 2019, referring to the additional profit that miners can obtain by including, reordering, inserting, or ignoring transactions. With the development of blockchain and on-chain research activities in recent years, MEV has now extended to maximal extractable value.
+The concept of MEV (miner-extractable value) first appeared in the Flashboy 2.0 article in 2019, referring to the additional profit that miners can obtain by including, reordering, inserting, or ignoring transactions. With the development of blockchain and Onchain research activities in recent years, MEV has now extended to maximal extractable value.
 
-Visually through data, as shown in the following figure, the MEV profit obtained through arbitrage reached $1.44 million in the past 30 days, which is during a bear market with relatively low trading volume. The previous market turmoil brought about by the FTX crash incident was just a [bull market for MEV](https://twitter.com/lviswang/status/1591664260987641856?s=20&t=YPM1Qwt_-K8IJGHxxu2gnA), where intense price fluctuations led to an explosion of arbitrage and liquidation opportunities, generating $5 million in arbitrage income in just 7 days. Therefore, MEV is always accompanying the market, and ordinary users may not want to but can't avoid being passively involved in this corner of the dark forest. At least, we should roughly understand what MEV is all about.
+Visually through data, as shown in the following figure, the MEV profit obtained through arbitrage reached $1.44 million in the past 30 days, during a bear market with relatively low trading volume. The previous market turmoil brought about by the FTX crash incident was just a [bull market for MEV](https://twitter.com/lviswang/status/1591664260987641856?s=20&t=YPM1Qwt_-K8IJGHxxu2gnA), where intense price fluctuations led to an explosion of arbitrage and liquidation opportunities, generating $5 million in arbitrage income in just 7 days. Therefore, MEV is always accompanying the market although ordinary users may not want to, they can't avoid being passively involved in this corner of the dark forest. At least, we should roughly understand what MEV is all about.
 
 ![ep_mev_ov.jpg](img/ep_mev_ov.jpg)
 
-Ethereum is the most active mainnet with the richest on-chain activities. Let's discuss a few prerequisites for the birth of MEV on Ethereum:
+Ethereum is the most active mainnet with the richest Onchain activities. Let's discuss a few prerequisites for the birth of MEV on Ethereum:
 
-1. The Gas mechanism of Ethereum is essentially an auction mechanism, where the highest bidder wins, and the transactions are designed to be sequential. That is, miners/validators will package the transactions with the highest gas first to maximize profits. This is one of the reasons for the high gas fees and congestion on Ethereum, and it also makes MEV possible: once a profitable transaction is found, it can be executed first by bribing miners (raising gas).
+1. The Gas mechanism of Ethereum is essentially an auction mechanism, where the highest bidder wins, and the transactions are designed to be sequential. That is, miners/validators will package the transactions with the highest gas first to maximize profits. This is one of the reasons for the high gas fees and congestion on Ethereum and it also makes MEV possible: once a profitable transaction is found, it can be executed first by bribing miners (raising gas).
 
 2. The design of the blockchain memory pool (Mempool). All transactions sent out need to temporarily enter the memory pool, rather than being packaged directly by miners. The memory pool is filled with pending transactions and is public, which means anyone can monitor every transaction and every function call in the memory pool, providing attackers with the conditions to monitor transactions. 
 
 ![mempool.jpg](img/mempool.jpg)
 
-3. According to [Etherscan](https://etherscan.io/blocks) data, after the POS merge, the block production time is fixed at 12 seconds, before the POS merge, it was around 13.5 seconds. The longer block production time, which is considered for the safety of node synchronization, also provides attackers with execution time.
+3. According to [Etherscan](https://etherscan.io/blocks) data, after the POS merge, the block production time is fixed at 12 seconds; before the POS merge, it was around 13.5 seconds. The longer block production time, which is considered for the safety of node synchronization, also provides attackers with execution time.
 
-In summary, **MEV attackers can see all pending transactions in the public mempool, have ample time to rehearse to see if the transaction can bring profits, if they determine that it is profitable, they can raise the gas fee to achieve the effect of priority execution, thus stealing others' benefits.**
+In summary, **MEV attackers can see all pending transactions in the public mempool and have ample time to rehearse to see if the transaction can bring profits. If they determine that it is profitable, they can raise the gas fee to achieve the effect of priority execution, thus stealing others' benefits.**
 
 ![mev_process.jpg](img/mev_process.jpg)
 
-Here's an interesting question, shouldn't Solana, which has no mempool and fast block production speed, have no MEV? In fact, Solana also has MEV, but let's just discuss MEV on Ethereum for now.
+Here's an interesting question - shouldn't Solana, which has no mempool and fast block production speed, have no MEV? In fact, Solana also has MEV, but let's just discuss MEV on Ethereum for now.
 
 So who are the beneficiaries of MEV?
 
-Firstly, miners/validators win passively. The competition between buyers maximizes the income of sellers, and the block space market is no exception; Secondly, the initiators of MEV attacks benefit, which is obvious. Can miners/validators get involved in MEV themselves? The answer is certainly yes. The optimal situation is that the miner/validator launches an MEV transaction exactly when they are producing a block. However, in practice, the chance of this happening is really low. The occurrence of MEV also depends somewhat on luck. A lucky validator may produce a block containing a large amount of MEV, while an unlucky one may not have any at all. According to the results of the calculation in the article [Post-Merge MEV: Modelling Validator Returns](https://pintail.xyz/posts/post-merge-mev/), some validators have hardly received any MEV in a year, while the annual return rate of some validators is far more than 100%. On average, MEV brings an additional 1.5% - 3% annual return to validators. Including block rewards, the median annual return rate for validators is roughly 6.1% to 7.6% (based on datasets from the MEV "off-peak" and "peak" periods).
+Firstly, miners/validators win passively. The competition between buyers maximizes the income of sellers and the block space market is no exception; Secondly, the initiators of MEV attacks benefit, which is obvious. Can miners/validators get involved in MEV themselves? The answer is certainly yes. The optimal situation is that the miner/validator launches an MEV transaction exactly when they are producing a block. However, in practice, the chance of this happening is really low. The occurrence of MEV also depends somewhat on luck. A lucky validator may produce a block containing a large amount of MEV, while an unlucky one may not have any at all. According to the results of the calculation in the article [Post-Merge MEV: Modelling Validator Returns](https://pintail.xyz/posts/post-merge-mev/), some validators have hardly received any MEV in a year, while the annual return rate of some validators is far more than 100%. On average, MEV brings an additional 1.5% - 3% annual return to validators. Including block rewards, the median annual return rate for validators is roughly 6.1% to 7.6% (based on datasets from the MEV "off-peak" and "peak" periods).
 
 
 ## The Extraction Process of MEV
@@ -38,7 +38,7 @@ As transactions on the blockchain are public, profitable arbitrage paths can be 
 
 
 ## Classification of MEV
-MEV robots, according to their creators' intentions, perform on-chain activities, packaging transactions and delivering them to unwitting miners for block production. From a positive perspective, they are important players in ensuring market stability and DApp activity; from a negative perspective, they exploit ordinary users unequally with their inherent advantage (they can monitor the entire Mempool).
+MEV robots, according to their creators' intentions, perform Onchain activities, packaging transactions and delivering them to unwitting miners for block production. From a positive perspective, they are important players in ensuring market stability and DApp activity; from a negative perspective, they exploit ordinary users unequally with their inherent advantage (they can monitor the entire Mempool).
 
 Considering that this article mainly introduces the use of Dune for MEV analysis, here is a simple classification of MEV based on Dune-related content:
 
@@ -60,7 +60,7 @@ Sandwich attacks are a combination of the previous two, sandwiching transactions
 ![swa.png](img/swa.png)
 
 ### 4. Just-in-Time liquidity Attack
-JIT liquidity is a special form of liquidity provision. In DEX, liquidity providers share transaction fees. JIT refers to adding liquidity just before a large Swap to share the transaction fee of that transaction, and immediately exiting liquidity after the transaction ends. This might sound strange – doesn’t providing liquidity continuously mean continuously receiving transaction fees? Personal opinion is that being an LP brings impermanent loss, while the impermanent loss brought by instantaneous liquidity provision can almost be ignored. JIT attacks are similar to sandwich attacks because they both involve prepositions and postpositions of the victim's transaction, but in the case of JIT, the attacker adds and removes liquidity, rather than buying and selling. This type of MEV increases the liquidity of DEX without harming traders, so it is also a "good" MEV. 
+JIT liquidity is a special form of liquidity provision. In DEX, liquidity providers share transaction fees. JIT refers to adding liquidity just before a large Swap to share the transaction fee of that transaction and immediately exiting liquidity after the transaction ends. This might sound strange – doesn’t providing liquidity continuously mean continuously receiving transaction fees? Personal opinion is that being an LP brings impermanent loss, while the impermanent loss brought by instantaneous liquidity provision can almost be ignored. JIT attacks are similar to sandwich attacks because they both involve prepositions and postpositions of the victim's transaction; but in the case of JIT, the attacker adds and removes liquidity, rather than buying and selling. This type of MEV increases the liquidity of DEX without harming traders, so it is also a "good" MEV. 
 
 ![JIT.png](img/JIT.png)
 
@@ -210,7 +210,7 @@ from labels.arbitrage_traders
 where blockchain = 'ethereum'
 ```
 
-We then join the uniswap_v3_ethereum.trades table with the arbitrage traders table, filter the takers, i.e., traders, which are the arbitrage trades. Next, we can count the number of transactions, the total transaction amount, the average transaction amount, count the number of independent trading robots, etc., for MEV arbitrage information. Similarly, we can also query data related to sandwich attacks. 
+We then join the uniswap_v3_ethereum.trades table with the arbitrage traders table and filter the takers (i.e., traders) which are the arbitrage trades. Next, we can count the number of transactions, the total transaction amount, the average transaction amount, count the number of independent trading robots, etc., for MEV arbitrage information. Similarly, we can also query data related to sandwich attacks. 
 
 ```sql
 with arbitrage_traders as (
@@ -235,7 +235,7 @@ Query for reference：[https://dune.com/queries/1883865](https://dune.com/querie
 
 From this, we can further compare the transaction count, transaction amount of MEV robots, and regular users; the proportion of MEV transaction count and transaction volume for each trading pair in Uniswap:
 
-To distinguish whether it is an MEV robot, we still judge by the label table, we only need to judge whether the `taker` is in `arbitrage_traders` to distinguish whether it is an arbitrage robot. 
+To distinguish whether it is an MEV robot, we still judge by the label table; we only need to judge whether the `taker` is in `arbitrage_traders` to distinguish whether it is an arbitrage robot.
 
 ```sql
 with arbitrage_traders as (
@@ -264,18 +264,18 @@ group by 1, 2
 order by 1, 2
 ```
 
-Generate two Area Chart charts for the above query results, comparing the transaction count and transaction amount proportions of MEV Bots and regular Traders, and we can get the following results:
+Generate two Area Chart charts for the above query results, comparing the transaction count and transaction amount proportions of MEV Bots and regular Traders. We then get the following results:
 
 ![uniswap_bot.png](img/uniswap_bot.png)
 
 For specific content, you can refer to the query: [https://dune.com/queries/1883887](https://dune.com/queries/1883887)
 
 
-We can also count the transaction number, transaction amount, etc., for bot and regular user trades by trading pair. Just need to categorize and count with the `token_pair` in the Spellbook, no more examples will be given here.
+We can also count the transaction number, transaction amount, etc., for bot and regular user trades by trading pair. We just need to categorize and count with the `token_pair` in the Spellbook, so no more examples will be given here.
 
 ## Summary
 
-The above introduced the principle and classification of Ethereum MEV, and two methods on how to use Dune to do MEV queries using Uniswap as an example. [AndrewHong](https://twitter.com/andrewhong5297) also has a lecture on MEV in the [12-day course of Dune](https://www.youtube.com/watch?v=SMnzCw-NeFE), people who are interested can check out the explanation by the principal of Duniversity, where it is mentioned that Dune's label table is derived from Etherscan, and its [coverage](https://dune.com/queries/1764004) may not necessarily be sufficient, so the two methods introduced in this article, the final query results may slightly differ. MEV is a complex topic, here we just aim to provoke thought, more methods need to be explored.
+The above introduced the principle and classification of Ethereum MEV, as well as the two methods on how to use Dune to do MEV queries, using Uniswap as an example. [AndrewHong](https://twitter.com/andrewhong5297) also has a lecture on MEV in the [12-day course of Dune](https://www.youtube.com/watch?v=SMnzCw-NeFE). People who are interested can check out the explanation by the principal of Duniversity, where it is mentioned that Dune's label table is derived from Etherscan and its [coverage](https://dune.com/queries/1764004) may not necessarily be sufficient. Therefore, using the two methods introduced in this article, the final query results may slightly differ. MEV is a complex topic, so here we just aim to provoke thought, as more methods need to be explored.
 
 ## References
 1. Understanding the Full Picture of MEV https://huobi-ventures.medium.com/understanding-the-full-picture-of-mev-4151160b7583
@@ -291,7 +291,7 @@ The above introduced the principle and classification of Ethereum MEV, and two m
 
 ## Introduction to SixDegreeLab
 
-SixDegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional on-chain data team. Our mission is to provide users with accurate on-chain data charts, analysis, and insights, and we are committed to popularizing on-chain data analysis. Through building communities, writing tutorials, and other methods, we are training on-chain data analysts, outputting valuable analysis content, and promoting the construction of the data layer of the blockchain by the community, thereby cultivating talents for the vast future blockchain data applications.
+SixDegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional Onchain data team. Our mission is to provide users with accurate Onchain data charts, analysis, and insights, and we are committed to popularizing Onchain data analysis. Through building communities, writing tutorials, and other methods, we are training Onchain data analysts, outputting valuable analysis content, and promoting the construction of the data layer of the blockchain by the community, thereby cultivating talents for the vast future blockchain data applications.
 
 Feel free to visit the [SixDegreeLab Dune homepage](https://dune.com/sixdegree).
 

@@ -308,10 +308,11 @@ select array_agg(contract_address) from
 
 Each database has dozens or even hundreds of built-in functions, and what we introduce here is only a small part of the commonly used functions. If you want to become a proficient data analyst, we highly recommend reading and understanding the usage of each of the built-in functions here:[Trino 函数](https://trino.io/docs/current/functions.html).
 
-## Introduction of SixdegreeLab
+## About Us
 
-SixdegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)） is a professional on-chain data team, our mission is to provide users with accurate on-chain data charts, analyses, and insights, and we are committed to popularising on-chain data analysis. Through building communities and writing tutorials, we train on-chain data analysts, output valuable analysis content, promote the community to build the data layer of blockchain, and cultivate talents for the future broad blockchain data application.
+`Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
 
-Welcome to [SixdegreeLab's Dune homepage](https://dune.com/sixdegree).
-
-Due to the limitations of the level, shortcomings are inevitable. If you find any errors, please correct them.
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)

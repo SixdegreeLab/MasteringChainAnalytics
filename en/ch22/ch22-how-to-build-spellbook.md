@@ -9,7 +9,7 @@ By building spells, all Dune community users can more easily accomplish data ana
 - One of your queries has been forked or copied multiple times
 - Your query contains very complex logic that can be reused elsewhere
 
-If one of the above scenarios applies, we can turn this query into a spell by building a view. This can simplify query SQL logic, improve consistency and maintainability, and clarify data metrics.
+If one of the above scenarios applies, we can turn this query into a spell by building a view. This can simplify query SQL logic, improve consistency and maintainability, as well as clarify data metrics.
 
 The open source Spellbook project maintained by Dune can automatically build and maintain these spells. Anyone in the community can contribute spells to the Spellbook project. This tutorial attempts to write a simple spell to help everyone get started easily.
 
@@ -19,11 +19,11 @@ In the simplest terms, a spell is essentially a SELECT query statement underneat
 
 The basic steps to build a spell include:
 
-- **Determine the data object**: Based on the example scenarios mentioned above, in combination with the specific problems and needs you encounter when writing queries, determine the data object to be processed to build and generate the spell, and define the mode (schema) for the output spell.
-- **Configure data sources**: The data source refers to the original data tables and parsed data tables on which the spell depends. They must be defined in a YAML file. Each data source needs to be defined only once in the spell.
-- **Write tests**: Consider the desired query results before writing the spell and write corresponding tests based on the results. Of course, if our spell is just a view of aggregated data, the test can be added after writing the spell.
-- **Write the spell**: Use a `.sql` file with a certain special format (JINJA template) to build a spell for each spell to be built by writing a `SELECT` query statement. Compile and test the spell.
-- **Submit a PR**: After writing the spell, compiling it locally successfully and manually testing it, create a new PR (Pull Request) on GitHub and wait for Dune's technical personnel to review and merge it. After successful merging, we can find the newly built spell in the query editor.
+- **Determine the data object**: based on the example scenarios mentioned above, in combination with the specific problems and needs you encounter when writing queries, determine the data object to be processed to build and generate the spell, and define the mode (schema) for the output spell.
+- **Configure data sources**: the data source refers to the original data tables and parsed data tables on which the spell depends. They must be defined in a YAML file. Each data source needs to be defined only once in the spell.
+- **Write tests**: consider the desired query results before writing the spell and write corresponding tests based on the results. Of course, if our spell is just a view of aggregated data, the test can be added after writing the spell.
+- **Write the spell**: use a `.sql` file with a certain special format (JINJA template) to build a spell for each spell to be built by writing a `SELECT` query statement. Compile and test the spell.
+- **Submit a PR**: after writing the spell, compiling it locally successfully and manually testing it, create a new PR (Pull Request) on GitHub and wait for Dune's technical personnel to review and merge it. After successful merging, we can find the newly built spell in the query editor.
 
 Dune provides more detailed instructions in their online documentation:[Spell guide](https://dune.com/docs/zh/spellbook/getting-started/)
 
@@ -49,7 +49,7 @@ git clone git@github.com:springzh/spellbook.git
 
 ![image_00.jpg](img/image_00.jpg)
 
-克隆完成后，工作目录中会看到一个新的`spellbook`子目录。进入该子目录。
+When you cloned the repo, you will get a new sub-directory called `spellbook`. Enter this directory:
 
 ```
 cd spellbook
@@ -141,11 +141,11 @@ While writing and debugging a new magic table, you may need to adjust and modify
 
 ##  The Magic Table to Create in This Tutorial
 
-The purpose of this tutorial is to enable everyone to quickly learn how to build a magic table using a simple example. Previously, when the Space ID on the BNB chain launched domain registration, I created a Space ID data dashboard ([SpaceID - BNB Domain](https://dune.com/sixdegree/bnb-domain-spaceid)). At that time, the Space ID only had a limited open Mint permission, and users provided a lot of feedback and suggestions regarding the Mint rules. In response to this feedback, the SpaceID team continuously improved and upgraded its smart contracts. Within a few days, the contract for domain registration went through five major versions, from V3 to V7. This led to a problem where, to consolidate all currently registered SpaceID domain data, one had to query the data separately from the event log tables of these different contract versions and manually merge them using "Union All" operations. If you check the source code of my data dashboard queries, you'll find that most of them have a long CTE (Common Table Expression) to aggregate and merge domain registration events from different contract versions. For example: https://dune.com/queries/1239514/2124307. To keep it up to date, I had to make numerous modifications to these queries one by one, including incorporating data from new contract versions. In fact, the SpaceID project now has V8 and V9 domain registration contract versions, which are not included in my dashboard, making it outdated. If other users forked my queries and made adjustments, unfortunately, their queries would also be outdated.
+The purpose of this tutorial is to enable everyone to quickly learn how to build a magic table using a simple example. Previously, when the Space ID on the BNB chain launched domain registration, I created a Space ID data dashboard ([SpaceID - BNB Domain](https://dune.com/sixdegree/bnb-domain-spaceid)). At that time, the Space ID only had a limited open Mint permission and users provided a lot of feedback as well as suggestions regarding the Mint rules. In response to this feedback, the SpaceID team continuously improved and upgraded its smart contracts. Within a few days, the contract for domain registration went through five major versions, from V3 to V7. This led to a problem where, to consolidate all currently registered SpaceID domain data, one had to query the data separately from the event log tables of these different contract versions and manually merge them using "Union All" operations. If you check the source code of my data dashboard queries, you'll find that most of them have a long CTE (Common Table Expression) to aggregate and merge domain registration events from different contract versions. For example: https://dune.com/queries/1239514/2124307. To keep it up to date, I had to make numerous modifications to these queries one by one, including incorporating data from new contract versions. In fact, the SpaceID project now has V8 and V9 domain registration contract versions, which are not included in my dashboard, making it outdated. If other users forked my queries and made adjustments, unfortunately, their queries would also be outdated.
 
 ![image_01.jpg](img/image_01.jpg)
 
-In such a case, if we build a magic table for domain registration events (actually a view), all queries can be written directly based on this magic table. When a new smart contract version is released, we only need to modify and update the definition of the magic table, submit a PR (Pull Request) for review. Once the PR is approved and merged, the data in the magic table will be automatically updated. All queries using this magic table will not require any changes. In contrast, without a magic table, my queries, as well as the queries generated by others who forked my queries, would have to be modified one by one. From here, we can see the benefits of building a magic table.
+In such a case, if we build a magic table for domain registration events (actually a view), all queries can be written directly based on this magic table. When a new smart contract version is released, we only need to modify and update the definition of the magic table and submit a PR (Pull Request) for review. Once the PR is approved and merged, the data in the magic table will be automatically updated. All queries using this magic table will not require any changes. In contrast, without a magic table, my queries, as well as the queries generated by others who forked my queries, would have to be modified one by one. From here, we can see the benefits of building a magic table.
 
 So, what we are going to do here is to build a magic table that includes all Space ID domain registration information on the `bnb` blockchain of the `spaceid` project.
 
@@ -524,15 +524,15 @@ If all modifications pass the review smoothly, your PR will be merged into the s
 
 ## Additional Notes and Special Thanks
 
-Note: As of the time of writing this document, our PR is still under review and has not been approved yet. Further modifications may be made based on feedback. The PR number for reference is 2725, and you can check the details on the PR page.
+Note: as of the time of writing this document, our PR is still under review and has not been approved yet. Further modifications may be made based on feedback. The PR number for reference is 2725, and you can check the details on the PR page.
 
-PR Github link: [Add BNB spaceid view](https://github.com/duneanalytics/spellbook/pull/2725)
+PR Github link: [add BNB spaceid view](https://github.com/duneanalytics/spellbook/pull/2725)
 
 Special thanks to community member @hosuke (Dune: https://dune.com/hosuke) for assisting with the PR review, providing feedback and improvement suggestions, and helping to modify the materialization strategy of the magic table.
 
 ## Introduction to SixdegreeLab
 
-SixdegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional on-chain data team. Our mission is to provide users with accurate on-chain data charts, analysis, and insights. We are committed to popularizing on-chain data analysis by building communities, writing tutorials, and cultivating on-chain data analysts. We output valuable analysis content and promote the community to build the data layer of blockchain, nurturing talents for the wide range of future blockchain data applications.
+SixdegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional Onchain data team. Our mission is to provide users with accurate Onchain data charts, analysis, and insights. We are committed to popularizing Onchain data analysis by building communities, writing tutorials, and cultivating Onchain data analysts. We output valuable analysis content and promote the community to build the data layer of blockchain, nurturing talents for the wide range of future blockchain data applications.
 
 Welcome to visit [SixdegreeLab's Dune homepage](https://dune.com/sixdegree).
 

@@ -284,7 +284,7 @@ With this, we have completed the creation of the first Dune data dashboard. The 
 
 ![dashboard.png](img/dashboard.png)
 
-To avoid overwhelming complexity, we have only covered some basic queries, and the resulting charts in the dashboard may not look extremely sophisticated. However, this is not important. What matters more is whether you can use this tutorial as a starting point to embark on your own journey of on-chain data analysis.
+To avoid overwhelming complexity, we have only covered some basic queries, and the resulting charts in the dashboard may not look extremely sophisticated. However, this is not important. What matters more is whether you can use this tutorial as a starting point to embark on your own journey of Onchain data analysis.
 After reading this tutorial, I hope you will try it out for yourself. Uniswap was just one example of a DEX, and you can perform similar analyses on any other DEX on different chains. Combining the techniques from the previous lessons, you can explore and compare data from other DEXs or even the same DEX on different chains (such as UniSwap on Ethereum and Optimism). As a blockchain data analyst, your dashboard is your resume, so take it seriously!
 
 # Homework
@@ -293,10 +293,12 @@ Based on the tutorial content, create a data dashboard with at least 5 queries f
 
 Keep up the good work! Feel free to share the links to your data dashboards in the Dune WeChat group or Dune's Discord channel.
 
-## About SixdegreeLab
 
-SixdegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional on-chain data team. Our mission is to provide users with accurate on-chain data charts, analyses, and insights while promoting on-chain data analysis. We cultivate blockchain data analysts by establishing communities and writing tutorials, aiming to build the data layer for the blockchain and nurture talent for the vast future applications of blockchain data.
+## About Us
 
-Visit [SixdegreeLab's Dune page](https://dune.com/sixdegree) for more information.
+`Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
 
-This article was written by Spring Zhang ([@superamscom](https://twitter.com/superamscom)), a member of SixdegreeLab. I apologize for any limitations in my knowledge and writing. If you find any errors, please feel free to point them out.
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)

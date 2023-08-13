@@ -321,3 +321,12 @@ order by 1
 - Subquery (with as)
   - with as can be used to construct a subquery, turning the result of some SQL into a 'virtual table' (similar to a view or subquery). The subsequent SQL can then directly retrieve data from this 'virtual table'.
   - Through with as, the readability of SQL logic can be improved, and multiple nestings can also be avoided.
+
+## About Us
+
+`Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
+
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)

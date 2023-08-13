@@ -2,7 +2,7 @@
 
 ## Background Information
 
-[NFT(Non-Fungable Token)](https://ethereum.org/zh/nft/) Non-Fungable token is a kind of standard token follow [ERC721](https://eips.ethereum.org/EIPS/eip-721) . compared to follow ERC20 standard in terms of fungable tokens, Traditionally, the most typical characteristics of NFT are that each token is indivisible, irreplaceable, and unique. The common uses of NFT are:
+[ERC721](https://eips.ethereum.org/EIPS/eip-721) is one of the most used [NFT(Non-Fungable Token)](https://ethereum.org/zh/nft/) standards. compared to follow ERC20 standard in terms of fungable tokens, Traditionally, the most typical characteristics of NFT are that each token is indivisible, irreplaceable, and unique. The common uses of NFT are:
 
 
 - Digital art/collections
@@ -12,7 +12,7 @@
 - Digital identity
 - Articles
 
-For example, in digital art, different NFTS have different styles; For example, in the ENS domain name, each domain name is unique and cannot be repeated. As for tickets, each ticket has a fixed seat, and different seats are also different numbers.
+For example, in digital art, different NFTS have different styles; for instance, in the ENS domain name, each domain name is unique and cannot be repeated. As for tickets, each ticket has a fixed seat, and different seats are also different numbers.
 
 With the development of NFT, other standard NFT have been derived:
 
@@ -28,11 +28,11 @@ With the development of NFT, other standard NFT have been derived:
 
 ## Contract description
 
-The contracts related to NFT are usually divided into two categories: one is the contract of the project party, and the other is the contract of the third-party exchange platform used to trade NFT.
+The contracts related to NFT are usually divided into two categories: one is the contract of the project party and the other is the contract of the third-party exchange platform used to trade NFT.
 
 ### ERC721 contract
 
-We use ERC721 NFT as an example to show the characteristics of contract, the other can according to demand to understand, we in the market of NFT Opensea to [azuki] (https://opensea.io/collection/azuki) on the NFT, for example, that contract contain what events:
+We use ERC721 NFT as an example to show the characteristics of an NFT contract, the other can according to demand to understand, we in the market of NFT Opensea to [azuki](https://opensea.io/collection/azuki) on the NFT, for example, that contract contain what events:
 
 ```solidity
 interface ERC721 {
@@ -80,7 +80,7 @@ interface ERC721 {
 }
 ```
 
-For data analysis, the most important function is the Transfer event, which is triggered on every transaction and recorded on the chain. In addition to Transfer, there is also the Mint event, which is usually used to mint a new NFT at the time of sale. Dune's spells table provides ERC721, ERC1155 type Transfer tables such as `erc721_ethereum.evt_Transfer `, `erc1155_ethereum.evt_Transfer`, etc. (different names under different blockchains), We can query NFT transfer events for a contract or an EOA address.
+For data analysis, the most important function is the Transfer event, which is triggered on every transaction and recorded on the chain. In addition to Transfer, there is also the Mint event, which is usually used to mint a new NFT at the time of sale. Dune's spells table provides `ERC721`, `ERC1155`  `Transfer` tables such as `erc721_ethereum.evt_Transfer` , `erc1155_ethereum.evt_Transfer`, etc. (different names under different blockchains), so we can query NFT transfer events for a contract or an EOA address.
 
 In the Transfer event, there are three main parameters: the sender address `from`, the receiver address `to` and the number of the NFT `tokenId`. In the case of transaction, both from and to are a normal address. If `mint`, the from address is all 0, and if `burn`, the address of to is all 0. The `nft.mint` and `nft.burn` tables on Dune also decode this event to get the final transaction information.
 ![](img/nft-transfer-etherscan.png)
@@ -117,11 +117,11 @@ For example, Alice  made an order for an Azuki NFT with the number [3638](https:
 
 ## Common table Description
 
-- Original base table: located in `Raw`-->`transactions` and `logs`tables;
-- Specific project table: located in `Decoded Projects`->Search the name of the specific project table, and the name of the trading platform;
+- Original base table: located in `Raw`-->`transactions` and `logs` tables;
+- Specific project table: located in `Decoded Projects->Search`, enter the name of the specific project table and the name of the trading platform;
 - Aggregate table:
-  - Spells-->erc721: Record all transfer records of erc721
-  - Spells-->nft: It contains information about trades, mints, transfers, fees, and burns, and the most important of these is the trades table, which aggregates all the trade data from the major exchanges.
+  - Spells-->erc721: record all `transfers` of erc721
+  - Spells-->nft: this contains information about trades, mints, transfers, fees, and burns; the most important of these is the trades table, which aggregates all of the trade data from the major exchanges.
 
 ![](img/dune-nft-related.png)
 
@@ -335,7 +335,7 @@ https://dune.com/sixdegree/nft-collections-metrics-custom-dashboard
 
 ## SixdegreeLab introduction
 
-SixdegreeLab([@SixdegreeLab](https://twitter.com/sixdegreelab))is a professional on-chain data team dedicated to providing accurate on-chain data charts, analysis, and insights to users. Our mission is to popularize on-chain data analysis and foster a community of on-chain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
+SixdegreeLab([@SixdegreeLab](https://twitter.com/sixdegreelab))is a professional Onchain data team dedicated to providing accurate Onchain data charts, analysis, and insights to users. Our mission is to popularize Onchain data analysis and foster a community of Onchain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
 
 Feel free to visit[SixdegreeLab's Dune homepage](https://dune.com/sixdegree).
 

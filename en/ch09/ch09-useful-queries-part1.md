@@ -1,10 +1,10 @@
-# Common query part1: ERC20 token price queries
+# Useful query part1: ERC20 token price queries
 
-In daily data analysis, we often receive some common needs, such as tracking the price changes of an ERC20 token, querying the balance of various ERC20 tokens held by a certain address, etc. In the help documentation of the Dune platform, [Some helpful data dashboards](https://dune.com/docs/reference/wizard-tools/helpful-dashboards/) and [Utility queries](https://dune.com/docs/reference/wizard-tools/utility-queries/) sections give some examples, you can refer to them. In this tutorial, we combine some typical needs that we encounter in our daily life, and sort out some query cases for you.
+In daily data analysis, We usually encounter some common queries, such as tracking the price changes of an ERC20 token, querying the balance of various ERC20 tokens held by a certain address, etc. In the help documentation of the Dune platform, [some helpful data dashboards](https://dune.com/docs/reference/wizard-tools/helpful-dashboards/) and [utility queries](https://dune.com/docs/reference/wizard-tools/utility-queries/) sections give some examples, you can refer to them. In this tutorial, we combine some typical needs that we encounter in our daily life, and sort out some query cases for you.
 
 ## Query the latest price of a single ERC20 token
 
-ERC20 tokens are used in a wide variety of blockchain applications. DeFi initiatives facilitate the trading of ERC20 tokens. Other projects reward their backers, early adopters, and development teams through distribution plans and airdrops in exchange for ERC20 tokens. Price data for several ERC20 tokens may be found on sites like [CoinGecko](https://www.coingecko.com/). The 'prices.usd' and 'prices.usd_latest' tables in Dune make it easy for data analysts to get the current market value of the most popular ERC20 tokens on each blockchain. There is a table called [prices.usd](https://dune.com/docs/reference/tables/prices/) that keeps track of the minute-by-minute prices of different ERC20 tokens. To facilitate activities like summarization and comparison while researching ERC20 token-related projects, we may pool the pricing data to convert the quantity of different tokens into the amount stated in US dollars.
+ERC20 tokens are used in a wide variety of blockchain applications. DeFi initiatives facilitate the trading of ERC20 tokens. Other projects reward their backers, early adopters, and development teams through distribution plans and airdrops in exchange for ERC20 tokens. Price data for several ERC20 tokens may be found on sites like [CoinGecko](https://www.coingecko.com/). The 'prices.usd' and 'prices.usd_latest' tables in Dune make it easy for data analysts to retrieve the current market value of the most popular ERC20 tokens on each blockchain. There is a table called [prices.usd](https://dune.com/docs/reference/tables/prices/) that keeps track of the minute-by-minute prices of different ERC20 tokens. To facilitate activities like summarization and comparison while researching ERC20 token-related projects, we may pool the pricing data to convert the quantity of different tokens into the amount stated in US dollars.
 
 **Get the latest price of a single ERC20 token**
 
@@ -39,13 +39,13 @@ where symbol = 'WETH'
     and blockchain = 'ethereum'
 ```
 
-The query is simpler to read from the 'prices.usd_latest' table, but because it is actually a view of the `prices.usd` table, and it is slightly less efficient to execute.
-reference source code: [prices_usd _latest] (https://github.com/dizunalytics/spellbook/blob/main/models/prices _usd.latest.sql)
+The query is simpler to read from the `prices.usd_latest` table, but since it is actually a view of the `prices.usd` table, it is slightly less efficient to execute.
+reference source code: [prices_usd _latest](https://github.com/dizunalytics/spellbook/blob/main/models/prices_usd.latest.sql)
 
 
 ## Check the latest prices of multiple ERC20 tokens
 
-When we need to read the latest prices of multiple Tokens at the same time, the convenience of the `prices.usd_latest` table is reflected. Here we take the latest price query of WETH, WBTC and USDC as an example.
+When we need to read the latest prices of multiple tokens at the same time, the convenience of the `prices.usd_latest` table is reflected. Here we take the latest price query of WETH, WBTC and USDC as an example.
 
 
 **Read the latest price information for multiple tokens from the `prices.usd_latest` table:**
@@ -71,7 +71,7 @@ from (
 where row_num = 1
 ```
 
-Because we want to read the latest prices of multiple tokens at the same time, we cannot simply use the `limit` clause to limit the number of results to get the desired results. Because what we actually need to return is to take the first record after each different token is sorted in descending order by the `minute` field. In the above query, we used `row_number() over (partition by symbol order by minute desc) as row_num` to generate a new column. The values of this column are grouped by `symbol` and sorted in descending order by the `minute` field, that is, each different token will generate its own row number sequence value such as 1, 2, 3, 4.... We put it into a subquery, and filter the record of `where row_num = 1` in the outer query, which is the latest record of each token. This method seems a little complicated, but similar queries are often used in practical applications, and new columns are generated through the `row_number()` function and then used to filter data.
+Because we want to read the latest prices of multiple tokens at the same time, we cannot simply use the `limit` clause to limit the number of results to get the desired results. What we actually need to return is to take the first record after each different token is sorted in descending order by the `minute` field. In the above query, we used `row_number() over (partition by symbol order by minute desc) as row_num` to generate a new column. The values in this column are grouped by `symbol` and sorted in descending order by the `minute` field - that is, each different token will generate its own row number sequence value such as 1, 2, 3, 4, etc. We put it into a subquery, and filter the record of `where row_num = 1` in the outer query, which is the latest record of each token. This method seems a little complicated, but similar queries are often used in practical applications, and new columns are generated through the `row_number()` function and then used to filter data.
 
 ## Query the daily average price of a single ERC20 token
 
@@ -124,7 +124,7 @@ order by 2, 1   -- Order by symbol first
 
 ## Calculate price from DeFi swap records
 
-The price data table `prices.usd` on Dune is maintained through spellbook, which does not include price information for all tokens on all supported blockchains. Especially when a new ERC20 token is newly issued and listed on the DEX (such as XEN), Dune's price list does not have the data of this token at this time. At this point, we can read the swap data in the DeFi project, such as the Swap data in Uniswap, calculate the exchange price between the corresponding token and USDC (or WETH), and then convert the USDC or WETH price data to get the US dollar price. A sample query is as follows:
+The price data table `prices.usd` on Dune is maintained through spellbook, which does not include price information for all tokens on all supported blockchains. Especially when a new ERC20 token is newly issued and listed on the DEX (such as XEN), Dune's price list will not automatically display this token's data. At this point, we can read the swap data in the DeFi project, such as the Swap data in Uniswap, calculate the exchange price between the corresponding token and USDC (or WETH), and then convert the USDC or WETH price data to get the US dollar price. A sample query is as follows:
 
 ``` sql
 with xen_price_in_usdc as (
@@ -259,11 +259,11 @@ Here's an example query: [https://dune.com/queries/1042456](https://dune.com/que
 
 ## Calculate price from logs
 
-Tip: The content of this section is relatively complicated. If you find it difficult, you can skip it directly.
+Tip: the content of this section is relatively complicated. If you find it difficult, you can skip it directly.
 
-A special case is when analyzing a new DeFi project or a blockchain newly supported by Dune. At this time, there is no corresponding `prices.usd` data, the smart contract of the corresponding project has not been submitted for analysis, and the transaction records have not been integrated into the magic table like `dex.trades`. At this point, the only thing we can access is the raw data tables such as `transactions` and `logs`. At this point, we can first find several transaction records, analyze the detailed information of the event log displayed on the blockchain, determine the data type and relative position contained in the `data` value of the event, and then manually analyze the data based on this to convert the price.
+A special case is when analyzing a new DeFi project or a blockchain newly supported by Dune. At this point, there is no corresponding `prices.usd` data, the smart contract of the corresponding project has not been submitted for analysis, and the transaction records have not been integrated into the magic table like `dex.trades`. The only thing we can access is the raw data tables such as `transactions` and `logs`. Therefore, we can first find several transaction records, analyze the detailed information of the event log displayed on the blockchain, determine the data type and relative position contained in the `data` value of the event, and then manually analyze the data based on this information to convert the price.
 
-For example, we need to calculate the price of the $OP token on the Optimism chain, and assuming that all the aforementioned conditions are met at this time, the price must be calculated from the original table of the transaction event log. We first find an exchange transaction record based on the clues provided by the project team (contract address, case hash, etc.): [https://optimistic.etherscan.io/tx/0x1df6dda6a4cffdbc9e477e6682b982ca096ea747019e1c0dacf4aceac3fc532f](https://optimistic.etherscan.io/tx/0x1 df6dda6a4cffdbc9e477e6682b982ca096ea747019e1c0dacf4aceac3fc532f). This is a swap transaction, where the `topic1` value of the last `logs` log "0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822" corresponds to "Swap(address,uint256,uint256,uint256,uint256,address)" method. This can be further verified by querying the `decoding.evm_signatures` table (this is because Optimism is an EVM-compatible blockchain that uses the same related functions as Ethereum).
+For example, say we need to calculate the price of the $OP token on the Optimism chain, and assuming that all the aforementioned conditions are met, the price must be calculated from the original table of the transaction event log. We first find an exchange transaction record based on the clues provided by the project team (contract address, case hash, etc.): [https://optimistic.etherscan.io/tx/0x1df6dda6a4cffdbc9e477e6682b982ca096ea747019e1c0dacf4aceac3fc532f](https://optimistic.etherscan.io/tx/0x1df6dda6a4cffdbc9e477e6682b982ca096ea747019e1c0dacf4aceac3fc532f). This is a swap transaction, where the `topic1` value of the last `logs` log "0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822" corresponds to "Swap(address,uint256,uint256,uint256,uint256,address)" method. This can be further verified by querying the `decoding.evm_signatures` table (this is because Optimism is an EVM-compatible blockchain that uses the same related functions as Ethereum).
 
 A screenshot of the logs on the blockchain browser is as follows:
 
@@ -289,7 +289,7 @@ from decoding.evm_signatures
 where id = 0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822
 ```
 
-Combining the above relevant information, we can convert the price by analyzing the Swap records in the event log. In the query below, we take the latest 1000 transaction records to calculate the average price. Because the exchange is bidirectional, it may be exchanged from `token0` to `token1` or vice versa, we use a case statement to take out different values accordingly to calculate the transaction price. In addition, we did not further obtain the price of USDC for conversion. After all, it is a stable currency and its price fluctuates less. When you need more accurate data, you can refer to the previous example to convert through USDC price information.
+Combining the above relevant information, we can convert the price by analyzing the Swap records in the event log. In the query below, we take the latest 1000 transaction records to calculate the average price. Since the exchange is bidirectional, it may be exchanged from `token0` to `token1` or vice versa, we use a case statement to take out different values accordingly to calculate the transaction price.  In addition, we did not further obtain the price of USDC for conversion. After all, it is a stable currency and its price fluctuates less. When you need more accurate data, you can refer to the previous example to convert through USDC price information.
 
 ``` sql
 with op_price as (
@@ -324,7 +324,7 @@ Here is an actual case: [https://dune.com/queries/1130354](https://dune.com/quer
 
 ## SixdegreeLab introduction
 
-SixdegreeLab([@SixdegreeLab](https://twitter.com/sixdegreelab))is a professional on-chain data team dedicated to providing accurate on-chain data charts, analysis, and insights to users. Our mission is to popularize on-chain data analysis and foster a community of on-chain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
+SixdegreeLab([@SixdegreeLab](https://twitter.com/sixdegreelab))is a professional Onchain data team dedicated to providing accurate Onchain data charts, analysis, and insights to users. Our mission is to popularize Onchain data analysis and foster a community of Onchain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
 
 Feel free to visit[SixdegreeLab's Dune homepage](https://dune.com/sixdegree).
 

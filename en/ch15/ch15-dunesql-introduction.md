@@ -2,7 +2,7 @@
 
 Dune has officially launched its team's self-developed query engine, Dune SQL, based on Trino ([https://trino.io/](https://trino.io/)<a id="jump_8"></a>). This article introduces some common query syntax, considerations, and details of Dune SQL.
 
-Note: As Dune has announced that it will fully transition to the Dune SQL query engine from the second half of 2023, this tutorial upgrades all the original Query to the Dune SQL version.
+Note: as Dune has announced that it will fully transition to the Dune SQL query engine from the second half of 2023, this tutorial upgrades all the original Query to the Dune SQL version.
 
 ## Dune SQL Syntax Overview
 
@@ -67,7 +67,7 @@ limit 10
 
 ### Address and Transaction Hash
 
-In Dune SQL queries, addresses and hash values can be used without enclosing them in single quotes. In this case, the case sensitivity is not enforced, and there is no need to explicitly convert them to lowercase.
+In Dune SQL queries, addresses and hash values can be used without enclosing them in single quotes. In this case, the case sensitivity is not enforced and there is no need to explicitly convert them to lowercase.
 
 ``` sql
 select block_time, hash, "from" as address, "to" as contract_address
@@ -81,7 +81,7 @@ where block_time >= date('2022-12-18') and block_time < date('2022-12-19')
 
 ### Dune SQL's String Type varchar and Numeric Type double
 
-In Dune SQL, the string type is `varchar`, and the commonly used numeric type is `double`. Integer values in Dune SQL are default to the `bigint` type. When performing multiplication with large numbers, it is prone to overflow errors. In such cases, you can forcefully convert them to `double` type or `decimal(38, 0)` type. Integer division in Dune SQL does not implicitly convert to a floating-point number and perform division; instead, it directly returns an integer. This aspect should also be taken into consideration.
+In Dune SQL, the string type is `varchar` and the commonly used numeric type is `double`. Integer values in Dune SQL are default to the `bigint` type. When performing multiplication with large numbers, it is prone to overflow errors. In such cases, you can forcefully convert them to `double` type or `decimal(38, 0)` type. Integer division in Dune SQL does not implicitly convert to a floating-point number and perform division; instead, it directly returns an integer. This aspect should also be taken into consideration.
 
 1. Converting to String
 
@@ -225,51 +225,51 @@ select block_date from unnest(sequence(date('2022-01-01'), date('2022-01-31'))) 
 
 1. Dune SQL utilizes the `cardinality()` to query the size of an array.
 
-The syntax for array queries in Dune SQL is as follows:
+    The syntax for array queries in Dune SQL is as follows:
 
-``` sql
-select evt_block_time, evt_tx_hash, profileIds
-from lens_polygon.LensHub_evt_Followed
-where cardinality(profileIds) = 2
-limit 10
-```
+    ``` sql
+    select evt_block_time, evt_tx_hash, profileIds
+    from lens_polygon.LensHub_evt_Followed
+    where cardinality(profileIds) = 2
+    limit 10
+    ```
 
 2. Dune SQL's array indexing starts counting from 1.
 
-Accessing Array Elements in Dune SQL:
+    Accessing Array Elements in Dune SQL:
 
-``` sql
-select evt_block_time, evt_tx_hash, profileIds,
-    profileIds[1] as id1, profileIds[2] as id2
-from lens_polygon.LensHub_evt_Followed
-where cardinality(profileIds) = 2
-limit 10
-```
+    ``` sql
+    select evt_block_time, evt_tx_hash, profileIds,
+        profileIds[1] as id1, profileIds[2] as id2
+    from lens_polygon.LensHub_evt_Followed
+    where cardinality(profileIds) = 2
+    limit 10
+    ```
 
 3. Splitting Array Elements into Multiple Rows of Records
 
-Splitting array elements into multiple rows of records in Dune SQL:
+    Splitting array elements into multiple rows of records in Dune SQL:
 
-``` sql
-select evt_block_time, evt_tx_hash, profileIds,	tbl.profile_id
-from lens_polygon.LensHub_evt_Followed
-cross join unnest(profileIds) as tbl(profile_id)
-where cardinality(profileIds) = 3
-limit 20
-```
+    ``` sql
+    select evt_block_time, evt_tx_hash, profileIds,	tbl.profile_id
+    from lens_polygon.LensHub_evt_Followed
+    cross join unnest(profileIds) as tbl(profile_id)
+    where cardinality(profileIds) = 3
+    limit 20
+    ```
 
 4. Splitting Multiple Array Fields into Multiple Rows of Records
-To split multiple array fields into multiple rows (assuming they have the same length), Dune SQL can include multiple fields within the `unnest()` and output corresponding fields simultaneously.
+    To split multiple array fields into multiple rows (assuming they have the same length), Dune SQL can include multiple fields within the `unnest()` and output corresponding fields simultaneously.
 
-Splitting multiple array elements into multiple rows in Dune SQL:
+    Splitting multiple array elements into multiple rows in Dune SQL:
 
-``` sql
-SELECT evt_block_time, evt_tx_hash, ids, "values", tbl.id, tbl.val
-FROM erc1155_polygon.evt_TransferBatch
-cross join unnest(ids, "values") as tbl(id, val)
-WHERE evt_tx_hash = 0x19972e0ac41a70752643b9f4cb453e846fd5e0a4f7a3205b8ce1a35dacd3100b
-AND evt_block_time >= date('2022-12-14')
-```
+    ``` sql
+    SELECT evt_block_time, evt_tx_hash, ids, "values", tbl.id, tbl.val
+    FROM erc1155_polygon.evt_TransferBatch
+    cross join unnest(ids, "values") as tbl(id, val)
+    WHERE evt_tx_hash = 0x19972e0ac41a70752643b9f4cb453e846fd5e0a4f7a3205b8ce1a35dacd3100b
+    AND evt_block_time >= date('2022-12-14')
+    ```
 
 ## Migrating Queries from Spark SQL to Dune SQL - Example
 
@@ -305,7 +305,7 @@ where user_status = 'Churned'
 2. [Trino Functions and Operators](https://trino.io/docs/current/functions.html)<a id="jump_8"></a>
 
 ## SixdegreeLab introduction
-SixdegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)<a id="jump_8"></a>）is a professional on-chain data team dedicated to providing accurate on-chain data charts, analysis, and insights to users. Our mission is to popularize on-chain data analysis and foster a community of on-chain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
+SixdegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)<a id="jump_8"></a>）is a professional Onchain data team dedicated to providing accurate Onchain data charts, analysis, and insights to users. Our mission is to popularize Onchain data analysis and foster a community of Onchain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
 
 Feel free to visit [SixdegreeLab's Dune homepage](https://dune.com/sixdegree)<a id="jump_8"></a>.
 

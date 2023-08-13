@@ -2,21 +2,21 @@
 
 ## Preface
 
-All public blockchains are essentially large networks. Analyzing on-chain data most likely involves network analysis. The existing visualizations on common data platforms like Dune currently have difficulty describing the relationships between nodes on blockchains.
+All public blockchains are essentially large networks. Analyzing Onchain data most likely involves network analysis. The existing visualizations on common data platforms like Dune currently have difficulty describing the relationships between nodes on blockchains.
 
 Let's use the controversial FTX "hacker" address (0x59ABf3837Fa962d6853b4Cc0a19513AA031fd32b) as an example to do some network analysis (we won't debate whether it's a hacker or the Panama government). We'll look at where the ETH from this address went (we'll examine the 2-hop relationships outgoing from this address).
 
 Tools used in the process:
 
-- Dune: Get raw data between addresses and do initial processing
+- Dune: get raw data between addresses and do initial processing
 - Python
-  - Networkx: Python package for creating, manipulating and studying complex networks. Allows storing networks in standardized and non-standardized data formats, generating various random and classic networks, analyzing network structure, building network models, designing new network algorithms, drawing networks, etc.
+  - Networkx: python package for creating, manipulating and studying complex networks. Allows storing networks in standardized and non-standardized data formats, generating various random and classic networks, analyzing network structure, building network models, designing new network algorithms, drawing networks, etc.
     - More info: https://networkx.org/
-  - Plotly: Great package for visualizations, can generate interactive HTML files. Has a complementary frontend framework called DASH that is very user-friendly for data analysts without advanced engineering skills.
+  - Plotly: great package for visualizations, can generate interactive HTML files. Has a complementary frontend framework called DASH that is very user-friendly for data analysts without advanced engineering skills.
     - More info: https://plotly.com/
-  - Pandas: Most commonly used Python package for working with data, provides many functions and methods to enable quick and convenient data manipulation.
+  - Pandas: most commonly used Python package for working with data, provides many functions and methods to enable quick and convenient data manipulation.
     - More info: https://pandas.pydata.org/
-- Etherscan API: Calculating ETH Balance on Dune is too tedious, requiring pulling all data each time. We can simply get Balance from the Etherscan API.
+- Etherscan API: calculating ETH Balance on Dune is too tedious, requiring pulling all data each time. We can simply get Balance from the Etherscan API.
 
 ## Overview
 
@@ -30,23 +30,23 @@ The process can be broadly divided into the following steps:
 
 #### I. Get Raw Data from Dune (SQL Part)
 
-The SQL is quite complex so I won't go into detail, feel free to check the URL for details if interested:
+The SQL is quite complex so I won't go into detail, so feel free to check the URL for details if interested:
 
 - Get data with relationships between all relevant addresses with SQL: https://dune.com/queries/1753177
 
-  - from: Sender of the transaction
-  - to: Receiver of the transaction
-  - transfer_eth_balance: Total ETH transferred between two
-  - transfer_eth_count: Total number of ETH transfers between two
+  - from: sender of the transaction
+  - to: receiver of the transaction
+  - transfer_eth_balance: total ETH transferred between two
+  - transfer_eth_count: total number of ETH transfers between two accounts
 
 ![](img/2023-07-25-16-27-01.png)
 
 - Get list of all addresses and associated labels via SQL: https://dune.com/queries/2430347
 
-  - address: All addresses involved in this network analysis
-  - level_type: Level in the network for all addresses involved (Core, Layer One, Layer Two)
-  - account_type: Is it a regular EOA, exchange, or smart contract
-  - label: Useful aggregated info for the address into a label for subsequent visualization in python
+  - address: all addresses involved in this network analysis
+  - level_type: level in the network for all addresses involved (Core, Layer One, Layer Two)
+  - account_type: is a regular EOA, exchange, or smart contract
+  - label: useful aggregated info for the address into a label for subsequent visualization in python
 
 ![](img/20-2.png)
 
