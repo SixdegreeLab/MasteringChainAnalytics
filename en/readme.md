@@ -1,4 +1,4 @@
-# Mastering Chain Analytics
+# Mastering Onchain Analytics
 
 This is a series tutorials for blockchain analysis enthusiasts, helping new users learn blockchain data analysis from scratch and become an onchain data analyst master.
 
@@ -9,7 +9,7 @@ This is a series tutorials for blockchain analysis enthusiasts, helping new user
 
 - **Introduction**
   - [Introduction](readme.md)
-  - [#0 become chain analyst](ch00/ch00-become-chain-analyst.md)
+  - [#0 become onchain analyst](ch00/ch00-become-chain-analyst.md)
 - **Elementary**
   - [#1 dune platform introduction](ch01/ch01-dune-platform-introduction.md)
   - [#2 quickstart](ch02/ch02-quickstart.md)
