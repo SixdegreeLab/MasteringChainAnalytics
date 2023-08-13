@@ -6,6 +6,8 @@
 - 中文版本: [精通链上数据分析](https://sixdegreelab.gitbook.io/mastering-chain-analytics/v/zh/)
 
 
+> 参与贡献: [https://github.com/SixdegreeLab/MasteringChainAnalytics](https://github.com/SixdegreeLab/MasteringChainAnalytics)
+
 # 目录
 
 - **简介**

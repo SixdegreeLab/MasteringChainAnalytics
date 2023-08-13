@@ -5,6 +5,10 @@ This is a series tutorials for blockchain analysis enthusiasts, helping new user
 - English Version: [Mastering Onchain Analytics](https://sixdegreelab.gitbook.io/mastering-chain-analytics)
 - Chinese Version: [精通链上数据分析](https://sixdegreelab.gitbook.io/mastering-chain-analytics/v/zh/)
 
+
+> Join & contribute: [https://github.com/SixdegreeLab/MasteringChainAnalytics](https://github.com/SixdegreeLab/MasteringChainAnalytics)
+
+
 # Table of contents
 
 - **Introduction**
