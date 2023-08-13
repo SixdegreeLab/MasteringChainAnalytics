@@ -1,6 +1,6 @@
 ## Introduction
-- [Intro](readme.md)
-- [#0 become chain analyst](ch00/ch00-become-chain-analyst.md)
+- [Introduction](readme.md)
+- [#0 Become onchain analyst](ch00/ch00-become-chain-analyst.md)
 
 ## Elementary
 

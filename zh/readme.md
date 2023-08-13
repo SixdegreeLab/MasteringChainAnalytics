@@ -38,9 +38,11 @@
   - [#23 使用Dune API创建应用程序](ch23/ch23-how-to-build-app-use-dune-api.md)
 
 ## 关于我们
-[SixdegreeLab](https://twitter.com/SixdegreeLab)是专业的链上数据团队，我们的使命是为用户提供准确的链上数据图表、分析以及洞见，并致力于普及链上数据分析。
+`Sixdegree`是专业的链上数据团队，我们的使命是为用户提供准确的链上数据图表、分析以及洞见，并致力于普及链上数据分析。
 通过建立社区、编写教程等方式，培养链上数据分析师，输出有价值的分析内容，推动社区构建区块链的数据层，为未来广阔的区块链数据应用培养人才。
 
-- website: [sixdegree.xyz](https://sixdegree.xyz)
-- twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
-- dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Email: [contact@sixdegree.xyz](mailto:contact@sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)
