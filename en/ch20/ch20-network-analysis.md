@@ -296,3 +296,13 @@ Check out the interactive version at this URL: https://pro0xbi.github.io/FTX_Acc
   We can see that among all addresses associated with the FTX "hacker", there are still at least 12 addresses holding >10,000 ETH, meaning at least 120,000 ETH have not been sold by the "hacker".
 
 ![](img/20-3.png)
+
+## About Us
+
+`Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
+
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Email: [contact@sixdegree.xyz](mailto:contact@sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)

@@ -35,11 +35,12 @@ This is a series tutorials for blockchain analysis enthusiasts, helping new user
   - [#23 how to build app use dune api](ch23/ch23-how-to-build-app-use-dune-api.md)
 
 
-
 ## About Us
 
-[SixdegreeLab](https://twitter.com/SixdegreeLab) are a group of Onchain data enthusiasts. Our mission is to provide users with accurate Onchain data charts, analysis, and insights, and we are committed to popularizing Onchain data analysis. By establishing a community, writing tutorials, etc., train data analysts on the chain, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad blockchain data application in the future.
+`Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
 
-- website: [sixdegree.xyz](https://sixdegree.xyz)
-- twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
-- dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Email: [contact@sixdegree.xyz](mailto:contact@sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)

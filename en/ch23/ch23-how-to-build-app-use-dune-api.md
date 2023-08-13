@@ -161,10 +161,12 @@ https://dune.com/queries/2056547
 
 The source code of the project is available here: [Uniswap New Pools Watcher](https://github.com/codingtalent/watcher)
 
-## Introduction to SixdegreeLab
+## About Us
 
-SixdegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional Onchain data team. Our mission is to provide users with accurate Onchain data charts, analysis, and insights, and to promote Onchain data analysis. By establishing a community, writing tutorials, and other methods, we cultivate Onchain data analysts, output valuable analytical content, and drive the community to build the data layer of blockchain, fostering talent for the vast future of blockchain data applications.
+`Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
 
-Feel free to visit [SixdegreeLab's Dune page](https://dune.com/sixdegree).
-
-Given my limited expertise, errors are inevitable. If you find any, please kindly point them out.
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Email: [contact@sixdegree.xyz](mailto:contact@sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)

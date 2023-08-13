@@ -520,11 +520,12 @@ We can generate a Bar Chart and a Table chart to display the data for the flow p
 Query link:
 * [https://dune.com/queries/1933442](https://dune.com/queries/1933442)<a id="jump_8"></a>
 
-## SixdegreeLab introduction
+## About Us
 
-SixdegreeLab（[@SixdegreeLab](https://twitter.com/sixdegreelab)<a id="jump_8"></a>）is a professional Onchain data team dedicated to providing accurate Onchain data charts, analysis, and insights to users. Our mission is to popularize Onchain data analysis and foster a community of Onchain data analysts. Through community building, tutorial writing, and other initiatives, we aim to cultivate talents who can contribute valuable analytical content and drive the construction of a data layer for the blockchain community, nurturing talents for the future of blockchain data applications.
+`Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
 
-Feel free to visit [SixdegreeLab's Dune homepage](https://dune.com/sixdegree)<a id="jump_8"></a>.
-
-Due to our limitations, mistakes may occur. If you come across any errors, kindly point them out, and we appreciate your feedback.
-
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Email: [contact@sixdegree.xyz](mailto:contact@sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)

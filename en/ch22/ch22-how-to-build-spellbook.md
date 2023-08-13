@@ -530,10 +530,12 @@ PR Github link: [add BNB spaceid view](https://github.com/duneanalytics/spellboo
 
 Special thanks to community member @hosuke (Dune: https://dune.com/hosuke) for assisting with the PR review, providing feedback and improvement suggestions, and helping to modify the materialization strategy of the magic table.
 
-## Introduction to SixdegreeLab
+## About Us
 
-SixdegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional Onchain data team. Our mission is to provide users with accurate Onchain data charts, analysis, and insights. We are committed to popularizing Onchain data analysis by building communities, writing tutorials, and cultivating Onchain data analysts. We output valuable analysis content and promote the community to build the data layer of blockchain, nurturing talents for the wide range of future blockchain data applications.
+`Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
 
-Welcome to visit [SixdegreeLab's Dune homepage](https://dune.com/sixdegree).
-
-Due to our limited expertise, some mistakes may be present. If any errors are found, kindly let us know.
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Email: [contact@sixdegree.xyz](mailto:contact@sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)

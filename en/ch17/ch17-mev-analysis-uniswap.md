@@ -288,11 +288,12 @@ The above introduced the principle and classification of Ethereum MEV, as well a
 8. https://github.com/33357/smartcontract-apps/blob/main/Robot/MEV_Who_are_you_working_for.md
 9. https://dune.com/sixdegree/mev-data-analytics-tutorial
 
+## About Us
 
-## Introduction to SixDegreeLab
+`Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
 
-SixDegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional Onchain data team. Our mission is to provide users with accurate Onchain data charts, analysis, and insights, and we are committed to popularizing Onchain data analysis. Through building communities, writing tutorials, and other methods, we are training Onchain data analysts, outputting valuable analysis content, and promoting the construction of the data layer of the blockchain by the community, thereby cultivating talents for the vast future blockchain data applications.
-
-Feel free to visit the [SixDegreeLab Dune homepage](https://dune.com/sixdegree).
-
-Due to limitations in our knowledge and understanding, there may be inevitable shortcomings. If you find any errors, please kindly point them out.
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Email: [contact@sixdegree.xyz](mailto:contact@sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)

@@ -293,12 +293,12 @@ Based on the tutorial content, create a data dashboard with at least 5 queries f
 
 Keep up the good work! Feel free to share the links to your data dashboards in the Dune WeChat group or Dune's Discord channel.
 
-
 ## About Us
 
 `Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
 
 - Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Email: [contact@sixdegree.xyz](mailto:contact@sixdegree.xyz)
 - Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
 - Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
 - Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)

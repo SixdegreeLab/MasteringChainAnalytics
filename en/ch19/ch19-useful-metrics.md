@@ -251,13 +251,12 @@ GROUP BY 1
 
 Here is a practical example that combines the number of new users with specific NFT project user data statistics: [Example](https://dune.com/queries/1334302).
 
-## SixdegreeLab Introduction
+## About Us
 
-SixdegreeLab ([@SixdegreeLab](https://twitter.com/sixdegreelab)) is a professional Onchain data team. Our mission is to provide users with accurate Onchain data charts, analyses, and insights. We are committed to promoting Onchain data analysis by establishing a community, creating tutorials, and cultivating Onchain data analysts. Through valuable analysis content and talent cultivation, we strive to facilitate the construction of the blockchain's data layer and nurture talents for the vast future applications of blockchain data.
+`Sixdegree` is a professional onchain data analysis team Our mission is to provide users with accurate onchain data charts, analysis, and insights. We are committed to popularizing onchain data analysis. By building a community and writing tutorials, among other initiatives, we train onchain data analysts, output valuable analysis content, promote the community to build the data layer of the blockchain, and cultivate talents for the broad future of blockchain data applications. Welcome to the community exchange!
 
-Feel free to visit [SixdegreeLab's Dune profile](https://dune.com/sixdegree).
-
-We acknowledge that limitations are inevitable due to our current level of expertise. If you discover any errors, we appreciate your feedback and corrections.
-
-
-
+- Website: [sixdegree.xyz](https://sixdegree.xyz)
+- Email: [contact@sixdegree.xyz](mailto:contact@sixdegree.xyz)
+- Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
+- Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
+- Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)
