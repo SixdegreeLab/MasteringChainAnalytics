@@ -34,7 +34,7 @@ The contracts related to NFT are usually divided into two categories: one is the
 
 We use ERC721 NFT as an example to show the characteristics of an NFT contract, the other can according to demand to understand, we in the market of NFT Opensea to [azuki](https://opensea.io/collection/azuki) on the NFT, for example, that contract contain what events:
 
-```solidity
+``` solidity
 interface ERC721 {
     /// @dev This event is fired when the ownership of any NFT changes (either way).
     ///  Both at creation time (` from `== 0) and destruction time (` to` == 0), except when the contract is created.
@@ -91,7 +91,7 @@ Some common marketplace contracts are Opensea, X2Y2, Blur, etc. Let's take Opens
 
 ![](img/seaport1.1.png)
 
-```solidity
+``` solidity
 uint256 constant receivedItemsHash_ptr = 0x60;
 
 /*
