@@ -2,6 +2,10 @@
 
 本教程是一个面向区块链爱好者的系列教程，帮助新手用户从零开始学习区块链数据分析，成为一名链上数据分析师。
 
+- 英文版本: [Mastering Onchain Analytics](https://sixdegreelab.gitbook.io/mastering-chain-analytics)
+- 中文版本: [精通链上数据分析](https://sixdegreelab.gitbook.io/mastering-chain-analytics/v/zh/)
+
+
 # 目录
 
 - **简介**
