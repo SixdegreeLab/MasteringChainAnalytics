@@ -1,5 +1,9 @@
 # Mastering Onchain Analytics
 
+<p align="center">
+  <img src="assets/bookcover-en.png" alt="book" width="50%"/>
+</p>
+
 This is a series tutorials for blockchain analysis enthusiasts, helping new users learn blockchain data analysis from scratch and become an onchain data analyst master.
 
 - English Version: [Mastering Onchain Analytics](https://tutorial.sixdegree.xyz)
