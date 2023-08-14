@@ -1,5 +1,9 @@
 # 精通链上数据分析
 
+<p align="center">
+  <img src="assets/bookcover-zh.png" alt="book" width="50%"/>
+</p>
+
 本教程是一个面向区块链爱好者的系列教程，帮助新手用户从零开始学习区块链数据分析，成为一名链上数据分析师。
 
 - 英文版本: [Mastering Onchain Analytics](https://tutorial.sixdegree.xyz)
