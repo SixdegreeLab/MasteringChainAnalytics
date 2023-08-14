@@ -9,8 +9,8 @@
 - [#4 熟悉数据表](ch04/ch04-understanding-tables.md)
 - [#5 SQL基础（一）](ch05/ch05-sql-basics-part1.md)
 - [#6 SQL基础（二）](ch06/ch06-sql-basics-part2.md)
-- [#7 实践案例：制作Lens的数据看板（一）](ch07/ch07-practice-build-lens-dashboard-part1.md)
-- [#8 实践案例：制作Lens的数据看板（二）](ch08/ch08-practice-build-lens-dashboard-part2.md)
+- [#7 实践案例：制作Lens看板（一）](ch07/ch07-practice-build-lens-dashboard-part1.md)
+- [#8 实践案例：制作Lens看板（二）](ch08/ch08-practice-build-lens-dashboard-part2.md)
 
 ## 中级教程
 - [#9 常见查询一：ERC20代币价格](ch09/ch09-useful-queries-part1.md)
