@@ -248,7 +248,7 @@ from hourly_trade_summary
 order by block_date
 ```
 
-![](./assets/daily-trade-volune.png)
+![](./img/daily-trade-volune.png)
 
 Reference Links: https://dune.com/queries/1664420
 
@@ -323,7 +323,7 @@ We made a dashboard where you can enter the address of an NFT contract and see a
 
 https://dune.com/sixdegree/nft-collections-metrics-custom-dashboard 
 
-![](./assets/nft-all-in-one.png)
+![](./img/nft-all-in-one.png)
 
 
 ## Reference

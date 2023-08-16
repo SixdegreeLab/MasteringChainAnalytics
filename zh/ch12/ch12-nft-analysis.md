@@ -243,7 +243,7 @@ from hourly_trade_summary
 order by block_date
 ```
 
-![](./assets/daily-trade-volune.png)
+![](./img/daily-trade-volune.png)
 
 参考链接：https://dune.com/queries/1664420
 
@@ -318,7 +318,7 @@ join total_summary on true
 
 https://dune.com/sixdegree/nft-collections-metrics-custom-dashboard 
 
-![](./assets/nft-all-in-one.png)
+![](./img/nft-all-in-one.png)
 
 
 ## 参考
