@@ -1,8 +1,8 @@
-# Mastering Chain Analytics
+# Mastering Onchain Analytics
 
 Online Book: 
-- En: [Mastering Onchain Analytics](https://sixdegreelab.gitbook.io/mastering-chain-analytics/)
-- Zh: [精通链上数据分析](https://sixdegreelab.gitbook.io/mastering-chain-analytics/v/zh/)
+- En: [Mastering Onchain Analytics](https://tutorial.sixdegree.xyz/)
+- Zh: [精通链上数据分析](https://tutorial.sixdegree.xyz/v/zh/)
 
 This is a series tutorials for blockchain analysis enthusiasts, helping new users learn blockchain data analysis from scratch and become an on-chain data analyst master.
 
