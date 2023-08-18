@@ -1,4 +1,4 @@
-# Familiar with data tables
+# 04 Understanding Data Tables
 
 Data platforms like Dune decode and store blockchain data in databases. Data analysts write SQL queries to analyze data from specific tables based on their analysis needs. With more and more blockchain platforms emerging in the market and a variety of projects deployed on different blockchains, it is essential for analysts to quickly locate the corresponding data tables for analysis and understand the meaning and purpose of each field in the tables. This is a crucial skill that every analyst must possess.
 Currently, the structure of the basic datasets provided by several data platforms is quite similar. Here, we will focus on explaining the structure of the Dune platform. If you prefer to use other data platforms, you can refer to the corresponding documentation for details. As Dune has officially announced that it will fully switch to the Dune SQL query engine by 2023, we have upgraded all the queries in this tutorial to the Dune SQL version.
@@ -168,7 +168,7 @@ The balances tables contain hourly, daily, and latest token balances for address
 
 ### The NFT trade tables
 
-The NFT trades tables contain transaction data from major NFT marketplaces like OpenSea, MagicEden, LooksRare, X2Y2, SudoSwap, Foundation, Archipelago，Cryptopunks,Element,SuperRare,Zora,Blur,and more.Similar to DeFi, each platform has its own dedicated spell table, like `opensea.trades`. When analyzing a single marketplace, its dedicated table is preferable.
+The NFT trades tables contain transaction data from major NFT marketplaces like OpenSea, MagicEden, LooksRare, X2Y2, SudoSwap, Foundation, ArchipelagoCryptopunks,Element,SuperRare,Zora,Blur,and more.Similar to DeFi, each platform has its own dedicated spell table, like `opensea.trades`. When analyzing a single marketplace, its dedicated table is preferable.
 
 ### Other spell tables
 

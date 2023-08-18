@@ -1,10 +1,10 @@
-# Getting Started with Data Analysis
+# 02 Quick Start
 
-## 0. Introduction
+## Introduction
 
 Our tutorial is heavily focused on practical application, written in conjunction with the scenarios and needs of daily Onchain data analysis. This article will explain the SQL basics you need to understand before starting to create data dashboards. This tutorial is beginner-friendly, primarily aimed at novice users who wish to learn data analysis. We assume that you have no prior experience in writing SQL queries. Users who have SQL experience but are not familiar with the Dune platform can also quickly browse this tutorial. This tutorial mainly includes an introduction to the Dune platform, a quick start to SQL queries, and more. In the next tutorial, we will write queries together, create visual charts, and use these charts to create data dashboards. We believe that as long as you have confidence and follow our tutorial to practice, you can also create high-quality data dashboards, taking the first step towards becoming an Onchain data analyst.
 
-## 1. Introduction to the Dune Platform
+## Introduction to the Dune Platform
 
 [Dune](https://dune.com/) is a powerful blockchain data analysis platform that provides raw blockchain data 
 and parsed data in the form of an SQL database. By using SQL queries, we can quickly search 
@@ -14,7 +14,7 @@ The query is the main data source of the Dune data panel. We write SQL statement
 
 The general process of using Dune to process data can be summarized as: Write SQL queries to display data -> Visualize query results -> Assemble visual charts in the data dashboard -> Adjust and beautify the data dashboard. For the use of the Dune platform, you can check its [official documentation](https://dune.com/docs/).
 
-## 2. Basic Knowledge of Databases
+## Basic Knowledge of Databases
 
 Before we start writing the first SQL query needed for our data dashboard, we need to understand some essential SQL query basics.
 
@@ -88,7 +88,8 @@ Next, we will give examples to explain how to use the relevant parts of the quer
 **Specify the returned field list:**
 
 ``` sql
-select blockchain, contract_address, decimals, symbol   -- Specify the columns to be returned one by one
+-- Specify the columns to be returned one by one
+select blockchain, contract_address, decimals, symbol   
 from tokens.erc20
 limit 10
 ```
@@ -98,7 +99,8 @@ limit 10
 ``` sql
 select blockchain, contract_address, decimals, symbol
 from tokens.erc20
-where blockchain = 'ethereum'   -- Only return ERC20 token information from the Ethereum blockchain
+-- Only return ERC20 token information from the Ethereum blockchain
+where blockchain = 'ethereum'   
 limit 10
 ```
 
@@ -107,7 +109,8 @@ limit 10
 ``` sql
 select blockchain, contract_address, decimals, symbol
 from tokens.erc20
-where blockchain = 'ethereum'   -- Return ERC20 token information from the Ethereum blockchain
+-- Return ERC20 token information from the Ethereum blockchain
+where blockchain = 'ethereum'   
     and symbol like 'E%'    -- The token symbol starts with the letter E
 ```
 
@@ -362,3 +365,5 @@ You can also learn more about the related content through the following links:
 - Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
 - Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
 - Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)
+
+

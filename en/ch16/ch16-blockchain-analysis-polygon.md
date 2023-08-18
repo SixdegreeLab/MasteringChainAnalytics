@@ -1,5 +1,5 @@
 
-# 16 Analysis of the Polygon Chain Overview
+# 16 Blockchain Analysis - Polygon
 
 Dune platform has been developing rapidly and currently supports 10 mainstream blockchains, including Layer 1 public chains such as Ethereum, BNB, Polygon, Fantom, and Layer 2 blockchains such as Arbitrum and Optimism that are dedicated to expanding Ethereum. In this tutorial, we will explore how to start analyzing the overview of a blockchain, taking the Polygon blockchain as an example.
 
@@ -38,7 +38,7 @@ SQL explanation:
 
 The results of this query can be added as Counter-type visualizations and included in a dashboard. The display is as follows:
 
-![image_01.png](img/image_01.png)
+![](img/image_01.png)
 
 Query link:[https://dune.com/queries/1835390](https://dune.com/queries/1835390)<a id="jump_8"></a>
 
@@ -71,7 +71,7 @@ Make a Fork of the above query, and modify it slightly to calculate the monthly 
 
 The visualizations of the two SQL queries added to the dashboard will have the following display. We can observe that the number of new blocks generated remains relatively stable, but the gas fees have significantly increased since 2022, with a brief decline in between and currently approaching the previous high.
 
-![image_02.png](img/image_02.png)
+![](img/image_02.png)
 
 Query Link:
 * [https://dune.com/queries/1835421](https://dune.com/queries/1835421)<a id="jump_8"></a>
@@ -134,7 +134,7 @@ order by 1
 
 Add Bar Chart for both daily and monthly transaction data, displaying transaction count and active user count. You can use a secondary Y-axis for the active user count, and choose either Line or Area chart. The resulting visualization on the dashboard would be the following:
 
-![image_03.png](img/image_03.png)
+![](img/image_03.png)
 
 Query Link:
 * [https://dune.com/queries/1835817](https://dune.com/queries/1835817)<a id="jump_8"></a>
@@ -196,7 +196,7 @@ For these two queries, we can add the following visualizations:
 
 Adding these visualizations to the dashboard will result in the following display:
 
-![image_04.png](img/image_04.png)
+![](img/image_04.png)
 
 Query link:
 * [https://dune.com/queries/1836744](https://dune.com/queries/1836744)<a id="jump_8"></a>
@@ -219,7 +219,7 @@ order by 1
 
 Since the query results are sorted in ascending order by date, the last record represents the average price for the most recent date, which can be considered as the "current price". We can generate a Counter chart for it, setting the "Row Number" value to "-1" to retrieve the value from the last row. Additionally, we can add a Line to display the daily average price for the MATIC token. After adding these charts to the dashboard, the display will be as shown below:
 
-![image_05.png](img/image_05.png)
+![](img/image_05.png)
 
 Query link:
 * [https://dune.com/queries/1836933](https://dune.com/queries/1836933)<a id="jump_8"></a>
@@ -285,7 +285,7 @@ order by 2 desc
 
 Generate a Bar Chart and a Pie Chart for the above two queries respectively. Add them to the dashboard, and the display is as follows:
 
-![image_06.png](img/image_06.png)
+![](img/image_06.png)
 
 Query link:
 * [https://dune.com/queries/1837749](https://dune.com/queries/1837749)<a id="jump_8"></a>
@@ -336,7 +336,7 @@ Similarly, we can adjust the date to monthly and calculate the count of newly cr
 
 The above queries generate Bar Chart and Area Chart respectively. After adding them to the dashboard, the resulting display is as follows:
 
-![image_07.png](img/image_07.png)
+![](img/image_07.png)
 
 Query link:
 * [https://dune.com/queries/1837749](https://dune.com/queries/1837749)<a id="jump_8"></a>
@@ -366,7 +366,7 @@ order by transaction_count desc
 
 Generating a Bar Chart and a Table Chart for this query. Adding them to the dashboard, the display is as follows:
 
-![image_08.png](img/image_08.png)
+![](img/image_08.png)
 
 Query link:
 * [https://dune.com/queries/1838001](https://dune.com/queries/1838001)<a id="jump_8"></a>
@@ -403,7 +403,7 @@ We first query the top 20 smart contracts with the highest historical transactio
 
 After adding these charts to the dashboard, the result is shown in the following:
 
-![image_09.png](img/image_09.png)
+![](img/image_09.png)
 
 Query link:
 * [https://dune.com/queries/1838060](https://dune.com/queries/1838060)<a id="jump_8"></a>
@@ -425,7 +425,7 @@ limit 50
 
 As it is a recent active projects, it may have been newly deployed and launched. Therefore, we have added hyperlinks to the query and created a Table. The display is as follows:
 
-![image_10.png](img/image_10.png)
+![]
 
 Query link:
 * [https://dune.com/queries/1838077](https://dune.com/queries/1838077)<a id="jump_8"></a>

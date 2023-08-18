@@ -1,4 +1,4 @@
-# Useful query part1: ERC20 token price queries
+# 09 Useful Queries (I): ERC20 token price queries
 
 In daily data analysis, We usually encounter some common queries, such as tracking the price changes of an ERC20 token, querying the balance of various ERC20 tokens held by a certain address, etc. In the help documentation of the Dune platform, [some helpful data dashboards](https://dune.com/docs/reference/wizard-tools/helpful-dashboards/) and [utility queries](https://dune.com/docs/reference/wizard-tools/utility-queries/) sections give some examples, you can refer to them. In this tutorial, we combine some typical needs that we encounter in our daily life, and sort out some query cases for you.
 
@@ -165,7 +165,7 @@ order by x.block_date
 ```
 
 The above query is a practical application in the data dashboard of the XEN Crypto project. The reference link is as follows:
-- data dashboard：[XEN Crypto Overview](https://dune.com/sixdegree/xen-crypto-overview)
+- data dashboard: [XEN Crypto Overview](https://dune.com/sixdegree/xen-crypto-overview)
 - Query: [XEN - price trend](https://dune.com/queries/1382200)
 
 ## Calculate price from DeFi transaction spells table
@@ -267,11 +267,11 @@ For example, say we need to calculate the price of the $OP token on the Optimism
 
 A screenshot of the logs on the blockchain browser is as follows:
 
-![image_01.png](img/image_01.png)
+![](img/image_01.png)
 
 The screenshot of evm_signatures signature data query is as follows:
 
-![image_02.png](img/image_02.png)
+![](img/image_02.png)
 
 When querying `evm_signatures` in the above figure, we did some processing so that the relevant columns of data are displayed from top to bottom. The corresponding SQL statement is:
 
@@ -331,3 +331,4 @@ Here is an actual case: [https://dune.com/queries/1130354](https://dune.com/quer
 - Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
 - Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
 - Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)
+

@@ -1,4 +1,4 @@
-# Creating an Application Using Dune API
+# 23 Creating an Application Using Dune API
 
 ## Project Overview
 
@@ -12,7 +12,7 @@ Please note that the above demo application may not work continuously due to API
 
 The user interface of the project is shown in the following image:
 
-![wather01.jpg](./img/watcher01.jpg)
+![](./img/watcher01.jpg)
 
 ## Introduction to Dune API Usage
 
@@ -24,7 +24,7 @@ https://api.dune.com/api/v1/query/2408388/results?api_key=<api_key>
 
 This is the simplest way to access the result set of a saved query through the API.
 
-![wather02.jpg](./img/watcher02.jpg)
+![](./img/watcher02.jpg)
 
 The execution result of a Query is cached by default. If you do not actively execute the Query again, the API endpoint obtained above will provide the cached result of the last execution. Typically, our applications need to actively execute queries to obtain the latest data that meets the conditions, rather than repeatedly obtaining cached result sets. This is especially true for monitoring-type applications. Therefore, we also need to access the "Execute" endpoint to execute the query and the "Status" endpoint to check the status of query execution. After receiving the information that the query has been executed, we can access the "Results" endpoint to obtain the data.
 
@@ -135,17 +135,9 @@ The deployment process is similar to a Next.js project. The initialization of th
 
 API calls and their corresponding query information:
 
-New Pools:
-
-https://dune.com/queries/2056212
-
-Latest Swap:
-
-https://dune.com/queries/2056310
-
-Alerts:
-
-https://dune.com/queries/2056547
+- New Pools: https://dune.com/queries/2056212
+- Latest Swap: https://dune.com/queries/2056310
+- Alerts: https://dune.com/queries/2056547
 
 ### Important Functionality Points
 

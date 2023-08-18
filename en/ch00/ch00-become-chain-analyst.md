@@ -1,43 +1,56 @@
-# #0 Becoming an Onchain Data Analyst 
-## TL;DR
+---
+# title: ""
+# author: []
+# date: ""
+# subject: "Markdown"
+# keywords: [Markdown, Example]
+# subtitle: "Aesculeae domus vincemur et Veneris adsuetus lapsum"
+lang: "en"
+titlepage: true,
+titlepage-background: "./bookcover-en.pdf"
+...
+# 00 Becoming an Onchain Data Analyst #
+## TLDR
 - The richness of Onchain data stems from the maturity of blockchain technology and the innovation of projects
 - Mastering the perspective of Onchain data helps to reduce information asymmetry and adds an extra layer of protection when navigating the dark forest
 - Onchain data truly reflects the flow of value, so the insights gained from analysis are more valuable
 - Data analysis provides a quantifiable perspective to support decision-making; analysis is a process, not an end
 - Good data analysis comes from data thinking, the ability to abstract things, and requires deepening industry understanding
+
 ## What is Onchain Data
 Most people, when first introduced to blockchain, get this concept: blockchain is a public, tamper-proof ledger and all transfers as well as transaction records are transparent and trustworthy. However, this is not the only function of blockchain. It is just the initial point of departure from the "peer-to-peer electronic cash system" - that is, the "ledger". With the development of smart contracts, blockchain is actually becoming a large database. The following diagram compares the architecture of traditional web2 and web3 applications: smart contracts replace the backend and blockchain also takes on some of the functions of the database. More and more Onchain projects are emerging and our interactions Onchain are becoming more frequent, such as how much liquidity we added in DeFi protocols, which NFTs we minted, and even which social accounts we follow can be recorded Onchain. All of our interactions with blockchain will be recorded in this database and these records will belong to Onchain data.
 
-![image](img/01.png)
+![](img/01.png)
 
 **Onchain data is roughly divided into three categories:**
+
 1. Transaction data.
 Such as sending and receiving addresses, transfer amount, address balance, etc.
 
-2. Block data.
+1. Block data.
 For example, timestamps, miner fees, miner rewards, etc.
 
-3. Smart contract code.
+1. Smart contract code.
 That is, the business logic coded on the blockchain.
 
 Onchain data analysis is to extract the desired information from these three types of data for interpretation. 
 From the perspective of the data stack, blockchain data products can be divided into data sources, data development tools, and data apps.
 
-![image](img/02.jpg)
+![](img/02.jpg)
 
 Flexible use of various data products will provide us with a new perspective in the crypto world.
 
 Although we always say that Onchain data is public and transparent, it is difficult for us to directly read this data, because a simple swap transaction Onchain may look like this:
 
-![image](img/03.png)
+![](img/03.png)
 
 We can see some raw Onchain data in the blockchain browser, but if my question is how much is the UniswapV3 trading volume today, this does not solve my problem!
 
-![image](img/04.png)
+![](img/04.png)
 
 The original Onchain data cannot give us the answer, so we need to go through a series of data ingestion processes such as indexing, processing, storage and then aggregate the corresponding data according to the question raised to find an answer.
 
-![image](img/05.jpg)
+![](img/05.jpg)
 
 To start from scratch, we may need to set up our own nodes to receive blockchain data 
 and then process it, but this is obviously very time-consuming and laborious. 
@@ -55,7 +68,7 @@ This Onchain data corresponds to the flow of value Onchain and in turn the insig
 
 Take the familiar DeFi protocol liquidity mining as an example: you add liquidity to earn rewards, the pool increases depth, users enjoy lower slippage, everyone has a bright future, and you securely lock your money in the contract. One day, the black swan quietly arrives, smart money with insider information immediately retreats, and you are just an ordinary investor; by the time you see the negative news and think about withdrawing, the rewards in your hand are almost worthless, and the severe impermanent loss makes it hard for you to break even.
 
-![image](img/06.jpg)
+![](img/06.jpg)
 
 But if you have an Onchain data perspective, you might find: the protocol's TVL suddenly drops and the token's dumping volume on Uniswap surges. In other words, smart people get the news or find something wrong, the liquidity in the pool is getting worse and money is running away, and everyone is bearish on the token and selling like crazy - should I exit now?
 
@@ -72,7 +85,7 @@ NFT data monitoring platforms are even more varied.
 These "finished" data products, while low-threshold and easy to use, 
 also have a bottleneck that cannot meet high customization requirements.
 
-![image](img/07.jpg)
+![](img/07.jpg)
 
 For example, you discover through https://ultrasound.money/ 
 that the gas consumption on Ethereum suddenly rises, 
@@ -83,13 +96,13 @@ Participants in XEN mining own all the XEN tokens they mine.
 As the number of participants increases, the difficulty of mining increases and the supply decreases. You want to understand the participation situation of everyone,  since just relying on gas consumption is not enough; you also want to know the number of participants, trends, and how long do participants choose to lock. At the same time, you also find that it seems to have no sybil protection. Pay a gas fee to participate - how many scientists are rushing in? Do I still have any profits? When you analyze this, you urgently need data to support your "rush or not" decision; but because it's early, there's no analysis of it in the data app and the app is also unlikely to monitor and analyze every protocol. This is why, despite the existence of many data products, we still need to be able to write some data analysis ourselves: existing products are difficult to meet customized needs.
 
 
-![image](img/08.jpg)
+![](img/08.jpg)
 
 
 Through my own data analysis, https://dune.com/sixdegree/xen-crypto-overview, I found out that most people choose short-term pledges, and nearly 70% are new wallets, indicating that they have been exploited by everyone. So I understand that the short-term selling pressure will be very large; if I choose to participate, I will pick the shortest pledge time and sell as soon as possible to see who runs faster. At this point, you have completed the entire process of Onchain data analysis: discover the project, study the project mechanism, abstract the standard for evaluating the project, and finally - perform data processing, visualization, and decision support.
 
 
-![image](img/09.jpg)
+![](img/09.jpg)
 
 
 
@@ -115,7 +128,7 @@ if the momentum is still up, then I will participate in it.
 
 monitor the holding movements of Smart money addresses and even consider the trading volume and holding distribution of tokens; check the protocol's TVL, outstanding debt amount, capital utilization rate, APR, etc.; consider daily new user numbers, growth trends, daily active user numbers, transaction numbers, player inflow/outflow situation, and the NFT market item sales situation.
 
-![image](img/10.jpg)
+![](img/10.jpg)
 
 The difficulty of these three questions increases gradually. The first two are easier to answer, but it is difficult to think clearly about the third question, which requires a lot of learning and understanding. This is also the small threshold that distinguishes the level of data analysts. A good analyst should have the following three characteristics:
 
@@ -138,7 +151,7 @@ This includes getting data (where does the Onchain data come from),
 processing data (how to find the desired and filter out the irrelevant), 
 and data visualization capabilities.
 
-![image](img/11.jpg)
+![](img/11.jpg)
 
 In general, data analysis is just a tool to support research, so don't analyze for the sake of analysis. This process is first out of your desire to research a certain project, concept, or track, then learn and understand the operating mechanism of the project, abstract the quantitative analysis of the qualitative concept, and finally gather data and visualize.
 
@@ -169,10 +182,11 @@ SixdegreeLab is a professional onchain data analysis team Our mission is to prov
 - Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
 - Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)
 
-## References
+## Reference
 1. [The Capital Efficiency Era of DeFi](https://blog.hashflow.com/the-capital-efficiency-era-of-defi-d8b3427feae4)
 2. [Using Onchain Data for Policy Research: Part 1](https://policy.paradigm.xyz/writing/using-Onchain-data-for-policy-research-part-1)
 3. [IOSG: Analysis of the Current Situation and Prospects of Onchain Data Analysis Platform](https://foresightnews.pro/article/detail/8473)
 4. [An Introduction to «Onchain» Analysis](https://www.blockstar.ch/post/an-introduction-to-Onchain-analysis)
 5. [The Architecture of a Web 3.0 application](https://www.preethikasireddy.com/post/the-architecture-of-a-web-3-0-application)
 6. [Sixdegree Dune Dashborads](https://dune.com/sixdegree)
+

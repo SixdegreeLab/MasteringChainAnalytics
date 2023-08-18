@@ -1,4 +1,4 @@
-## Introduction to the Dune Platform
+# 01 Introduction to the Dune Platform #
 As mentioned earlier, from the perspective of the data stack, 
 blockchain data products can be divided into three categories: 
 `data sources`, `data development tools`, and `data apps`. 
@@ -21,16 +21,16 @@ After registering on the Dune platform, the main interface of the platform is as
 with specific functions:
 
 - **Discover**: show various trends on the platform
-  - **Dashboard**: displays the most followed dashboards. 
+  - Dashboard: displays the most followed dashboards. 
     On this page, you can search for keywords of interest in the search box 
     in the upper left corner/right side. This is the most important part.
     You can click on a dashboard to view other people's dashboards.
-  - Queries: displays the most followed queries. On this page, 
+  - **Queries**: displays the most followed queries. On this page, 
     you can search for keywords of interest in the search box in the 
     upper left corner/right side.
   - Wizards: ranking of users with the highest collection volume on the platform.
   - Teams: ranking of teams with the highest collection volume on the platform.
-- Favorites:
+- **Favorites**:
   - Dashboard: your favorite dashboards, which can be searched in the search box 
     on the right.
   - Queries: your favorite queries, which can be searched in the search box on the right.
@@ -78,7 +78,7 @@ which consists of three main parts:
   the query results will be displayed in `Query results`, 
   and you can sequentially create new sub-visualization pages afterwards.
 
-![query-page](img/query-page.png)
+![](img/query-page.png)
 
 Queries on the platform can be forked, allowing you to copy someone else's query 
 to your own account for modification and editing.
@@ -155,3 +155,5 @@ Each visualization widget can be dragged and resized.
 - Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
 - Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
 - Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)
+
+

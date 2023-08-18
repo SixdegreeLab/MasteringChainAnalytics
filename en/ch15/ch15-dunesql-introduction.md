@@ -1,4 +1,4 @@
-# 15 Introduction to Dune SQL Query Engine
+# 15 Introduction to DuneSQL
 
 Dune has officially launched its team's self-developed query engine, Dune SQL, based on Trino ([https://trino.io/](https://trino.io/)<a id="jump_8"></a>). This article introduces some common query syntax, considerations, and details of Dune SQL.
 
@@ -14,7 +14,7 @@ There are several key points to note in the syntax of Dune SQL:
 
 The Dune documentation provides a detailed syntax comparison table. You can refer to the [Syntax Comparison](https://dune.com/docs/query/syntax-differences#syntax-comparison)<a id="jump_8"></a>  for more information. The following shows a partial comparison of the differences:
 
-![image_01.png](img/image_01.png)
+![](img/image_01.png)
 
 ## Dune SQL Examples
 
@@ -280,7 +280,7 @@ Dune SQL Version: [https://dune.com/queries/1000162](https://dune.com/queries/10
 
 Here is a comparison of the modifications during the migration:
 
-![image_02.png](img/image_02.png)
+![](img/image_02.png)
 
 ## Other Features
 

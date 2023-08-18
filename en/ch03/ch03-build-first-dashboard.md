@@ -1,4 +1,4 @@
-# Creating Your First Dune Data Dashboard
+# 03 Creating Your First Dashboard
 
 In the previous tutorial, "[Getting Started](../02_get_started/readme.md)," we learned the prerequisites for creating a data dashboard and mastered the basics of writing SQL queries. Now, let's write queries and create a Dune data dashboard together. To help you get started faster, we will create the data dashboard using a specific project as an example. The example of the completed data dashboard can be found here: [https://dune.com/sixdegree/uniswap-v3-pool-tutorial](https://dune.com/sixdegree/uniswap-v3-pool-tutorial).
 
@@ -29,7 +29,7 @@ The structure of the liquidity pool table, `uniswap_v3_ethereum.Factory_evt_Pool
 
 Here is a partial view of the liquidity pool table (displaying only a subset of columns):
 
-![image_00.png](img/image_00.png)
+![](img/image_00.png)
 
 ## Main Content of the Data Dashboard
 
@@ -68,7 +68,7 @@ then click the "Add" button next to the corresponding data dashboard to add this
 
 Now we can go back to the data dashboard page. After refreshing the page, you will see the newly added visualization chart. Click the "Edit" button in the upper right corner of the page to edit the data dashboard, including adjusting the size and position of each chart, adding text components, etc. Below is a screenshot of the counter chart for "Total Number of Liquidity Pools" after adjusting the height.
 
-![image_01.png](img/image_01.png)
+![](img/image_01.png)
 
 ### Adding Text Components
 
@@ -90,7 +90,7 @@ Reference link to this query in Dune: [https://dune.com/queries/1454947](https:/
 
 This query returns four output values. We can add them as separate counter components and name them "Number of 0.01% Pools," "Number of 0.05% Pools," etc. Then, add them to the data dashboard and adjust the size and order of the components in the data dashboard editing page. The display result is shown in the image below:
 
-![image_02.png](img/image_02.png)
+![](img/image_02.png)
 
 Alternatively, we can use the GROUP BY clause to group the results and display them in a pie chart.
 
@@ -116,7 +116,7 @@ Reference link to this query in Dune: [https://dune.com/queries/1455127](https:/
 
 We can add a pie chart visualization for this query. Click "New visualization" and choose "Pie Chart" from the chart type dropdown list, then click "Add visualization". Modify the title of the chart to "Number of Pools with Different Fee Rates". Select "fee_tier" as the horizontal axis (X Column) and "pool_count" as the vertical axis (Y Column 1) of the chart. Check the "Show data label" option on the left side. Finally, click "Add to dashboard" to add this visualization to the data dashboard. The result will be displayed as shown below:
 
-![image_03.png](img/image_03.png)
+![](img/image_03.png)
 
 ## Query 3: Weekly Summary of Newly Created Liquidity Pools
 
@@ -138,7 +138,7 @@ Reference link to this query in Dune: [https://dune.com/queries/1455311](https:/
 
 Data that is grouped by time is suitable for visualizations such as bar charts, area charts, and line charts. Here, we will use a bar chart. Click "New visualization" and choose "Bar Chart" from the chart type dropdown list, then click "Add visualization". Modify the title of the chart to "Weekly Summary of Newly Created Pools". Select "block_date" as the horizontal axis (X Column) and "pool_count" as the vertical axis (Y Column 1) of the chart. Uncheck the "Show chart legend" option on the left side. Finally, click "Add to dashboard" to add this visualization to the data dashboard. The result will be displayed as shown below:
 
-![image_04.png](img/image_04.png)
+![](img/image_04.png)
 
 
 ## Query 4: Total Daily Creation of Liquidity Pools in the Last 30 Days
@@ -161,7 +161,7 @@ Reference link for this query on Dune: [https://dune.com/queries/1455382](https:
 
 We can visualize the results using a bar chart. Add a new chart of type "Bar" and modify the title to "Total Daily Creation of Liquidity Pools in the Last 30 Days." Select "block_date" for the X column and "pool_count" for the Y column. Uncheck the "Show chart legend" option on the left and check the "Show data labels" option. Add this visualization chart to the dashboard. The resulting visualization will look like this:
 
-![image_05.png](img/image_05.png)
+![](img/image_05.png)
 
 
 ## Query 5: Weekly Summary of Newly Created Liquidity Pools - Grouped by Fee Tiers
@@ -185,7 +185,7 @@ Reference link for this query on Dune: [https://dune.com/queries/1455535](https:
 
 We can visualize the results using a bar chart. Add a new chart of type "Bar" and modify the title to "Weekly Summary of Newly Created Liquidity Pools - Grouped by Fee Tiers." Select "block_date" for the X column and "pool_count" for the Y column. Additionally, select "fee_tier" in the "Group by" section to enable grouping and stacking of data by fee tiers. Check the "Enable stacking" option on the left to stack data with the same date and fee tier together. Add this visualization chart to the dashboard. The resulting visualization will look like this:
 
-![image_06.png](img/image_06.png)
+![](img/image_06.png)
 
 
 ## Query 6: Most Popular Token by Number of Liquidity Pools
@@ -230,11 +230,11 @@ Reference link for this query on Dune: [https://dune.com/queries/1455706](https:
 
 We can visualize the results using a bar chart. Add a new chart of type "Bar" and modify the title to "Number of Liquidity Pools for Top 100 ERC20 Tokens". Select "symbol" for the X column and "pool_count" for the Y column. To maintain the sorting order (from highest to lowest count), uncheck the "Sort values" option on the right. Although we have limited the data to the top 100 tokens, we can still see significant differences in the number of liquidity pools for different tokens, ranging from over 5,000 to just a few. To make the chart more intuitive, check the "Logarithmic" option on the right to display the data in logarithmic scale. Add this visualization chart to the dashboard. The resulting visualization will look like this:
 
-![image_07.png](img/image_07.png)
+![](img/image_07.png)
 
 As the logarithmic scale visually downplays the differences in values, we can also add a "Table" visualization to view the actual numerical values. Continue adding a new visualization chart for this query, select the "Table" chart type. Set the title as "Statistics of the Number of Liquidity Pools for the Top 100 ERC20 Tokens." Adjust the relevant options for the table visualization as needed, and then add it to the dashboard.
 
-![image_08.png](img/image_08.png)
+![](img/image_08.png)
 
 You may notice that the table does not return exactly 100 rows of data. This is because some newly appeared tokens may not have been added to the data table in Dune yet.
 
@@ -276,18 +276,18 @@ Reference link to this query on Dune: [https://dune.com/queries/1455897](https:/
 
 We add a visualization chart of type "Table" to the query, set the title as "Latest Created Liquidity Pools List," and adjust the visualization options as desired before adding it to the dashboard.
 
-![image_09.png](img/image_09.png)
+![](img/image_09.png)
 
-# Summary
+## Summary
 
 With this, we have completed the creation of the first Dune data dashboard. The complete interface of this dashboard appears as shown in the following image:
 
-![dashboard.png](img/dashboard.png)
+![](img/dashboard.png)
 
 To avoid overwhelming complexity, we have only covered some basic queries, and the resulting charts in the dashboard may not look extremely sophisticated. However, this is not important. What matters more is whether you can use this tutorial as a starting point to embark on your own journey of Onchain data analysis.
 After reading this tutorial, I hope you will try it out for yourself. Uniswap was just one example of a DEX, and you can perform similar analyses on any other DEX on different chains. Combining the techniques from the previous lessons, you can explore and compare data from other DEXs or even the same DEX on different chains (such as UniSwap on Ethereum and Optimism). As a blockchain data analyst, your dashboard is your resume, so take it seriously!
 
-# Homework
+## Homework
 
 Based on the tutorial content, create a data dashboard with at least 5 queries for any DEX. The naming format for the dashboard should be "SixdegreeAssignment1-YourName," such as "SixdegreeAssignment1-Spring." This format makes it easier for everyone to learn from each other and helps us monitor the quality of the tutorials. To encourage active participation in creating dashboards, we will keep a record of the completion and quality of the homework. In the future, we will provide rewards, including but not limited to Dune community identities, physical merchandise, free API quotas, POAPs, memberships to various collaborative data products, job recommendations for blockchain data analysis, priority registration for community offline activities, and other incentives from the Sixdegree community.
 
@@ -302,3 +302,5 @@ Keep up the good work! Feel free to share the links to your data dashboards in t
 - Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
 - Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
 - Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)
+
+

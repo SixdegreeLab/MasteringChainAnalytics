@@ -20,7 +20,7 @@
 - [#12 NFT analysis](ch12/ch12-nft-analysis.md)
 - [#13 Lending analysis](ch13/ch13-lending-analysis.md)
 - [#14 DeFi analysis](ch14/ch14-defi-analysis.md)
-- [#15 DuneSQL introduction](ch15/ch15-dunesql-introduction.md)
+- [#15 Introduction to DuneSQL ](ch15/ch15-dunesql-introduction.md)
 - [#16 Blockchain analysis - polygon](ch16/ch16-blockchain-analysis-polygon.md)
 - [#17 MEV analysis - uniswap](ch17/ch17-mev-analysis-uniswap.md)
 - [#18 Uniswap multichain analysis](ch18/ch18-uniswap-multichain-analysis.md)
@@ -31,5 +31,4 @@
 - [#21 BTC analysis](ch21/ch21-btc-analysis.md)
 - [#22 How to build Spellbook](ch22/ch22-how-to-build-spellbook.md)
 - [#23 How to build app use dune api](ch23/ch23-how-to-build-app-use-dune-api.md)
-api.md)
  

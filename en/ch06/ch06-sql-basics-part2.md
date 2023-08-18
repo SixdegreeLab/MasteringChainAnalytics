@@ -1,4 +1,4 @@
-# SQL syntax (II)
+# 06 SQL Basics (II)
 
 In the "SQL syntax (I)" section, we covered the fundamentals of SQL,including SQL query statement infrastructure syntax, datetime, group by, with as and join.Next, we continue to introduce some common fundamentals of SQL.
 
@@ -88,7 +88,7 @@ profiles_total as (
     from profile_created
 )
 
--- ...省略部分代码...
+-- ...skip some code...
 ```
 
 As you can see, through the CASE statement we can flexibly convert the data according to actual needs to facilitate subsequent statistical summary.
@@ -206,7 +206,7 @@ order by block_date
 
 Add `pool_count_diff` to the visualisation chart (using the right hand axis and choosing Line for the graph type) as shown below:
 
-![part_2_01.png](img/part_2_01.png)
+![](img/part_2_01.png)
 
 The Lead() function proves to be a valuable tool when we wish to perform "forward" comparisons of data across various rows. For example, we previously prpesented a query that identified the creator accounts with the highest post counts in the Lens instance. Now, we shall refine this query to retrieve the top 50 accounts with the highest post counts. With this refined dataset, we can delve into comparing the differences in the number of posts among these top accounts. Specifically, we will examine the variance between the first and second positions, the second and third positions, and so on.The key part of the query code is as follows:
 
@@ -234,7 +234,7 @@ order by post_count desc
 ```
 The query results are shown in the figure below, where we can see that there are very small differences in the number of posts between some accounts:
 
-![part_2_02.png](img/part_2_02.png)
+![](img/part_2_02.png)
 
 Full SQL reference link:
 - [https://dune.com/queries/1647422](https://dune.com/queries/1647422)
@@ -282,7 +282,7 @@ where row_num = 1 -- Filter out the latest average price of each token by row nu
 
 The above query results are shown in the figure below:
 
-![part_2_03.png](img/part_2_03.png)
+![](img/part_2_03.png)
 
 Full SQL reference link:
 - [https://dune.com/queries/1647482](https://dune.com/queries/1647482)
@@ -306,7 +306,7 @@ select array_agg(contract_address) from
 
 ## Summary
 
-Each database has dozens or even hundreds of built-in functions, and what we introduce here is only a small part of the commonly used functions. If you want to become a proficient data analyst, we highly recommend reading and understanding the usage of each of the built-in functions here:[Trino 函数](https://trino.io/docs/current/functions.html).
+Each database has dozens or even hundreds of built-in functions, and what we introduce here is only a small part of the commonly used functions. If you want to become a proficient data analyst, we highly recommend reading and understanding the usage of each of the built-in functions here:[Trino functions](https://trino.io/docs/current/functions.html).
 
 ## About Us
 

@@ -1,4 +1,4 @@
-# SQL Basics (1)
+# 05 SQL Basics (I)
 
 ## Basic Concepts
 
@@ -55,7 +55,7 @@ and value /power(10,18) >1000 -- Limit ETH transfer value > 1000
 order by block_time -- Sort by block_time in ascending order,desc for descending order
 ```
 
-![](img/query-page2.webp)
+![](img/query-page2.png)
 
 #### Dune Query URL
 
@@ -98,7 +98,7 @@ and "from" = 0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296
 and value /power(10,18) > 1000 -- Limit ETH transfer value > 1000
 ```
 
-![](img/query-page3.webp)
+![](img/query-page3.png)
 
 #### Dune Query URL
 
@@ -233,7 +233,7 @@ left join -- Join transactions_info with price_info, using left join
 ) price_info on transactions_info.stat_minute = price_info.stat_minute -- Join with stat_minute field
 ```
 
-![](img/leftjoin.webp)
+![](img/leftjoin.png)
 
 ##### Dune Query URL
 
