@@ -7,8 +7,9 @@
 # subtitle: "Aesculeae domus vincemur et Veneris adsuetus lapsum"
 lang: "en"
 titlepage: true,
-titlepage-background: "./bookcover-en.pdf"
+titlepage-background: "./assets/bookcover-en.pdf"
 ...
+
 # 00 Becoming an Onchain Data Analyst #
 ## TLDR
 - The richness of Onchain data stems from the maturity of blockchain technology and the innovation of projects

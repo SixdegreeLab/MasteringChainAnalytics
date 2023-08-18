@@ -425,10 +425,7 @@ limit 50
 
 As it is a recent active projects, it may have been newly deployed and launched. Therefore, we have added hyperlinks to the query and created a Table. The display is as follows:
 
-![]
-
-Query link:
-* [https://dune.com/queries/1838077](https://dune.com/queries/1838077)<a id="jump_8"></a>
+- Query link: [https://dune.com/queries/1838077](https://dune.com/queries/1838077)<a id="jump_8"></a>
 
 ## Summary
 
