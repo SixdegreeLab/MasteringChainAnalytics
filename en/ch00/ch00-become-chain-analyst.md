@@ -11,7 +11,9 @@ titlepage-background: "./assets/bookcover-en.pdf"
 ...
 
 # 00 Becoming an Onchain Data Analyst #
-## TLDR
+
+**TLDR**
+
 - The richness of Onchain data stems from the maturity of blockchain technology and the innovation of projects
 - Mastering the perspective of Onchain data helps to reduce information asymmetry and adds an extra layer of protection when navigating the dark forest
 - Onchain data truly reflects the flow of value, so the insights gained from analysis are more valuable
