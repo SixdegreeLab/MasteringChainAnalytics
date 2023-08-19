@@ -197,13 +197,13 @@ select sum(usd_amount) / 1e6 as total_value_locked_usd
 from daily_liquidity_change
 ```
 
-Reference: https://dune.com/queries/1037796/1798021.
+Reference: https://dune.com/queries/1037796/1798021
 
 ### 2. Outstanding Loans
 
 This refers to the amount of money that has been loaned out and has not yet been repaid. Similar to calculating TVL, refer to the data from the blockchain explorer, find the contract function corresponding to topic0(1), and subtract the repaid ('Repay') from the borrowed ('Borrow').
 
-Reference: https://dune.com/queries/1037796/1798021.
+Reference: https://dune.com/queries/1037796/1798021
 
 ``` sql
  select 'Borrow' as action_type,
