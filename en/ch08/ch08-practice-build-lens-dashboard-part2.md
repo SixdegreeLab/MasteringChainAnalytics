@@ -39,7 +39,7 @@ group by 1
 
 When doing this kind of data statistics, we usually also need to get some Counter type statistical values, such as the total number of addresses that have created multiple Profiles, how many Profiles have been created by these addresses, and the proportion of these Profiles in all created Profiles etc. The above CTE subquery code can be shared when querying these data, so we make few changes to it and add two additional CTEs to count the values of these Counter types. Add a visualisation chart for this query and add it to the data dashboard respectively. The display effect is as follows:
 
-![](img/image_09.png)
+![](img/ch08_image_09.png)
 
 Reference link for the above query on Dune:
 - [https://dune.com/queries/1562662](https://dune.com/queries/1562662)
@@ -121,7 +121,7 @@ order by 2 desc
 
 Interpretation of the above SQL: Since Post data is stored in two tables separately, in CTE `post_data`, we use `union all` to merge the data taken from the two tables together. We use `posts_summary` to count the number of Profiles and the cumulative number of Posts they have posted. In `top_post_profiles`, we follow the data of the 1000 Profiles with the largest number of posts per Profile. Finally, we query `top_post_profiles` and `posts_summary` in association, and output the account data with the most posts and their comparison with the total post data. After the query results are visualized and added to the data dashboard, the display effect is as follows:
 
-![](img/image_10.png)
+![](img/ch08_image_10.png)
 
 Reference link for the above query on Dune:
 - [https://dune.com/queries/1554541](https://dune.com/queries/1554541)
@@ -200,7 +200,7 @@ limit 100
 
 We can add a histogram to display the number of posts of the 100 accounts with the most posts in the past 30 days, and add a Table type chart to output details. The display effect after the relevant chart is added to the data dashboard is as follows:
 
-![](img/image_12.png)
+![](img/ch08_image_12.png)
 
 Reference link for the above query on Dune:
 - [https://dune.com/queries/1559981](https://dune.com/queries/1559981)
@@ -228,7 +228,7 @@ limit 10
 
 We also obtain the total comment data by defining an additional CTE, so that the Counter chart can be output in the same query, and the comment data of the 1000 accounts with the most comments and the comment data of all accounts can be compared. After the query results are visualized and added to the data dashboard, the display effect is as follows:
 
-![](img/image_13.png)
+![](img/ch08_image_13.png)
 
 Reference link for the above query on Dune:
 - [https://dune.com/queries/1560028](https://dune.com/queries/1560028)
@@ -254,7 +254,7 @@ limit 500
 
 In the same way, we add an additional CTE to obtain the data of all comments, and compare the data of the top 500 most commented Publications with the global data. Add the corresponding visual chart to the data dashboard, the effect is as follows:
 
-![](img/image_14.png)
+![](img/ch08_image_14.png)
 
 Reference link for the above query on Dune:
 - [https://dune.com/queries/1560578](https://dune.com/queries/1560578)
@@ -263,7 +263,7 @@ Reference link for the above query on Dune:
 
 Mirroring data is highly similar to comment data, and users must first create their own Profile to mirror other people's Publications. We write two queries respectively to count the top 1000 account data with the most mirroring operations and the top 500 publication data with the most mirroring operations. Compare them with the overall mirror data as well. The effect after adding the data dashboard is shown in the following figure:
 
-![](img/image_15.png)
+![](img/ch08_image_15.png)
 
 Reference link for the above query on Dune:
 - [https://dune.com/queries/1561229](https://dune.com/queries/1561229)
@@ -293,7 +293,7 @@ Since the transaction table records are quite large, the query time consumption 
 
 The other parts of the collection data analysis SQL are basically the same as the previous example, so I won't repeat them here. Similarly, we also conduct statistical analysis on the most collected Publications. The display effect after adding the relevant visualisation images to the data dashboard is shown in the following figure:
 
-![](img/image_16.png)
+![](img/ch08_image_16.png)
 
 Reference link for the above query on Dune:
 - [https://dune.com/queries/1560847](https://dune.com/queries/1560847)
@@ -355,7 +355,7 @@ It's important to note here that we use the `cross join unnest(f.profile_ids) as
 
 Similarly, on the basis of the above query, we also add the CTE definition to obtain all the concerned data, so that when obtaining the most concerned proile list, we can compare it with the overall number of concerned. After the query results are visualized and added to the data dashboard, the effect is as follows:
 
-![](img/image_17.png)
+![](img/ch08_image_17.png)
 
 Reference link for the above query on Dune:
 - [https://dune.com/queries/1554454](https://dune.com/queries/1554454)
@@ -391,7 +391,7 @@ group by 1
 
 Use a Pie chart to visualize the above query results. After adding it to the data dashboard, the display effect is as shown in the figure below:
 
-![](img/image_18.png)
+![](img/ch08_image_18.png)
 
 Reference link for the above query on Dune:
 - [https://dune.com/queries/1554888](https://dune.com/queries/1554888)
@@ -400,7 +400,7 @@ Reference link for the above query on Dune:
 
 The number of daily new followers of Lens users is also an important indicator for observing changes in overall activity. We write a query to count the number of posts per day. The `follow_data` CTE in this query is exactly the same as before. The query processing method is also highly similar to the statistics of the number of daily posts mentioned above, so the details will not be detailed here. Add a visualization chart to the query result and add it to the data dashboard, the display effect is as follows:
 
-![](img/image_19.png)
+![](img/ch08_image_19.png)
 
 Reference link for the above query on Dune:
 - [https://dune.com/queries/1555185](https://dune.com/queries/1555185)
@@ -456,7 +456,7 @@ order by 1, 2
 
 Visualize the above query results and add them to the data dashboard, the display effect is as follows:
 
-![](img/image_20.png)
+![](img/ch08_image_20.png)
 
 Reference link for the above query on Dune:
 - [https://dune.com/queries/1561822](https://dune.com/queries/1561822)
@@ -484,7 +484,7 @@ with action_data as (
 
 Except for the different data sources, these two queries are basically the same as the comprehensive analysis of creator operations. Visualize the query results and add them to the data dashboard, the display effect is as follows:
 
-![](img/image_21.png)
+![](img/ch08_image_21.png)
 
 Reference link for the above query on Dune:
 - [https://dune.com/queries/1562000](https://dune.com/queries/1562000)

@@ -6,7 +6,7 @@ The concept of MEV (miner-extractable value) first appeared in the Flashboy 2.0 
 
 Visually through data, as shown in the following figure, the MEV profit obtained through arbitrage reached $1.44 million in the past 30 days, during a bear market with relatively low trading volume. The previous market turmoil brought about by the FTX crash incident was just a [bull market for MEV](https://twitter.com/lviswang/status/1591664260987641856?s=20&t=YPM1Qwt_-K8IJGHxxu2gnA), where intense price fluctuations led to an explosion of arbitrage and liquidation opportunities, generating $5 million in arbitrage income in just 7 days. Therefore, MEV is always accompanying the market although ordinary users may not want to, they can't avoid being passively involved in this corner of the dark forest. At least, we should roughly understand what MEV is all about.
 
-![](img/ep_mev_ov.jpg)
+![](img/ch17_ep_mev_ov.jpg)
 
 Ethereum is the most active mainnet with the richest Onchain activities. Let's discuss a few prerequisites for the birth of MEV on Ethereum:
 
@@ -14,13 +14,13 @@ Ethereum is the most active mainnet with the richest Onchain activities. Let's d
 
 2. The design of the blockchain memory pool (Mempool). All transactions sent out need to temporarily enter the memory pool, rather than being packaged directly by miners. The memory pool is filled with pending transactions and is public, which means anyone can monitor every transaction and every function call in the memory pool, providing attackers with the conditions to monitor transactions. 
 
-![](img/mempool.jpg)
+![](img/ch17_mempool.jpg)
 
 3. According to [Etherscan](https://etherscan.io/blocks) data, after the POS merge, the block production time is fixed at 12 seconds; before the POS merge, it was around 13.5 seconds. The longer block production time, which is considered for the safety of node synchronization, also provides attackers with execution time.
 
 In summary, **MEV attackers can see all pending transactions in the public mempool and have ample time to rehearse to see if the transaction can bring profits. If they determine that it is profitable, they can raise the gas fee to achieve the effect of priority execution, thus stealing others' benefits.**
 
-![](img/mev_process.jpg)
+![](img/ch17_mev_process.jpg)
 
 Here's an interesting question - shouldn't Solana, which has no mempool and fast block production speed, have no MEV? In fact, Solana also has MEV, but let's just discuss MEV on Ethereum for now.
 
@@ -34,7 +34,7 @@ In the process of MEV extraction, scientists calculate profits and arbitrage pat
 
 As transactions on the blockchain are public, profitable arbitrage paths can be filtered and studied, leading to intense GAS competition. And the GAS bidding on the blockchain is public, so the GAS paid to miners can often double several times within the time of a block. Ultimately, if no one drops out, all profits often need to be given to the miner until one party ends the infighting.
 
-![](img/mev_supchain.jpg)
+![](img/ch17_mev_supchain.jpg)
 
 
 ## Classification of MEV
@@ -53,20 +53,20 @@ This type of MEV accelerates the liquidity of DeFi, providing guarantees for the
 ### 3. Frontrunning, Backrunning, and Sandwich(ing)
 Frontrunning is when MEV bots pay slightly higher gas fees to execute transactions ahead of a certain transaction in the Mempool, such as swapping tokens at a lower price. Backrunning is when bots try different arbitrages, liquidations, or transactions after a transaction causes a significant price displacement. 
 
-![](img/fr.jpg)
+![](img/ch17_fr.jpg)
 
 Sandwich attacks are a combination of the previous two, sandwiching transactions on both ends. For example, MEV bots place a buy order before the transaction and a sell order after the transaction, causing the user's transaction to execute at a worse price. If the transaction slippage is set unreasonably, it is easy to suffer a sandwich attack. This kind of MEV is obviously "bad".
 
-![](img/swa.png)
+![](img/ch17_swa.png)
 
 ### 4. Just-in-Time liquidity Attack
 JIT liquidity is a special form of liquidity provision. In DEX, liquidity providers share transaction fees. JIT refers to adding liquidity just before a large Swap to share the transaction fee of that transaction and immediately exiting liquidity after the transaction ends. This might sound strange – doesn’t providing liquidity continuously mean continuously receiving transaction fees? Personal opinion is that being an LP brings impermanent loss, while the impermanent loss brought by instantaneous liquidity provision can almost be ignored. JIT attacks are similar to sandwich attacks because they both involve prepositions and postpositions of the victim's transaction; but in the case of JIT, the attacker adds and removes liquidity, rather than buying and selling. This type of MEV increases the liquidity of DEX without harming traders, so it is also a "good" MEV. 
 
-![](img/JIT.png)
+![](img/ch17_JIT.png)
 
 JIT liquidity actually occupies a very small proportion in DEX transactions. Although it sounds very powerful, according to the [Just-in-time Liquidity on the Uniswap Protocol](https://uniswap.org/blog/jit-liquidity) report, in Uniswap, JIT liquidity has always been less than 1%, so it is a kind of MEV with minor impact.
 
-![](img/JITv.png)
+![](img/ch17_JITv.png)
 
 
 ## MEV Analysis with Dune
@@ -77,9 +77,9 @@ Here are two ideas for doing MEV analysis with Dune. For related queries, please
  
 As shown in the figure below, among the four types of tables in Dune, the Community Table is a data source provided by external organizations, including data provided by Flashbots. 
 
-![](img/dune_com.jpg)
+![](img/ch17_dune_com.jpg)
 
-![](img/dune_fb.jpg)
+![](img/ch17_dune_fb.jpg)
 
 [Flashbots](https://www.flashbots.net/) is an MEV research and development organization, established to mitigate the negative externality of MEV on the blockchain. Currently, more than 90% of Ethereum validator nodes are running Flashbots programs. For those interested in Flashbots, you can check out their [research and documentation](https://boost.flashbots.net/) on your own. All we need to know here is that they are an MEV research organization that provides MEV-related data for users to do queries and analysis on Dune.
 
@@ -122,7 +122,7 @@ order by 1, 2
 
 Generating a Line Chart, we can see that MEV was very active in 2021, but there was a significant decrease in MEV activity in 2022 due to the market turning bearish. At the same time, opportunities for arbitrage and competition are much more intense than liquidations, so naturally, the fees paid to miners are also higher. Another detail, we find that there are a small number of obvious outliers in Flashbots' data, so we have filtered them out in the query. 
 
-![](img/mevsumchat.png)
+![](img/ch17_mevsumchat.png)
 
 Query for reference: [https://dune.com/queries/1883628](https://dune.com/queries/1883628)
 
@@ -143,7 +143,7 @@ order by 2 desc
 
 Generate a Table type of visualization result set and a pie chart for the above query results, and we can get the following results: 
 
-![](img/arb.png)
+![](img/ch17_arb.png)
 
 It can be observed that the arbitrage transactions currently recorded by Flashbots primarily involve Uniswap V2, Uniswap V3, Balancer V1, Curve, and Bancor. The majority of arbitrage profits come from the Uniswap protocol.
 
@@ -193,7 +193,7 @@ Then, in the `single_protocol_profit` CTE, we average the profit amounts based o
 
 Finally, we aggregate the split protocols. Adjust the visualization chart's output fields, add the data to the dashboard, and display as follows:
 
-![](img/arb_protocol.png)
+![](img/ch17_arb_protocol.png)
 
 Now we can clearly see that the arbitrage income from Uniswap V2 is as high as $176M, accounting for nearly 70%.
 
@@ -266,7 +266,7 @@ order by 1, 2
 
 Generate two Area Chart charts for the above query results, comparing the transaction count and transaction amount proportions of MEV Bots and regular Traders. We then get the following results:
 
-![](img/uniswap_bot.png)
+![](img/ch17_uniswap_bot.png)
 
 For specific content, you can refer to the query: [https://dune.com/queries/1883887](https://dune.com/queries/1883887)
 

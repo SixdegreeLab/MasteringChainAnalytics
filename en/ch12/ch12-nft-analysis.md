@@ -84,13 +84,13 @@ For data analysis, the most important function is the Transfer event, which is t
 
 In the Transfer event, there are three main parameters: the sender address `from`, the receiver address `to` and the number of the NFT `tokenId`. In the case of transaction, both from and to are a normal address. If `mint`, the from address is all 0, and if `burn`, the address of to is all 0. The `nft.mint` and `nft.burn` tables on Dune also decode this event to get the final transaction information.
 
-![](img/nft-transfer-etherscan.png)
+![](img/ch12_nft-transfer-etherscan.png)
 
 ### marketplace contracts
 
 Some common marketplace contracts are Opensea, X2Y2, Blur, etc. Let's take Opensea Seaport1.1 contract as an example. All functions related to a transaction will trigger the OrderFulfilled event to record the data on the chain. Dune's nft.trades parses this event to get the final trades. The seaport contract writable functions are as follows:
 
-![](img/seaport1.1.png)
+![](img/ch12_seaport1.1.png)
 
 ``` solidity
 uint256 constant receivedItemsHash_ptr = 0x60;
@@ -124,7 +124,7 @@ For example, Alice  made an order for an Azuki NFT with the number [3638](https:
   - Spells-->erc721: record all `transfers` of erc721
   - Spells-->nft: this contains information about trades, mints, transfers, fees, and burns; the most important of these is the trades table, which aggregates all of the trade data from the major exchanges.
 
-![](img/dune-nft-related.png)
+![](img/ch12_dune-nft-related.png)
 
 The important details of nft.trades table are as follows:
 
@@ -166,7 +166,7 @@ In general, an NFT project will focus on the following basic metrics:
   
 It is necessary to query the transaction amount of all the trading markets and express all the transactions with a scatter plot. At the same time, different ranges can be selected through the time range, such as the last 24h, the last 7 days, the last 1 month, and so on. It should be noted that for some transactions, the transaction price is too high, you need to filter out these, otherwise you will not be able to clearly show most of the transaction price movement.
 
-![](img/history-price.png)
+![](img/ch12_history-price.png)
 
 Reference Links: https://dune.com/queries/1660237
 
@@ -249,7 +249,7 @@ from hourly_trade_summary
 order by block_date
 ```
 
-![](./img/daily-trade-volune.png)
+![](img/ch12_daily-trade-volune.png)
 
 Reference Links: https://dune.com/queries/1664420
 
@@ -324,7 +324,7 @@ We made a dashboard where you can enter the address of an NFT contract and see a
 
 [https://dune.com/sixdegree/nft-collections-metrics-custom-dashboard](https://dune.com/sixdegree/nft-collections-metrics-custom-dashboard)
 
-![](./img/nft-all-in-one.png)
+![](img/ch12_nft-all-in-one.png)
 
 
 ## Reference

@@ -45,7 +45,7 @@ with specific functions:
   - Docs: link to the help documentation.
   - Discord: link to the community discussion group.
 
-![](img/main-page.png)
+![](img/ch01_main-page.png)
 
 ## Core Features
 
@@ -78,7 +78,7 @@ which consists of three main parts:
   the query results will be displayed in `Query results`, 
   and you can sequentially create new sub-visualization pages afterwards.
 
-![](img/query-page.png)
+![](img/ch01_query-page.png)
 
 Queries on the platform can be forked, allowing you to copy someone else's query 
 to your own account for modification and editing.
@@ -97,7 +97,7 @@ can be viewed here: [https://spellbook-docs.dune.com/#!/overview](https://spellb
 At present, hundreds of various tables have been contributed by community users 
 in the spellbook, such as nft.trades, dex.trades, tokens.erc20, etc.
 
-![](img/spellbook.png)
+![](img/ch01_spellbook.png)
 
 **Parameters**
 
@@ -105,7 +105,7 @@ In the query, you can also set a variable input parameter to change the query co
 such as setting different user addresses or setting different time ranges. 
 The parameter setting is embedded in the query statement in the form of`'{{parameter name}}'`.
 
-![](img/query-params.png)
+![](img/ch01_query-params.png)
 
 ### Visualization
 
@@ -118,7 +118,7 @@ The chart supports displaying data in multiple dimensions.
 The area below the chart is where you set the chart style, including name, axis format,
 color, etc.
 
-![](img/visualization.png)
+![](img/ch01_visualization.png)
 
 ### Dashboard
 
@@ -130,7 +130,7 @@ In the dashboard, you can add all the charts generated from queries,
 and you can add text information in markdown format. 
 Each visualization widget can be dragged and resized.
 
-![](img/dashboard.png)
+![](img/ch01_dashboard.png)
 
 ### Dune Related Resources
 - Official Resources

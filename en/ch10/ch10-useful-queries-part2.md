@@ -80,7 +80,7 @@ In the above query, we count the account balances by address in the `address_bal
 
 The query results are shown in the following figure. Contrast Etherscan's data above [https://etherscan.io/token/0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9](HTTP://https://etherscan.io/token/0x50d1c9771902476076ecfc8b2a83ad6b9355a4c9), the amount of total circulation tokens is essentially consistent, but the number of holders have certain differences. The difference is caused by the criteria used to determine which accounts have very small balances, which can be converted to decimal places when aggregating the balances of each address and ignored when counting the number of holders and total balances in circulation. A rule of thumb is to ignore addresses with balances less than `0.001` or `0.0001`.
 
-![](img/image_03.png)
+![](img/ch10_image_03.png)
 
 An example query: [https://dune.com/queries/1620179](https://dune.com/queries/1620179)
 
@@ -125,7 +125,7 @@ limit 100
 
 Using the FTT token contract address default parameters, the above query returns the 100 addresses holding the largest number of FTTS. We can visualize a bar chart comparing the amount held by the top 100 holders. Because the amount difference is obvious, we will log the Y-axis data by checking the Logarithmic option. As shown below:
 
-![](img/image_04.png)
+![](img/ch10_image_04.png)
 
 An example query: [https://dune.com/queries/1620917](https://dune.com/queries/1620917)
 
@@ -172,7 +172,7 @@ order by 2 desc
 
 A pie chart is the best way to visualize the distribution over a small number of specified intervals, but one drawback of using a pie chart is that the data often is not sorted in the order you expect. So in the above query, we also use another CASE statement to output the field `amount_area_id` used for sorting. In addition to the pie chart, we also output a histogram, because histograms support adjusted sorting (the default ordering, which can be unsorted or reversed), which is more intuitive to compare the number of adjacent ranges. In this histogram, we unsort and invert the result set so that the histogram is plotted from smallest to largest. Here is how the visualization looks when added to the data dashboard:
 
-![](img/image_05.png)
+![](img/ch10_image_05.png)
 
 An example query: [https://dune.com/queries/1621478](https://dune.com/queries/1621478)
 
@@ -203,7 +203,7 @@ order by 1
 
 We use `floor(log2(sum(amount / 1e18)))` to log the balance of all holders and round it down to get an integer value. It also calculates the normal balance and using `having balance_amount >= pow(10, -4)` filters out accounts with a balance less than 0.0001. In the query that outputs the final result, we use a CASE statement that treats the value `log_balance_amount >= 0` as 0, indicating that the account balance is between 0 and 2. For any other value, the `pow()` function is used to restore the normal amount of money. In this way, we realize the number of addresses in different amount intervals by logarithmic partitioning. As shown below, We can visualize the query results as a histogram:
 
-![](img/image_06.png)
+![](img/ch10_image_06.png)
 
 An example query: 
 - Statistical distribution by log partition: [https://dune.com/queries/1622137](https://dune.com/queries/1622137)
@@ -299,7 +299,7 @@ The instructions are as follows:
 
 We visualize the query results into two charts, and add them to the data dashboard as follows: 
 
-![](img/image_07.png)
+![](img/ch10_image_07.png)
 
 An Example on Dune: [https://dune.com/queries/1625278](https://dune.com/queries/1625278)
 

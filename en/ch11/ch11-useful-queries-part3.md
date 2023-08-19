@@ -58,11 +58,11 @@ Earlier in calculating the price of ERC20 tokens, we saw an example of calculati
 
 In the Lens smart contract source code, we see the `FollowNFTTransferred` event definition, [code link](https://github.com/lens-protocol/core/blob/main/contracts/libraries/Events.sol#L347). There is also a `Followed` event in the code, but decoding is complicated by the array argument, so we'll use the previous event as an example. From the event name, we can infer that when a user follows a Lens Profile, a FollowNFT will be generated and transferred to the follower's address. We can  then find a transaction record of interest. Let's look at the logs inside for the following transaction:[https://polygonscan.com/tx/0x30311c3eb32300c8e7e173c20a6d9c279c99d19334be8684038757e92545f8cf](https://polygonscan.com/tx/0x30311c3eb32300c8e7e173c20a6d9c279c99d19334be8684038757e92545f8cf). The transaction Logs page in our browser and switch to the "Logs" TAB, so we can see that there are four event logs in total. In certain instances, the blockchain browser can display the original event name. The Lens transaction we're looking at doesn't show the original name, so how do we know which one corresponds to the `FollowNFTTransferred` event log? Here we can use third-party tools to compare by generating the keccak256 hash of the event definition. [Keccak - 256](https://emn178.github.io/online-tools/keccak_256.html) this page can generate online Keccak - 256 hash value. Let's clean up the definition of the `FollowNFTTransferred` event in the source code to a minified mode (remove parameter names, remove Spaces), Get ` FollowNFTTransferred (uint256 uint256, address, the address, uint256) `, then paste it to Keccak - 256 tool page, The generated hash value for ` 4996ad2257e7db44908136c43128cc10ca988096f67dc6bb0bcee11d151368fb `. (The latest Dune parse table already has the full event table for the Lens project, here is just for example purposes)
 
-![](img/image_08.png)
+![](img/ch11_image_08.png)
 
 Using this hash, we can search Polygonscan's transaction log list to find a match. You can see that the first log entry is exactly what we're looking for.
 
-![](img/image_09.png)
+![](img/ch11_image_09.png)
 
 After finding the corresponding log record, with the event definition, we can easily decode the data:
 
@@ -228,7 +228,7 @@ where evt_tx_hash = 0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322f
 
 The first two fields returned by the preceding query are arrays (shown in  the following image):
 
-![](img/image_10.png)
+![](img/ch11_image_10.png)
 
 We can use `cross join unnest(tokens) as tbl1(token)` to split the `tokens` array field into multiple lines:
 ``` sql
@@ -248,7 +248,7 @@ cross join unnest(deltas) as tbl2(delta)   -- Split into multiple lines, and nam
 where evt_tx_hash = 0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322ffff32c
 ```
 
-![](img/image_11.png)
+![](img/ch11_image_11.png)
 
 To avoid duplication, it is advisable to split multiple fields simultaneously within the same `unnest()` function, it will return a temporary table with multiple corresponding new fields.
 
@@ -261,7 +261,7 @@ where evt_tx_hash = 0x65a4f35d81fd789d93d79f351dc3f8c7ed220ab66cb928d2860329322f
 
 The result is shown in the following figure: 
 
-![](img/image_12.png)
+![](img/ch11_image_12.png)
 
 Example link to the above query: 
 - [https://dune.com/queries/1654079](https://dune.com/queries/1654079)

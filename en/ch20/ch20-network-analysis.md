@@ -39,7 +39,7 @@ The SQL is quite complex so I won't go into detail, so feel free to check the UR
   - transfer_eth_balance: total ETH transferred between two
   - transfer_eth_count: total number of ETH transfers between two accounts
 
-![](img/01-Graph-Raw-Relation.png)
+![](img/ch20_01-Graph-Raw-Relation.png)
 
 - Get list of all addresses and associated labels via SQL: [https://dune.com/queries/2430347](https://dune.com/queries/2430347)
 
@@ -48,7 +48,7 @@ The SQL is quite complex so I won't go into detail, so feel free to check the UR
   - account_type: is a regular EOA, exchange, or smart contract
   - label: useful aggregated info for the address into a label for subsequent visualization in python
 
-![](img/02-graph-raw-label.png)
+![](img/ch20_02-graph-raw-label.png)
 
 #### II. Read local files into DataFrames using pandas and supplement with Balance column from Etherscan API
 
@@ -295,7 +295,7 @@ Check out the interactive version at this URL: [https://pro0xbi.github.io/FTX_Ac
 
   We can see that among all addresses associated with the FTX "hacker", there are still at least 12 addresses holding >10,000 ETH, meaning at least 120,000 ETH have not been sold by the "hacker".
 
-![](img/20-3.png)
+![](img/ch20_20-3.png)
 
 ## About Us
 

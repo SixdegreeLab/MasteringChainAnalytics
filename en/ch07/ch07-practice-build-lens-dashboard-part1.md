@@ -34,7 +34,7 @@ There is a wealth of content that can be analysed. In this dashboard, we only us
 
 On the [deployed smart contract](https://docs.lens.xyz/docs/deployed-contract-addresses) page of the official Lens document, it is prompted to use the smart contract LensHub Proxy (LensHub Proxy) as the main contract for interaction. Except for a small number of NFT-related queries that need to use the data table under the smart contract FollowNFT, we basically focus on the decoded table under the smart contract LensHub. The figure below lists part of the data table under this smart contract.
 
-![](img/image_01.png)
+![](img/ch07_image_01.png)
 
 As mentioned in the previous tutorial, there are two types of decoded smart contract data tables: event log table (Event Log) and function call table (Function Call). The two types of tables are named in the format: `projectname_blockchain.contractName_evt_eventName` and :`projectname_blockchain.contractName_call_functionName` respectively. Browsing the list of tables under the LensHub contract, we can see the following main data tables:
 - collect/collectWithSig
@@ -72,7 +72,7 @@ Now we can add visualization charts to the dashboard. Since this is our first qu
 
 At this point, we can click the "My Creations" link at the head of the Dune website, and then select the "Dashboards" Tab to switch to the data dashboard list. Click the name of our newly created board to enter the preview interface of the board. We can see the two Counter type visualizations we just added. Here, by clicking the "Edit" button to enter the edit mode, you can adjust the size and position of the chart accordingly, and you can click the "" button to add text components to explain or beautify the data dashboard. The figure below is an example of the interface of the adjusted data dashboard.
 
-![](img/image_02.png)
+![](img/ch07_image_02.png)
 
 The link to our newly created data dashboard is:[Lens Protocol Ecosystem Analysis](https://dune.com/sixdegree/lens-protocol-ecosystem-analysis)
 
@@ -93,7 +93,7 @@ order by 1
 
 Save the query and add two visual charts of `Bar Chart` type, select `transaction_count` and `user_count` for `Y column 1`, and set the titles of the visual charts as "Lens Daily Transactions" and "Lens Daily Users" respectively. Add them to the data dashboard. The result is shown in the figure below:
 
-![](img/image_03.png)
+![](img/ch07_image_03.png)
 
 Often when querying statistics by date, we can summarise the relevant data by date, calculate the cumulative value and add it to the same visual chart as the daily data to have a more intuitive understanding of the overall trend of data growth. This is easily achieved by using the `sum() over ()` window function. In order to keep the logic simple and easy to understand, we always prefer to use CTEs to break down complex query logic into multiple steps. Modify the above query as:
 
@@ -126,7 +126,7 @@ It is important to note that because the same user may have used Lens on differe
 
 Once the adjustment is complete, the charts in dashoboard will automatically update to the latest display, as shown in the figure below.
 
-![](img/image_04.png)
+![](img/ch07_image_04.png)
 
 Reference links for the above two queries on Dune:
 - [https://dune.com/queries/1534604](https://dune.com/queries/1534604)
@@ -165,7 +165,7 @@ order by block_date
 
 Create and add visualization charts to the dashboard in a similar way. The display is shown in the figure below:
 
-![](img/image_05.png)
+![](img/ch07_image_05.png)
 
 Reference links for the above two queries on Dune:
 - [https://dune.com/queries/1534486](https://dune.com/queries/1534486)
@@ -247,7 +247,7 @@ After the query is executed and saved, we add the following visualization charts
 
 Add all the above visualization charts to the data dashboard, and adjust the display order, as shown in the following figure:
 
-![](img/image_06.png)
+![](img/ch07_image_06.png)
 
 Reference link for this query on Dune:
 - [https://dune.com/queries/1535541](https://dune.com/queries/1535541)
@@ -285,7 +285,7 @@ Before the query is executed, the Dune engine will replace the parameter names i
 
 As mentioned earlier, the length of the domain name is also critical, and the shorter the domain name, the more scarce it is. In addition to searching for the characters contained in the domain name, we can add another parameter `{{name_length}}` for domain name length filtering, change its parameter type to a drop-down list type, and fill in the sequence of numbers 5-20 as a parameter value list, one per line value. Because the Lens domain name currently has at least 5 characters, and there are very few domain names exceeding 20 characters, so we choose 5 to 20 as the interval. The parameter settings are shown in the figure below.
 
-![](img/image_08.png)
+![](img/ch07_image_08.png)
 
 After adding the new parameters, we adjust the WHERE clause of the SQL statement as shown below. Its meaning is to search for a list of domain names whose name contains the input keyword and whose character length is equal to the selected length value. Note that although the values of our `name_length` parameter are all numbers, the default type of the List type parameter is a string, so we use the `cast()` function to convert its type to an integer type before comparing.
 
@@ -341,7 +341,7 @@ limit 1000
 
 We add a Table type visualization chart to this query and add it to the data dashboard. When adding a parameter query to the data kanban, all parameters are automatically added to the kanban header. We can enter the edit mode and drag the parameter to its desired position. The rendering after adding the chart to the data dashboard is shown below.
 
-![](img/image_07.png)
+![](img/ch07_image_07.png)
 
 Reference link for the above query on Dune:
 - [https://dune.com/queries/1535903](https://dune.com/queries/1535903)

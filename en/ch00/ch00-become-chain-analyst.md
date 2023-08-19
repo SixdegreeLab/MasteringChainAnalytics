@@ -23,7 +23,7 @@ titlepage-background: "./assets/bookcover-en.pdf"
 ## What is Onchain Data
 Most people, when first introduced to blockchain, get this concept: blockchain is a public, tamper-proof ledger and all transfers as well as transaction records are transparent and trustworthy. However, this is not the only function of blockchain. It is just the initial point of departure from the "peer-to-peer electronic cash system" - that is, the "ledger". With the development of smart contracts, blockchain is actually becoming a large database. The following diagram compares the architecture of traditional web2 and web3 applications: smart contracts replace the backend and blockchain also takes on some of the functions of the database. More and more Onchain projects are emerging and our interactions Onchain are becoming more frequent, such as how much liquidity we added in DeFi protocols, which NFTs we minted, and even which social accounts we follow can be recorded Onchain. All of our interactions with blockchain will be recorded in this database and these records will belong to Onchain data.
 
-![](img/01.png)
+![](img/ch00_01.png)
 
 **Onchain data is roughly divided into three categories:**
 
@@ -39,21 +39,21 @@ That is, the business logic coded on the blockchain.
 Onchain data analysis is to extract the desired information from these three types of data for interpretation. 
 From the perspective of the data stack, blockchain data products can be divided into data sources, data development tools, and data apps.
 
-![](img/02.jpg)
+![](img/ch00_02.jpg)
 
 Flexible use of various data products will provide us with a new perspective in the crypto world.
 
 Although we always say that Onchain data is public and transparent, it is difficult for us to directly read this data, because a simple swap transaction Onchain may look like this:
 
-![](img/03.png)
+![](img/ch00_03.png)
 
 We can see some raw Onchain data in the blockchain browser, but if my question is how much is the UniswapV3 trading volume today, this does not solve my problem!
 
-![](img/04.png)
+![](img/ch00_04.png)
 
 The original Onchain data cannot give us the answer, so we need to go through a series of data ingestion processes such as indexing, processing, storage and then aggregate the corresponding data according to the question raised to find an answer.
 
-![](img/data-process.png)
+![](img/ch00_data-process.png)
 
 To start from scratch, we may need to set up our own nodes to receive blockchain data 
 and then process it, but this is obviously very time-consuming and laborious. 
@@ -71,7 +71,7 @@ This Onchain data corresponds to the flow of value Onchain and in turn the insig
 
 Take the familiar DeFi protocol liquidity mining as an example: you add liquidity to earn rewards, the pool increases depth, users enjoy lower slippage, everyone has a bright future, and you securely lock your money in the contract. One day, the black swan quietly arrives, smart money with insider information immediately retreats, and you are just an ordinary investor; by the time you see the negative news and think about withdrawing, the rewards in your hand are almost worthless, and the severe impermanent loss makes it hard for you to break even.
 
-![](img/scam.png)
+![](img/ch00_scam.png)
 
 But if you have an Onchain data perspective, you might find: the protocol's TVL suddenly drops and the token's dumping volume on Uniswap surges. In other words, smart people get the news or find something wrong, the liquidity in the pool is getting worse and money is running away, and everyone is bearish on the token and selling like crazy - should I exit now?
 
@@ -88,7 +88,7 @@ NFT data monitoring platforms are even more varied.
 These "finished" data products, while low-threshold and easy to use, 
 also have a bottleneck that cannot meet high customization requirements.
 
-![](img/07.jpg)
+![](img/ch00_07.jpg)
 
 For example, you discover through https://ultrasound.money/ 
 that the gas consumption on Ethereum suddenly rises, 
@@ -99,7 +99,7 @@ Participants in XEN mining own all the XEN tokens they mine.
 As the number of participants increases, the difficulty of mining increases and the supply decreases. You want to understand the participation situation of everyone,  since just relying on gas consumption is not enough; you also want to know the number of participants, trends, and how long do participants choose to lock. At the same time, you also find that it seems to have no sybil protection. Pay a gas fee to participate - how many scientists are rushing in? Do I still have any profits? When you analyze this, you urgently need data to support your "rush or not" decision; but because it's early, there's no analysis of it in the data app and the app is also unlikely to monitor and analyze every protocol. This is why, despite the existence of many data products, we still need to be able to write some data analysis ourselves: existing products are difficult to meet customized needs.
 
 
-![](img/xen.png)
+![](img/ch00_xen.png)
 
 Through my own data analysis, https://dune.com/sixdegree/xen-crypto-overview, I found out that most people choose short-term pledges, and nearly 70% are new wallets, indicating that they have been exploited by everyone. So I understand that the short-term selling pressure will be very large; if I choose to participate, I will pick the shortest pledge time and sell as soon as possible to see who runs faster. At this point, you have completed the entire process of Onchain data analysis: discover the project, study the project mechanism, abstract the standard for evaluating the project, and finally - perform data processing, visualization, and decision support.
 
@@ -157,7 +157,7 @@ This includes getting data (where does the Onchain data come from),
 processing data (how to find the desired and filter out the irrelevant), 
 and data visualization capabilities.
 
-![](img/support.png)
+![](img/ch00_support.png)
 
 In general, data analysis is just a tool to support research, so don't analyze for the sake of analysis. This process is first out of your desire to research a certain project, concept, or track, then learn and understand the operating mechanism of the project, abstract the quantitative analysis of the qualitative concept, and finally gather data and visualize.
 

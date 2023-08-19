@@ -267,11 +267,11 @@ For example, say we need to calculate the price of the $OP token on the Optimism
 
 A screenshot of the logs on the blockchain browser is as follows:
 
-![](img/image_01.png)
+![](img/ch09_image_01.png)
 
 The screenshot of evm_signatures signature data query is as follows:
 
-![](img/image_02.png)
+![](img/ch09_image_02.png)
 
 When querying `evm_signatures` in the above figure, we did some processing so that the relevant columns of data are displayed from top to bottom. The corresponding SQL statement is:
 

@@ -21,7 +21,7 @@ Similarly, SQL is like the sentence you spoke, Dune Analytics is the errand runn
 
 You can think of a table as an Excel sheet, with each sheet containing different data. Take `ethereum.transactions` (Ethereum transaction records) as an example:
 
-![](img/query-page.png)
+![](img/ch05_query-page.png)
 
 There are some commonly used fields in tables:
 
@@ -55,7 +55,7 @@ and value /power(10,18) >1000 -- Limit ETH transfer value > 1000
 order by block_time -- Sort by block_time in ascending order,desc for descending order
 ```
 
-![](img/query-page2.png)
+![](img/ch05_query-page2.png)
 
 #### Dune Query URL
 
@@ -98,7 +98,7 @@ and "from" = 0x3DdfA8eC3052539b6C9549F12cEA2C295cfF5296
 and value /power(10,18) > 1000 -- Limit ETH transfer value > 1000
 ```
 
-![](img/query-page3.png)
+![](img/ch05_query-page3.png)
 
 #### Dune Query URL
 
@@ -140,7 +140,7 @@ and value /power(10,18) >1000 -- Limit ETH transfer value > 1000
 order by block_time -- Sort by block_time ascending, add desc at end for descending
 ```
 
-![](img/query-page4.png)
+![](img/ch05_query-page4.png)
 
 ##### Dune Query URL
 
@@ -173,7 +173,7 @@ group by 1
 order by 1
 ```
 
-![](img/query-page5.png)
+![](img/ch05_query-page5.png)
 
 ##### Dune Query URL
 
@@ -184,7 +184,7 @@ order by 1
 - Aggregation by groups (`group by`):
   The syntax for aggregation by groups is `group by`. As the name suggests, it groups first then aggregates, and needs to be used together with aggregate functions.
 
-![](img/group-by-case.png)
+![](img/ch05_group-by-case.png)
 
 Let's say the table above shows household expenses (3 people) for the first 2 months of 2020. If you just use `sum`, you would only get the total of 12900. If you want to get the 2 types of aggregated data on the right, you need to use group by (group by `Person` or group by `Month`).
 
@@ -233,7 +233,7 @@ left join -- Join transactions_info with price_info, using left join
 ) price_info on transactions_info.stat_minute = price_info.stat_minute -- Join with stat_minute field
 ```
 
-![](img/leftjoin.png)
+![](img/ch05_leftjoin.png)
 
 ##### Dune Query URL
 
@@ -249,7 +249,7 @@ left join -- Join transactions_info with price_info, using left join
   - Join condition (on)
 - The most commonly used are join and left join. Take these two examples to explain the specific usage
 
-![](img/query-2.png)
+![](img/ch05_query-2.png)
 
 ```
 - join: Joins two tables based on the join condition (on), taking the intersection
@@ -310,7 +310,7 @@ group by 1
 order by 1
 ```
 
-![](img/query-page-1.png)
+![](img/ch05_query-page-1.png)
 
 ##### Dune Query URL
 

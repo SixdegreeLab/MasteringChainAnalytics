@@ -20,11 +20,11 @@ Let's start with the first metric we are going to learn today - Total Value Lock
 
 For example, let's take a look at the TVL ranking for DEXs:
 
-![](img/image_01.png)
+![](img/ch19_image_01.png)
 
 And the TVL ranking for Layer 2 networks:
 
-![](img/image_02.png)
+![](img/ch19_image_02.png)
 
 The top-ranked protocols are the ones with higher popularity.
 
@@ -155,7 +155,7 @@ ORDER BY 1, 2
 
 With this query, we can visualize the TVL changes:
 
-![](img/image_03.png)
+![](img/ch19_image_03.png)
 
 Links to the above queries:
 
@@ -224,7 +224,7 @@ ORDER BY block_date
 
 We use the `DISTINCT` function to ensure that each user is counted only once per day. In addition to calculating the number of daily active users, we also use the `SUM` `OVER` function to calculate the cumulative user count. If you want to calculate the monthly active users (MAU), you can modify the query to use `DATE_TRUNC('month', block_time)` to group the counts by month.
 
-![](img/image_04.png)
+![](img/ch19_image_04.png)
 
 
 
@@ -247,7 +247,7 @@ WHERE start_time >= date('2022-10-01')
 GROUP BY 1
 ```
 
-![](img/image_05.png)
+![](img/ch19_image_05.png)
 
 Here is a practical example that combines the number of new users with specific NFT project user data statistics: [Example](https://dune.com/queries/1334302).
 

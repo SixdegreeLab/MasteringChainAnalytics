@@ -9,7 +9,7 @@ Here we introduce a new concept called Coin Day. `Coin Day = Token Quantity * Nu
 
 All BTC Onchain accumulates Coin Days every day. If a portion of BTC moves (from Wallet A to Wallet B), the accumulated Coin Days for this portion will be destroyed, which is the so-called Coin Day Destroyed.     
 
-![](img/historical_trend.png)    
+![](img/ch21_historical_trend.png)    
 
 
 ### Underlying Logic
@@ -41,7 +41,7 @@ If you can roughly understand the concepts of Input, Output, and UTXO, it's easy
   - `value`: the BTC amount included in this transfer Transaction
   - `spent_tx_id`: the output that generated this Input (Which incoming payment was used for this expenditure)
     
-![](img/input_info.png)       
+![](img/ch21_input_info.png)       
 
 ### bitcoin.outputs
 
@@ -52,7 +52,7 @@ If you can roughly understand the concepts of Input, Output, and UTXO, it's easy
   - `tx_id`: the Tx id of this incoming Transaction
   - `value`: the BTC amount included in this incoming Transaction
   
-![](img/output_info.png)    
+![](img/ch21_output_info.png)    
 
 ## Dashboard Design and Implementation
 
@@ -84,7 +84,7 @@ We can discuss the analysis of fluctuations. In my view, analyzing fluctuations 
     - `Number of active Ethereum users today = Total number of Ethereum users * Active ratio today`
 - `Burn rate: Depends on EIP1559 or whether there are new proposals`    
 
-![](img/funnel_info.png)    
+![](img/ch21_funnel_info.png)    
 
 
 **2. Characteristics of the thing itself**
@@ -105,11 +105,11 @@ Back to the main topic, we'll start designing the Bitcoin - Coin Day Destroyed D
 
 First, we need a chart to reflect the overall situation. Since there's only the CDD as an indicator, which is quite simple, I've only included a historical trend chart.    
 
-![](img/historical_trend.png)    
+![](img/ch21_historical_trend.png)    
 
 However, the time period of this chart is too long and it's difficult to clearly see recent changes in CDD from this chart. Therefore, I've added a trend for the recent period.
 
-![](img/recent_trend.png)     
+![](img/ch21_recent_trend.png)     
 
 P.S. Here, you can still see a significant CDD abnormality before this round of downturn.
 
@@ -119,25 +119,25 @@ Here, I only decomposed along three dimensions:
 
 - Decomposition by time (hour): this way, I know roughly when the indicator abnormality occurred. [Statistics for the latest day].
 
-![](img/hour.png)    
+![](img/ch21_hour.png)    
 
 - Decomposition by the wallet address initiating the transaction: this way, I know what caused the indicator abnormality and whether it was caused by a single wallet or multiple wallets, as well as whether it was a small portion of old coins or a large number of new coins. [Statistics for the latest day].
 
-![](img/wallet.png)    
+![](img/ch21_wallet.png)    
 
 - Decomposition down to the very fine granularity of the Transaction_ID: this way, I know specifically which transactions caused the abnormality and can verify this in the blockchain browser. [Statistics for the latest day].
 
-![](img/transaction.png)    
+![](img/ch21_transaction.png)    
 
 - In addition, to facilitate analysis of fluctuations on any given day in history based on the wallet address, I added a tool module that allows you to find the distribution of CDD by wallet for any day in history by entering the date.
 
-![](img/tool.png)    
+![](img/ch21_tool.png)    
 
 ### Completion
 
 And just like that, a dashboard for monitoring CDD is complete. The final effect is that you can conveniently see the historical trend and recent changes of the indicator. If an abnormality occurs one day, you can quickly pinpoint the time of the abnormality and the associated wallets, as well as the specific transaction_id aids further analysis.
 
-![](img/overview.png)    
+![](img/ch21_overview.png)    
 
 Detailed Dashboard can be found at: https://dune.com/sixdegree/bitcoin-coin-day-destroyed-matrix
 

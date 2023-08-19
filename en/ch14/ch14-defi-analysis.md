@@ -19,7 +19,7 @@ order by 1 asc, 4 desc
 
 This query lists the projects, their corresponding blockchains, and the names of the corresponding Spells in the current `dex.trades` table. Currently, the related Spells for aggregating data in `dex.trades` are shown in the following image:
 
-![](img/image_01.png)
+![](img/ch14_image_01.png)
 
 Query Link:
 
@@ -116,7 +116,7 @@ In this query result, we add the following visualizations:
 
 Create a new Dashboard and include the relevant charts. As shown in the following image:
 
-![](img/image_02.png)
+![](img/ch14_image_02.png)
 
 Similarly, we can summarize the data on a monthly basis, calculate relevant metrics for each month, and add visualizations to the dashboard.
 
@@ -144,7 +144,7 @@ order by 1, 2
 
 Here, we merely compare the number of active users, transaction count, and transaction amount. Bar charts and pie charts for different fields in the result set are added in the dashboard. You may have noticed that our queries are aggregated by both day and project. When creating a Pie Chart, if we select only the `Project` as the X Column and choose `trade_count` as Y Column 1, without selecting any fields for Group By, the trade_count values for each day will automatically be accumulated together, and the total value will be displayed in the pie chart. Considering this, we don't need to write a separate query to generate the pie chart, which is considered an application technique. The dashboard shows as the following :
 
-![](img/image_03.png)
+![](img/ch14_image_03.png)
 
 Query link:
 
@@ -184,7 +184,7 @@ order by 1, 2
 
 In the above query, we first define a `top_token_pair` CTE to retrieve the top 20 token pairs based on transaction count. Then, we summarize the transaction count, active user count, and transaction amount for these 20 token pairs on a monthly basis. We add the corresponding visualizations for this query and include them in the dashboard. The display is shown below.
 
-![](img/image_04.png)
+![](img/ch14_image_04.png)
 
 Query link:
 
@@ -244,7 +244,7 @@ order by 1, 2
 ```
 
 Generate an area chart and a pie chart, and add them to the dashboard. We can observe that the "USDC-WETH" trading pair has accounted for 58% of the total transaction amount since 2022. The visualization is shown in the following:
-![](img/image_05.png)
+![](img/ch14_image_05.png)
 
 Query link:
 
@@ -335,7 +335,7 @@ This query can be interpreted as follows:
 
 Two bar charts are added, with one selecting "Enable stacking" to overlay the bars. The charts are added to the dashboard, and we can observe that the number of churned users is quite large. As shown in the picture below:
 
-![](img/image_06.png)
+![](img/ch14_image_06.png)
 
 Query link:
 

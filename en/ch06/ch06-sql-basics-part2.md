@@ -206,7 +206,7 @@ order by block_date
 
 Add `pool_count_diff` to the visualisation chart (using the right hand axis and choosing Line for the graph type) as shown below:
 
-![](img/part_2_01.png)
+![](img/ch06_part_2_01.png)
 
 The Lead() function proves to be a valuable tool when we wish to perform "forward" comparisons of data across various rows. For example, we previously prpesented a query that identified the creator accounts with the highest post counts in the Lens instance. Now, we shall refine this query to retrieve the top 50 accounts with the highest post counts. With this refined dataset, we can delve into comparing the differences in the number of posts among these top accounts. Specifically, we will examine the variance between the first and second positions, the second and third positions, and so on.The key part of the query code is as follows:
 
@@ -234,7 +234,7 @@ order by post_count desc
 ```
 The query results are shown in the figure below, where we can see that there are very small differences in the number of posts between some accounts:
 
-![](img/part_2_02.png)
+![](img/ch06_part_2_02.png)
 
 Full SQL reference link:
 - [https://dune.com/queries/1647422](https://dune.com/queries/1647422)
@@ -282,7 +282,7 @@ where row_num = 1 -- Filter out the latest average price of each token by row nu
 
 The above query results are shown in the figure below:
 
-![](img/part_2_03.png)
+![](img/ch06_part_2_03.png)
 
 Full SQL reference link:
 - [https://dune.com/queries/1647482](https://dune.com/queries/1647482)

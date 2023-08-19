@@ -47,7 +47,7 @@ Considering that the result data can be quite large, we can put the above query 
 
 We will add 3 Counter charts for the total trading volume, number of trades, and user count. Additionally, we will add 3 Pie charts to display the percentage of trading volume, number of trades, and user count for each chain. Furthermore, we will include a Table chart to present detailed numbers. All these charts will be added to the dashboard, resulting in the following display:
 
-![](img/image_01.png)
+![](img/ch18_image_01.png)
 
 Query link:
 * [https://dune.com/queries/1859214](https://dune.com/queries/1859214)<a id="jump_8"></a>
@@ -85,7 +85,7 @@ Here, we summarize all transaction data from 2022 based on date and blockchains.
 
 Since our goal is to analyze the data performance across different chains, we can focus on the specific values as well as their proportions. Proportional analysis allows us to visually observe the trends of different chains over time. With this in mind, we generate the following charts: Line Chart for daily transaction volume, Bar Chart for daily transaction count/daily unique user count, Area Chart for cumulative transaction volume as well as transaction count/unique user count, and another Area Chart to display the percentage contribution of each daily transaction data. The resulting charts, when added to the dashboard, will appear as follows:
 
-![](img/image_02.png)
+![](img/ch18_image_02.png)
 
 Query link:
 * [https://dune.com/queries/1928680](https://dune.com/queries/1928680)<a id="jump_8"></a>
@@ -136,7 +136,7 @@ order by 1, 2
 
 To generate different visualizations for these queries, displaying the daily number and proportion of new users, daily number and proportion of retained users, daily cumulative number of new users, and the proportion of new users for each chain in 2022, we can create the following charts:
 
-![](img/image_03.png)
+![](img/ch18_image_03.png)
 
 Query link:
 * [https://dune.com/queries/1928825](https://dune.com/queries/1928825)<a id="jump_8"></a>
@@ -155,7 +155,7 @@ order by block_date
 
 Here we will define the blockchain to be filtered as a parameter of type List, which will include the names (in lowercase format) of the four supported blockchains as options. We will generate two charts for the query results, displaying the daily number of new users and their respective proportions. After adding the charts to the dashboard, the display will be as follows:
 
-![](img/image_04.png)
+![](img/ch18_image_04.png)
 
 Query link:
 * [https://dune.com/queries/1929142](https://dune.com/queries/1929142)<a id="jump_8"></a>
@@ -215,7 +215,7 @@ group by 1
 
 We can generate a Pie Chart to compare the number and proportion of newly created liquidity pools on each chain in 2022. Additionally, we can create a Table chart to display detailed data. After adding these charts to the dashboard, the display will look as follows:
 
-![](img/image_05.png)
+![](img/ch18_image_05.png)
 
 Query link:
 * [https://dune.com/queries/1929177](https://dune.com/queries/1929177)<a id="jump_8"></a>
@@ -249,7 +249,7 @@ order by block_date
 
 We can generate a Bar Chart for the daily count of new liquidity pools and an Area Chart to display the daily count percentage. Additionally, we can create an Area Chart to showcase the cumulative count of newly created liquidity pools. The visualizations can be added to the dashboard for display, as shown in the following image:
 
-![](img/image_06.png)
+![](img/ch18_image_06.png)
 
 Query link:
 * [https://dune.com/queries/1929235](https://dune.com/queries/1929235)<a id="jump_8"></a>
@@ -409,7 +409,7 @@ The explanation of the above query is as follows:
 
 Generate a Pie Chart and a Counter chart respectively. Adds them to the dashboard, resulting in the following display:
 
-![](img/image_07.png)
+![](img/ch18_image_07.png)
 
 Query link:
 * [https://dune.com/queries/1929279](https://dune.com/queries/1929279)<a id="jump_8"></a>
@@ -461,7 +461,7 @@ order by 1, 2
 
 We discovered that there is some abnormal data on the Optimism chain, so we added the condition `abs(amount_usd) < 1e9` in the above query to exclude them. Generate an Area Chart for this query. Add it to the dashboard and the display is as follows:
 
-![](img/image_08.png)
+![](img/ch18_image_08.png)
 
 Query link:
 * [https://dune.com/queries/1933439](https://dune.com/queries/1933439)<a id="jump_8"></a>
@@ -515,7 +515,7 @@ limit 100
 
 We can generate a Bar Chart and a Table chart to display the data for the flow pools with the highest TVL (Total Value Locked).
 
-![](img/image_09.png)
+![](img/ch18_image_09.png)
 
 Query link:
 * [https://dune.com/queries/1933442](https://dune.com/queries/1933442)<a id="jump_8"></a>
