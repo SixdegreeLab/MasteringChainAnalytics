@@ -1,6 +1,6 @@
 # 03 Creating Your First Dashboard
 
-In the previous tutorial, "[Getting Started](../02_get_started/readme.md)," we learned the prerequisites for creating a data dashboard and mastered the basics of writing SQL queries. Now, let's write queries and create a Dune data dashboard together. To help you get started faster, we will create the data dashboard using a specific project as an example. The example of the completed data dashboard can be found here: [https://dune.com/sixdegree/uniswap-v3-pool-tutorial](https://dune.com/sixdegree/uniswap-v3-pool-tutorial).
+In the previous tutorial, "**Quick Start**" we learned the prerequisites for creating a data dashboard and mastered the basics of writing SQL queries. Now, let's write queries and create a Dune data dashboard together. To help you get started faster, we will create the data dashboard using a specific project as an example. The example of the completed data dashboard can be found here: [https://dune.com/sixdegree/uniswap-v3-pool-tutorial](https://dune.com/sixdegree/uniswap-v3-pool-tutorial).
 
 We won't go into detail about each step of the process. You can learn how to use Dune's Query Editor and Data Dashboard in the official [Dune platform documentation](https://dune.com/docs/).
 

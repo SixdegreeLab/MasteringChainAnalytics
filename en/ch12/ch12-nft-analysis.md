@@ -83,6 +83,7 @@ interface ERC721 {
 For data analysis, the most important function is the Transfer event, which is triggered on every transaction and recorded on the chain. In addition to Transfer, there is also the Mint event, which is usually used to mint a new NFT at the time of sale. Dune's spells table provides `ERC721`, `ERC1155`  `Transfer` tables such as `erc721_ethereum.evt_Transfer` , `erc1155_ethereum.evt_Transfer`, etc. (different names under different blockchains), so we can query NFT transfer events for a contract or an EOA address.
 
 In the Transfer event, there are three main parameters: the sender address `from`, the receiver address `to` and the number of the NFT `tokenId`. In the case of transaction, both from and to are a normal address. If `mint`, the from address is all 0, and if `burn`, the address of to is all 0. The `nft.mint` and `nft.burn` tables on Dune also decode this event to get the final transaction information.
+
 ![](img/nft-transfer-etherscan.png)
 
 ### marketplace contracts
@@ -321,7 +322,7 @@ Reference Links: https://dune.com/queries/1300500/2228120
 
 We made a dashboard where you can enter the address of an NFT contract and see all kinds of information about the project. You can learn more about queries using the query on the dashboard:
 
-https://dune.com/sixdegree/nft-collections-metrics-custom-dashboard 
+[https://dune.com/sixdegree/nft-collections-metrics-custom-dashboard](https://dune.com/sixdegree/nft-collections-metrics-custom-dashboard)
 
 ![](./img/nft-all-in-one.png)
 

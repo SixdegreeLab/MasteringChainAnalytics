@@ -278,15 +278,15 @@ We can also count the transaction number, transaction amount, etc., for bot and 
 The above introduced the principle and classification of Ethereum MEV, as well as the two methods on how to use Dune to do MEV queries, using Uniswap as an example. [AndrewHong](https://twitter.com/andrewhong5297) also has a lecture on MEV in the [12-day course of Dune](https://www.youtube.com/watch?v=SMnzCw-NeFE). People who are interested can check out the explanation by the principal of Duniversity, where it is mentioned that Dune's label table is derived from Etherscan and its [coverage](https://dune.com/queries/1764004) may not necessarily be sufficient. Therefore, using the two methods introduced in this article, the final query results may slightly differ. MEV is a complex topic, so here we just aim to provoke thought, as more methods need to be explored.
 
 ## References
-1. Understanding the Full Picture of MEV https://huobi-ventures.medium.com/understanding-the-full-picture-of-mev-4151160b7583
-2. Foresight Ventures: Describe, Classify, Dominate MEV https://foresightnews.pro/article/detail/10011
-3. Flashboy 2.0 https://arxiv.org/pdf/1904.05234.pdf
-4. Post-Merge MEV: Modelling Validator Returns https://pintail.xyz/posts/post-merge-mev/
-5. https://dune.com/amdonatusprince/mev-sandwich-attacks-and-jit
-6. https://dune.com/alexth/uniswap-v3-mev-activity
-7. Just-in-time Liquidity on the Uniswap Protocol https://uniswap.org/blog/jit-liquidity
-8. https://github.com/33357/smartcontract-apps/blob/main/Robot/MEV_Who_are_you_working_for.md
-9. https://dune.com/sixdegree/mev-data-analytics-tutorial
+1. [Understanding the Full Picture of MEV](https://huobi-ventures.medium.com/understanding-the-full-picture-of-mev-4151160b7583)
+2. [Foresight Ventures: Describe, Classify, Dominate MEV](https://foresightnews.pro/article/detail/10011)
+3. [Flashboy 2.0](https://arxiv.org/pdf/1904.05234.pdf)
+4. [Post-Merge MEV: Modelling Validator Returns](https://pintail.xyz/posts/post-merge-mev/)
+5. [mev-sandwich-attacks-and-jit](https://dune.com/amdonatusprince/mev-sandwich-attacks-and-jit)
+6. [uniswap-v3-mev-activity](https://dune.com/alexth/uniswap-v3-mev-activity)
+7. [Just-in-time Liquidity on the Uniswap Protocol](https://uniswap.org/blog/jit-liquidity)
+8. [MEV-Who are you working for](https://github.com/33357/smartcontract-apps/blob/main/Robot/MEV_Who_are_you_working_for.md)
+9. [mev-data-analytics-tutorial](https://dune.com/sixdegree/mev-data-analytics-tutorial)
 
 ## About Us
 

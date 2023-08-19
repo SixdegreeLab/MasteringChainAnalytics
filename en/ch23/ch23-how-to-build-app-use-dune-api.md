@@ -38,17 +38,17 @@ The main function of this application is to provide a pure frontend application 
 
 The application includes three main functionalities:
 
-1. New Pools
+1. **New Pools**
+   
+    Returns a list of newly created liquidity pools that meet the selected blockchain and date range criteria. When calling the API, the user selects the blockchain name (in all lowercase) and the date parameters (YYYY-MM-DD, converted to specific dates based on user choices).
 
-Returns a list of newly created liquidity pools that meet the selected blockchain and date range criteria. When calling the API, the user selects the blockchain name (in all lowercase) and the date parameters (YYYY-MM-DD, converted to specific dates based on user choices).
+1. **Latest Swaps**
 
-1. Latest Swaps
+    Displays the latest 100 swap exchange records for a pool selected from the pool list in a new interface. The user enters this interface by clicking the "Latest Swap" link next to a specific pool from the previous step. When calling the API, the user provides the blockchain name, pool address, and the current hour value (YYYY-MM-DD HH:MI:SS, converted to specific date and hour values, e.g. "2023-02-27 09:00:00"). The API call returns the results, which are displayed in a list format.
 
-Displays the latest 100 swap exchange records for a pool selected from the pool list in a new interface. The user enters this interface by clicking the "Latest Swap" link next to a specific pool from the previous step. When calling the API, the user provides the blockchain name, pool address, and the current hour value (YYYY-MM-DD HH:MI:SS, converted to specific date and hour values, e.g. "2023-02-27 09:00:00"). The API call returns the results, which are displayed in a list format.
+3. **Large Swap Alerts**
 
-1. Large Swap Alerts
-
-Allows the user to input a pool address (prompting the user to copy it from the pool list), and set a threshold for large swaps (e.g.1000USD). The application then calls the API every 5 minutes and generates an on-site alert if there are swap records that meet the specified condition. The user can set the pool address to monitor and the minimum swap amount in USD (currently providing three choices: 1000, 10000, and 100000). If the API returns data, it will be added to the on-site alert. A red badge in the navigation bar will indicate the number of unread alerts, and clicking it will display the list. After clicking on a single alert, it will be marked as read.
+    Allows the user to input a pool address (prompting the user to copy it from the pool list), and set a threshold for large swaps (e.g.1000USD). The application then calls the API every 5 minutes and generates an on-site alert if there are swap records that meet the specified condition. The user can set the pool address to monitor and the minimum swap amount in USD (currently providing three choices: 1000, 10000, and 100000). If the API returns data, it will be added to the on-site alert. A red badge in the navigation bar will indicate the number of unread alerts, and clicking it will display the list. After clicking on a single alert, it will be marked as read.
 
 ## Development Environment Setup
 

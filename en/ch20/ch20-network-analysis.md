@@ -11,11 +11,11 @@ Tools used in the process:
 - Dune: get raw data between addresses and do initial processing
 - Python
   - Networkx: python package for creating, manipulating and studying complex networks. Allows storing networks in standardized and non-standardized data formats, generating various random and classic networks, analyzing network structure, building network models, designing new network algorithms, drawing networks, etc.
-    - More info: https://networkx.org/
+    - More info: [https://networkx.org/](https://networkx.org/)
   - Plotly: great package for visualizations, can generate interactive HTML files. Has a complementary frontend framework called DASH that is very user-friendly for data analysts without advanced engineering skills.
-    - More info: https://plotly.com/
+    - More info: [https://plotly.com/](https://plotly.com/)
   - Pandas: most commonly used Python package for working with data, provides many functions and methods to enable quick and convenient data manipulation.
-    - More info: https://pandas.pydata.org/
+    - More info: [https://pandas.pydata.org/](https://pandas.pydata.org/)
 - Etherscan API: calculating ETH Balance on Dune is too tedious, requiring pulling all data each time. We can simply get Balance from the Etherscan API.
 
 ## Overview
@@ -32,23 +32,23 @@ The process can be broadly divided into the following steps:
 
 The SQL is quite complex so I won't go into detail, so feel free to check the URL for details if interested:
 
-- Get data with relationships between all relevant addresses with SQL: https://dune.com/queries/1753177
+- Get data with relationships between all relevant addresses with SQL: [https://dune.com/queries/1753177](https://dune.com/queries/1753177)
 
   - from: sender of the transaction
   - to: receiver of the transaction
   - transfer_eth_balance: total ETH transferred between two
   - transfer_eth_count: total number of ETH transfers between two accounts
 
-![](img/2023-07-25-16-27-01.png)
+![](img/01-Graph-Raw-Relation.png)
 
-- Get list of all addresses and associated labels via SQL: https://dune.com/queries/2430347
+- Get list of all addresses and associated labels via SQL: [https://dune.com/queries/2430347](https://dune.com/queries/2430347)
 
   - address: all addresses involved in this network analysis
   - level_type: level in the network for all addresses involved (Core, Layer One, Layer Two)
   - account_type: is a regular EOA, exchange, or smart contract
   - label: useful aggregated info for the address into a label for subsequent visualization in python
 
-![](img/20-2.png)
+![](img/02-graph-raw-label.png)
 
 #### II. Read local files into DataFrames using pandas and supplement with Balance column from Etherscan API
 
@@ -280,7 +280,7 @@ print('end')
 
 #### V. Result graph
 
-Check out the interactive version at this URL: https://pro0xbi.github.io/FTX_Accounts_Drainer.html
+Check out the interactive version at this URL: [https://pro0xbi.github.io/FTX_Accounts_Drainer.html](https://pro0xbi.github.io/FTX_Accounts_Drainer.html)
 
 - Node colors
 
