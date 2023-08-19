@@ -51,7 +51,7 @@ We can see some raw Onchain data in the blockchain browser, but if my question i
 
 The original Onchain data cannot give us the answer, so we need to go through a series of data ingestion processes such as indexing, processing, storage and then aggregate the corresponding data according to the question raised to find an answer.
 
-![](img/05.jpg)
+![](img/data-process.png)
 
 To start from scratch, we may need to set up our own nodes to receive blockchain data 
 and then process it, but this is obviously very time-consuming and laborious. 
@@ -69,7 +69,7 @@ This Onchain data corresponds to the flow of value Onchain and in turn the insig
 
 Take the familiar DeFi protocol liquidity mining as an example: you add liquidity to earn rewards, the pool increases depth, users enjoy lower slippage, everyone has a bright future, and you securely lock your money in the contract. One day, the black swan quietly arrives, smart money with insider information immediately retreats, and you are just an ordinary investor; by the time you see the negative news and think about withdrawing, the rewards in your hand are almost worthless, and the severe impermanent loss makes it hard for you to break even.
 
-![](img/06.jpg)
+![](img/scam.png)
 
 But if you have an Onchain data perspective, you might find: the protocol's TVL suddenly drops and the token's dumping volume on Uniswap surges. In other words, smart people get the news or find something wrong, the liquidity in the pool is getting worse and money is running away, and everyone is bearish on the token and selling like crazy - should I exit now?
 
@@ -97,13 +97,12 @@ Participants in XEN mining own all the XEN tokens they mine.
 As the number of participants increases, the difficulty of mining increases and the supply decreases. You want to understand the participation situation of everyone,  since just relying on gas consumption is not enough; you also want to know the number of participants, trends, and how long do participants choose to lock. At the same time, you also find that it seems to have no sybil protection. Pay a gas fee to participate - how many scientists are rushing in? Do I still have any profits? When you analyze this, you urgently need data to support your "rush or not" decision; but because it's early, there's no analysis of it in the data app and the app is also unlikely to monitor and analyze every protocol. This is why, despite the existence of many data products, we still need to be able to write some data analysis ourselves: existing products are difficult to meet customized needs.
 
 
-![](img/08.jpg)
-
+![](img/xen.png)
 
 Through my own data analysis, https://dune.com/sixdegree/xen-crypto-overview, I found out that most people choose short-term pledges, and nearly 70% are new wallets, indicating that they have been exploited by everyone. So I understand that the short-term selling pressure will be very large; if I choose to participate, I will pick the shortest pledge time and sell as soon as possible to see who runs faster. At this point, you have completed the entire process of Onchain data analysis: discover the project, study the project mechanism, abstract the standard for evaluating the project, and finally - perform data processing, visualization, and decision support.
 
 
-![](img/09.jpg)
+
 
 
 
@@ -129,7 +128,11 @@ if the momentum is still up, then I will participate in it.
 
 monitor the holding movements of Smart money addresses and even consider the trading volume and holding distribution of tokens; check the protocol's TVL, outstanding debt amount, capital utilization rate, APR, etc.; consider daily new user numbers, growth trends, daily active user numbers, transaction numbers, player inflow/outflow situation, and the NFT market item sales situation.
 
-![](img/10.jpg)
+- **Three Question before doing data analysis**:
+  1. What is my purpose?
+  2. What is my strategy?
+  3. What data do I need to help me make decisions?
+
 
 The difficulty of these three questions increases gradually. The first two are easier to answer, but it is difficult to think clearly about the third question, which requires a lot of learning and understanding. This is also the small threshold that distinguishes the level of data analysts. A good analyst should have the following three characteristics:
 
@@ -152,7 +155,7 @@ This includes getting data (where does the Onchain data come from),
 processing data (how to find the desired and filter out the irrelevant), 
 and data visualization capabilities.
 
-![](img/11.jpg)
+![](img/support.png)
 
 In general, data analysis is just a tool to support research, so don't analyze for the sake of analysis. This process is first out of your desire to research a certain project, concept, or track, then learn and understand the operating mechanism of the project, abstract the quantitative analysis of the qualitative concept, and finally gather data and visualize.
 
