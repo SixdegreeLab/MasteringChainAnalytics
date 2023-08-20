@@ -55,3 +55,18 @@ This is a series tutorials for blockchain analysis enthusiasts, helping new user
 - Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
 - Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
 - Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)
+
+## Acknowledgements
+
+**Sponsor**
+
+This book is sponsored by the following institutions, really appreciate their strong support when writing this book.
+
+- [Ethereum Fundation](https://ethereum.foundation/)
+- [Dune Analytics](https://dune.com/)
+
+**Contributors**
+
+At the same time, there are many contributors to participate in this book. Thank you very much for your hard work.
+
+- george-taotaome, chenxsan, Brendan, 肖宁, g.c., ken, shell, yueyan, wodeche,Winkey
