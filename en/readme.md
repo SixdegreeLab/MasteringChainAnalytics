@@ -1,7 +1,6 @@
-# Mastering Onchain Analytics
 
 <p align="center">
-  <img src="assets/bookcover-en.png" alt="book" width="50%"/>
+  <img src="assets/bookcover-en.png" alt="book" width="60%"/>
 </p>
 
 This is a series tutorials for blockchain analysis enthusiasts, helping new users learn blockchain data analysis from scratch and become an onchain data analyst master.
@@ -13,7 +12,7 @@ This is a series tutorials for blockchain analysis enthusiasts, helping new user
 > Join & contribute: [https://github.com/SixdegreeLab/MasteringChainAnalytics](https://github.com/SixdegreeLab/MasteringChainAnalytics)
 
 
-# Table of contents
+## Table of contents
 
 - **Introduction**
   - [Introduction](readme.md)
