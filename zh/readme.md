@@ -56,3 +56,21 @@
 - Twitter: [twitter.com/SixdegreeLab](https://twitter.com/SixdegreeLab)
 - Dune: [dune.com/sixdegree](https://dune.com/sixdegree)
 - Github: [https://github.com/SixdegreeLab](https://github.com/SixdegreeLab)
+
+
+## 致谢
+
+**赞助**
+
+本书得到以下机构赞助，非常感谢他们在撰写此书期间给予的大力支支持。
+
+
+- [Ethereum Fundation](https://ethereum.foundation/)
+- [Dune Analytics](https://dune.com/)
+
+**贡献者**
+
+与此同时，有非常多的贡献者也参与到了此书的编写中，非常感谢他们的努力付出。
+
+
+- george-taotaome, chenxsan, Brendan, 肖宁, g.c., ken, shell, yueyan, wodeche,Winkey
