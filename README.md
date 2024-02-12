@@ -38,9 +38,9 @@ This is a series tutorials for blockchain analysis enthusiasts, helping new user
 | #22          | [how to build spellbook](en/ch22/ch22-how-to-build-spellbook.md)                           | [如何构建魔法表（Spellbook）](zh/ch22/ch22-how-to-build-spellbook.md)               |
 | #23          | [how to build app use dune api](en/ch23/ch23-how-to-build-app-use-dune-api.md)             | [使用Dune API创建应用程序](zh/ch23/ch23-how-to-build-app-use-dune-api.md)          |
 | **Account Abstraction**     |  ---                                                                                       |  ---                                                                       |
-| #20          | [#AA 01 explanation of account abstraction](ch24/ch24-explanation-of-account-abstraction.md)                                       |                                 |
-| #21          | [#AA 02 account abstraction data analysis](ch25/ch25-account-abstraction-data-analysis.md)                                               |                            |
-| #22          | [[#AA 03 AA aggregation table of EVM chains](ch26/ch26-AA-aggregation-table-of-EVM-chains.md)                           |                |
+| #AA 01          | [explanation of account abstraction](ch24/ch24-explanation-of-account-abstraction.md)                                       |                                 |
+| #AA 02          | [account abstraction data analysis](ch25/ch25-account-abstraction-data-analysis.md)                                               |                            |
+| #AA 03          | [AA aggregation table of EVM chains](ch26/ch26-AA-aggregation-table-of-EVM-chains.md)                           |                |
 
 
 
