@@ -2,16 +2,16 @@
 
 The `EntryPoint` contract of ERC4337 has been deployed on multiple EVM chains. You can view the list of all chains that have deployed the `EntryPoint` contract here:
 
-- v0.5: https://blockscan.com/address/0x5fF137D4b0FDCD49DcA30c7CF57E578a026d2789
-- v0.6: https://blockscan.com/address/0x0576a174D229E3cFA37253523E645A78A0C91B57
+- v0.5: [https://blockscan.com/address/0x5fF137D4b0FDCD49DcA30c7CF57E578a026d2789](https://blockscan.com/address/0x5fF137D4b0FDCD49DcA30c7CF57E578a026d2789)
+- v0.6: [https://blockscan.com/address/0x0576a174D229E3cFA37253523E645A78A0C91B57](https://blockscan.com/address/0x0576a174D229E3cFA37253523E645A78A0C91B57)
 
 If you want to analyze the combined data of all EVM chains, it would clearly be too cumbersome to write the analysis one by one. Therefore, based on the spellbook of the dune platform, we have aggregated the data of the EntryPoint contracts of two versions on 9 major blockchains into two new data tables. These tables can currently be directly used on the dune platform for easy analysis. The specific source code can be found at:
 
-https://github.com/duneanalytics/spellbook/tree/main/models/account_abstraction/erc4337
+[https://github.com/duneanalytics/spellbook/tree/main/models/account_abstraction/erc4337](https://github.com/duneanalytics/spellbook/tree/main/models/account_abstraction/erc4337)
 
 
-- `account_abstraction_erc4337.account_deployed`: Includes AccountDeployed event data from 9 chains
 - `account_abstraction_erc4337.userops`: Contains `UserOperationEvent` event data from 9 chains, also joined with the `transactions` table and `price` table to get information like the bundler of each `userOp` and the gas fee paid for that transaction.
+- `account_abstraction_erc4337.account_deployed`: Includes AccountDeployed event data from 9 chains
 
 Including blockchains:
 |           |        |
@@ -23,7 +23,9 @@ Including blockchains:
 | Avalanche |        |
 
 
-## account_abstraction_erc4337.userops
+## userops
+
+For a detailed definition of userops, see the link below
 
 The aggregated table userops contains more information, the included field information is as follows:
 
@@ -96,12 +98,12 @@ from revenue group by 1
 
 ![](img/agg-monthly-revenue.png)
 
-## account_abstraction_erc4337.account_deployed
+## account_deployed
 
 The information contained in account_deployed is relatively small, it just integrates the data of the two contract versions and several EVM chains together. 
 See the link for detailed definitions:
 
-https://spellbook-docs.dune.com/#!/model/model.spellbook.account_abstraction_erc4337_account_deployed
+[https://spellbook-docs.dune.com/#!/model/model.spellbook.account_abstraction_erc4337_userops](https://spellbook-docs.dune.com/#!/model/model.spellbook.account_abstraction_erc4337_userops)
 
 The fields included in the aggregated account_deployed table are as follows:
 
@@ -132,4 +134,4 @@ select chain, count(distinct factory) as Factories from total_op group by 1 orde
 
 For complete examples, please refer to the following link. This dashboard contains analyses of various aspects of `EntryPoint`:
 
-https://dune.com/sixdegree/account-abstraction-overview
+[https://dune.com/sixdegree/account-abstraction-overview](https://dune.com/sixdegree/account-abstraction-overview)
