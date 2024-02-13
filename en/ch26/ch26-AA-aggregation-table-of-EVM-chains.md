@@ -25,7 +25,9 @@ Including blockchains:
 
 ## userops
 
-For a detailed definition of userops, see the link below
+For a detailed definition of userops, see the link below:
+
+[https://spellbook-docs.dune.com/#!/model/model.spellbook.account_abstraction_erc4337_userops](https://spellbook-docs.dune.com/#!/model/model.spellbook.account_abstraction_erc4337_userops)
 
 The aggregated table userops contains more information, the included field information is as follows:
 
