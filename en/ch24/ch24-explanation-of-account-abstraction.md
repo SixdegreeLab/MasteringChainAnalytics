@@ -2,37 +2,42 @@
 
 ## Introduction of Account Abstraction
 
-Ethereum has two types of accounts: externally owned account (EOA) and contract accounts (Smart Contract, CA).
+Ethereum has two types of accounts: externally owned accounts (EOA) and contract accounts (CA), or smart contracts.
 
-- EOAs are user-controlled accounts that can send transactions. EOAs control ownership of the account through their private key, and can execute transactions by signing, thus changing the internal state of the EOA or the state of an external contract account. 
-Since the private key (or seed phrase) is the only representation of EOA ownership, EOAs are not suitable for defining complex ownership or transaction logic, such as social login and multisig transactions. The limitations of EOAs lead to poor user experiences: 
-some cumbersome steps, such as private key and secret phase management, directly hinder Web2 users from entering Web3. Most popular wallets, like MetaMask, are based on the EOA account model.
+- EOAs are user-controlled accounts that can send transactions. Users maintain ownership of their accounts through their private keys, and can execute transactions by signing, thus changing the internal state of their EOAs or the state of external contract accounts. 
+Since the private key (or seed phrase) is the only representation of EOA ownership, EOAs are not suitable for defining complex ownership or transaction logic, such as social login and multisig transactions. The limitations of EOAs lead to poor user experiences;
+some cumbersome steps, such as private key and secret phase management, directly hinder Web2 users from entering Web3. Most popular wallets, such as MetaMask, are based on the EOA model.
+
 
 - CAs can host arbitrary Solidity code, thus being able to leverage the full Turing completeness of the EVM. Unfortunately, contract accounts cannot send transactions, so their functionality must be triggered by EOAs. 
-Smart contract wallets are a type of contract account that are indirectly triggered by their users through the EOA networks of wallet providers, whether through relays or bundlers.
+A smart contract wallet is a type of contract account that is indirectly triggered by its user through the EOA networks of wallet providers, whether through relays or bundlers.
 
-**Account Abstraction (AA)**, the core of which is to decouple the signing authority and ownership of accounts, allowing for more flexible combinations of CAs and EOAs, and enabling features like gas abstraction, programmable permissions, etc through smart contract code. 
 
-The ERC4337 standard is a standard for implementing Account Abstraction without changing the Ethereum consensus layer, and it's also the proposal with the highest feasibility. In the past year, a large number of applications based on this protocol have also emerged. 
+**Account Abstraction (AA)**, the core of which is to decouple the signing authority and ownership of accounts, allowing for more flexible combinations of CAs and EOAs, thus enabling features like gas abstraction, programmable permissions, etc. through smart contract code. 
+
+The ERC4337 standard is a measure for implementing Account Abstraction without changing the Ethereum consensus layer, and it's also the proposal with the highest feasibility. In the past year, a large number of applications based on this protocol have also emerged. 
 The series of account abstraction data analysis articles are all centered around this standard.
+
 
 ## ERC4337 Execution Flow
 
 In the ERC4337 account abstraction standard implementation, there are four roles involved:
 
-- User: The owner of the smart wallet, corresponding to the Smart Wallet Contract.
-- Bundler: Responsible for submitting the transaction information submitted by the user to the entry point contract (EntryPoint), these are EOA accounts.
-- Paymaster: Responsible for paying gas fees for operations, this is optional, if not set the gas is paid by the smart contract wallet.
-- Wallet Factory: Responsible for creating new smart contract wallets.
+- User: the owner of the smart wallet, corresponding to the smart wallet contract.
+- Bundler: responsible for submitting the transaction information sent by the user to the entry point contract (EntryPoint). These are EOA accounts.
+- Paymaster: responsible for paying gas fees for operations, but this is optional. If not set the gas is paid by the smart contract wallet.
+- Wallet Factory: responsible for creating new smart contract wallets.
+
 
 
 The specific execution flow is as follows:
 
 1. The user submits User Operations through an account abstraction supported wallet, these User Operations will enter an Alt Mempool;
-2. The Bundler monitors this Mempool, retrieves User Operations from it, and submits these Ops to the entry point contract;
-3. If there is an initcode field in this wallet, the Factory Contract will be called to deploy a new smart wallet contract;
+2. The bundler monitors this Mempool, retrieves User Operations from it, and submits these Ops to the entry point contract;
+3. If there is an initcode field in this wallet, the factory contract will be called to deploy a new smart wallet contract;
 4. If there is no initcode field, the smart wallet contract will be called to execute the specific operation;
-5. In steps 3 and 4, if the user has set a paymaster in the UserOp, then the ETH comes from the paymaster, otherwise the gas is paid by the wallet.
+5. In steps 3 and 4, if the user has set a paymaster in the UserOp, then the ETH comes from the paymaster. Otherwise, the gas is paid by the wallet.
+
 
 ![](./img/erc4337-flow.png)
 
@@ -63,22 +68,23 @@ From the above flow we can see that all smart contract wallets are executed thro
 | function handleAggregatedOps |                                  |
 
 ### handleOps function
-Among all the functions, handleOps is the most important function of the entire contract, all user submitted operations will go through this function.
+Among all the functions, handleOps is the most important function of the entire contract, as all user submitted operations will pass through this function.
 
 Let's take a transaction on Ethereum as an example to illustrate. This operation first creates a new smart wallet contract, then it calls Lido's Warpped stETH contract to swap 0.0001 ETH for wstETH.
+
 
 [0x56971f8e053a236b1700e428f37a6bf9cc197e5f59e36a4571323a84888764eb](https://etherscan.io/tx/0x56971f8e053a236b1700e428f37a6bf9cc197e5f59e36a4571323a84888764eb)
 
 ![](img/etherscan-transaction.png)
 
 
-The specific execuate flow is as follows: 
+The specific execution flow is as follows: 
 https://phalcon.blocksec.com/explorer/tx/eth/0x56971f8e053a236b1700e428f37a6bf9cc197e5f59e36a4571323a84888764eb
 
 ![](img/execuate-flow.png)
 
 
-Let's first check the `handleOps` function definition. This function takes in two parameters: an array of `UserOps` called `ops`, and a Bundler's `beneficiary` address for gas payment.
+Let's first check the `handleOps` function definition. This function takes in two parameters: an array of `UserOps` called `ops`, and a bundler’s `beneficiary` address for gas payment.
 
 ``` solidity
 function handleOps(UserOperation[] calldata ops, address payable beneficiary) public nonReentrant {
@@ -124,8 +130,8 @@ The details of `UserOp` are as follows, with the above example referencing this 
 | beneficiary | beneficiary              | address  | the address to receive the fees                                                                                                               | 0x25Df024637d4e56c1aE9563987Bf3e92C9f534c0                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 
-The above example contains initCode, so the first step will call the Wallet Factory to create a smart wallet contract, 
-this example uses ZeroDev's, at this time the transaction will record an event log, containing:
+The above example contains initCode, so the first step will call the wallet factory to create a smart wallet contract.
+This example uses ZeroDev's, and at this time the transaction will record an event log, containing:
 
 - `userOpHash`: the userOp that deployed this account. UserOperationEvent will follow.
 - `sender`: the account that is deployed
@@ -135,7 +141,7 @@ this example uses ZeroDev's, at this time the transaction will record an event l
 ![](img/event-AccountDeployed.png)
 
 
-Then it starts to execute the Validate operation, but this operation is not designed with too much information, so let's not consider it for now.
+It then begins to execute the Validate operation, but this operation is not designed with too much information, so let's not consider it for now.
 
 Finally, the EntryPoint will call the smart wallet contract to execute some tasks, 
 such as transfers, interacting with dex, staking, etc. 
