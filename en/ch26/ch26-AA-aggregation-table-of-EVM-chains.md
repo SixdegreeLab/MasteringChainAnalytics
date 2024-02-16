@@ -5,13 +5,13 @@ The `EntryPoint` contract of ERC4337 has been deployed on multiple EVM chains. Y
 - v0.5: [https://blockscan.com/address/0x5fF137D4b0FDCD49DcA30c7CF57E578a026d2789](https://blockscan.com/address/0x5fF137D4b0FDCD49DcA30c7CF57E578a026d2789)
 - v0.6: [https://blockscan.com/address/0x0576a174D229E3cFA37253523E645A78A0C91B57](https://blockscan.com/address/0x0576a174D229E3cFA37253523E645A78A0C91B57)
 
-If you want to analyze the combined data of all EVM chains, it would clearly be too cumbersome to write the analysis one by one. Therefore, based on the spellbook of the dune platform, we have aggregated the data of the EntryPoint contracts of two versions on 9 major blockchains into two new data tables. These tables can currently be directly used on the dune platform for easy analysis. The specific source code can be found at:
+If you want to analyze the combined data of all EVM chains, it would clearly be too cumbersome to write the analyses one by one. Therefore, based on the spellbook of the dune platform, we have aggregated the data of the EntryPoint contracts of two versions on 9 major blockchains into two new data tables. These tables can currently be directly used on the dune platform for easy analysis. The specific source code can be found at:
 
 [https://github.com/duneanalytics/spellbook/tree/main/models/account_abstraction/erc4337](https://github.com/duneanalytics/spellbook/tree/main/models/account_abstraction/erc4337)
 
+- `account_abstraction_erc4337.userops`: contains UserOperationEvent event data from 9 chains, also joined with the transactions table and price table to get information like the bundler of each `userOp` and the gas fee paid for that transaction.
+- `account_abstraction_erc4337.account_deployed`: includes AccountDeployed event data from 9 chains
 
-- `account_abstraction_erc4337.userops`: Contains `UserOperationEvent` event data from 9 chains, also joined with the `transactions` table and `price` table to get information like the bundler of each `userOp` and the gas fee paid for that transaction.
-- `account_abstraction_erc4337.account_deployed`: Includes AccountDeployed event data from 9 chains
 
 Including blockchains:
 |           |        |
@@ -25,11 +25,11 @@ Including blockchains:
 
 ## userops
 
-For a detailed definition of userops, see the link below:
+For a detailed definition of `UserOps`, see the link below:
 
 [https://spellbook-docs.dune.com/#!/model/model.spellbook.account_abstraction_erc4337_userops](https://spellbook-docs.dune.com/#!/model/model.spellbook.account_abstraction_erc4337_userops)
 
-The aggregated table userops contains more information, the included field information is as follows:
+The aggregated table UserOps contains more information; the included field information is as follows:
 
 | COLUMN              | DESCRIPTION                                                                                                                              |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------|
@@ -53,7 +53,7 @@ The aggregated table userops contains more information, the included field infor
 | beneficiary         | the address where the bundler setting for the user operation pay for thier gas fee                                                       |
 
 
-The analysis will then be much simpler. For example, analyzing the distribution of `user operations` across 9 chains:
+The analysis will then be much simpler. For example, analyzing the distribution of user operations across 9 chains:
 
 ```sql
 with total_op as (

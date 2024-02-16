@@ -1,17 +1,18 @@
 # Account Abstraction Data Analysis
 
-The previous chapter mentions that the account abstraction system implemented by ERC4337 involves ordinary users, packagers, payees, and wallet factories. So when looking at the ecosystem participants' performance in Account Abstraction, it is more about looking at the on-chain metrics of these few participants. Here we use the tables in the decoded EntryPoint on the **[Dune](https://dune.com)** platform to see how to analyze. Here we take the EntryPoint v0.6 version on the Polygon chain as an example. You can find the corresponding table in `Data explorer` -> `Decoded projects` -> `erc4337` on the left side.
+The previous chapter mentioned that the account abstraction system implemented by ERC4337 involves ordinary users, packagers, payees, and wallet factories. So when looking at the ecosystem participants' performance in Account Abstraction, it is more about looking at the on-chain metrics of these few participants. Here we use the tables in the decoded EntryPoint on the  **[Dune](https://dune.com)** platform to analyze. We take the EntryPoint v0.6 version on the Polygon chain as an example. You can find the corresponding table in `Data explorer` -> `Decoded projects` -> `erc4337` on the left side.
 
 
 ## Basic table
 
-- `handleOps(function)`: Execute a batch of UserOperations
-- `UserOperationEvent(event)`: An event emitted after each successful request
+- `handleOps(function)`: execute a batch of UserOperations
+- `UserOperationEvent(event)`: an event emitted after each successful request
 - `AccountDeployed(event)`: account "sender" was deployed.
+
 
 ## User analysis
 
-Let's start with the simplest - how many User Operations were initiated by users. Each Operation initiated by a user will generate a UserOperationEvent record, so the calculation needs to use the UserOperationEvent table, note that it's not the handleOps table, because as mentioned earlier, handleOps will pass in an array of ops, which means one record in the handleOps table will correspond to multiple records in the UserOperationEvent table.
+Let's start with the simplest analysis: how many User Operations were initiated by users. Each Operation initiated by a user will generate a UserOperationEvent record, so the calculation needs to use the UserOperationEvent table. Note that it's not the `handleOps` table, because as mentioned earlier, `handleOps` will pass in an array of ops, which means one record in the `handleOps` table will correspond to multiple records in the UserOperationEvent table.
 
 ``` sql
 --get the total User Operations
@@ -25,12 +26,13 @@ group by 1
 ![](img/daily-operation.png)
 
 
-Daily new user analysis, that is, calculating how many new wallet addresses are created every day, there are two ways, one is to count through whether the `initCode` field in `handleOps` is not empty, and the other is to count the daily number of new users through the AccountDeployed event.
+For daily new user analysis - that is, calculating how many new wallet addresses are created every day - there are two ways. One is to count the instances in which the `initCode` field in `handleOps` is not empty, and the second is to count the daily number of new users through the AccountDeployed event.
 
 ![](img/daily-new-user.png)
 
 ## Bundler analysis
-For **bundlers**, it is usually necessary to analyze which bundler there are and the market share of each bundler, because the `UserOperationEvent` table does not record the Bundler address, so we need to obtain the EOA account address that initiated this transaction through the hash field of the transaction association `polygon.transactions` table. Of course there is another way, which is to obtain its `beneficiary` field as the bundler address by associating with the `handleOps` table. Here we adopt the former.
+
+For **bundlers**, it is usually necessary to analyze how many bundlers there are and the market share of each bundler, because the UserOperationEvent table does not record the bundler address, so we need to obtain the EOA address that initiated this transaction through the hash field of the transaction association `polygon.transactions` table. Of course there is another way, which is to obtain its beneficiary field as the bundler address by associating with the `handleOps` table. Here we adopt the former.
 
 ``` sql
 -- total bundler count
@@ -62,7 +64,7 @@ select bundler, count(*) as nums from ops left join tx on ops.evt_tx_hash = tx.h
 
 ![](img/bundler-rank.png)
 
-In addition to submitting `userOp`, the bundler also needs to pay gasfee for this transaction, so it is also necessary to analyze the gas paid by the bundler to see if the bundler is at a loss or making a profit. To do this, on the basis of getting the bundler above, we need to associate the `price` table again to obtain the token price at each time point, so as to calculate the USD revenue of the bundler. The following SQL is used to calculate the actual `op_fee` and `op_fee_usd` paid for an Operation, as well as the `tx_fee` and `tx_fee_usd` paid by the Bundler for this transaction. `op_fee - tx_fee` is the income for the bundler. When calculating the bundler's income, it should be noted that the above sql is calculated on a per-userop basis. For the case where a transaction contains multiple `operations(userOp)`, direct calculation will result in duplicate calculations, and the result will be incorrect. Therefore, this part of the data needs to be excluded.
+In addition to submitting `userOp`, the bundler also needs to pay gas fee for this transaction, so it is also necessary to analyze the gas paid by the bundler to see if the bundler is at a loss or making a profit. To do this, based on the bundler above, we need to associate the `price` table again to obtain the token price at each time point, so as to calculate the USD revenue of the bundler. The following SQL is used to calculate the actual `op_fee` and `op_fee_usd` paid for an Operation, as well as the `tx_fee` and `tx_fee_usd` paid by the bundler for this transaction. `op_fee - tx_fee` is the income for the bundler. When calculating the bundler's income, it should be noted that the above sql is calculated on a per-userop basis. For the case where a transaction contains multiple `operations(userOp)`, direct calculation will result in duplicate calculations, and the result will be incorrect. Therefore, this part of the data needs to be excluded.
 
 ``` sql
 -- get bundler revernue
@@ -141,7 +143,7 @@ select * from revenue order by BundlerRevenueUSD desc
 
 ## Paymaster analysis
 
-The analysis of the paymaster is relatively simpler than that of the bundler. The paymaster information of each operation is recorded in the `paymaster` field in the `UserOperationEvent` table. If the `paymaster` field value is `0000...0000`, it means this operation(userOp) does not use a paymaster. If it is not empty, it stores the contract address of the paymaster. The paymaster usually analyzes information such as how many paymasters it has and how many operations each paymaster has paid for.
+The analysis of the paymaster is relatively simpler than that of the bundler. The paymaster information of each operation is recorded in the `paymaster` field in the `UserOperationEvent` table. If the `paymaster` field value is `0000...0000`, it means this operation (userOp) does not use a paymaster. If it is not empty, it stores the contract address of the paymaster. The paymaster usually analyzes information such as how many paymasters it has and how many operations each paymaster has paid for.
 
 ``` sql
 -- ===== total paymaster count =====
@@ -182,9 +184,8 @@ group by 1 order by 2 desc
 
 ![](img/wallet-factory.png)
 
-It is worth noting that these bundlers, paymasters and wallet factories may belong to the same entity. When analyzing, we can further associate these addresses entity labels to get results that are closer to the real world. The labels for these addresses can be found here:
+It is worth noting that these bundlers, paymasters, and wallet factories may belong to the same entity. When analyzing, we can further associate these addresses entity labels to get results that are closer to the real world. The labels for these addresses can be found here:
 
 https://docs.google.com/spreadsheets/d/1QJEYDOr-AMD2bNAoupfjQJYJabFgdb2TRSyekdIfquM/edit#gid=0
 
 The above analysis only considers the version v0.6 of the EntryPoint contract on Polygon. If you want to analyze information on other chains, you can analyze it in the same way. Of course, you can also use the aggregated tables we provide on Dune for analysis, which will be introduced in detail in the next chapter.
-
