@@ -2,8 +2,9 @@
 
 The `EntryPoint` contract of ERC4337 has been deployed on multiple EVM chains. You can view the list of all chains that have deployed the `EntryPoint` contract here:
 
-- v0.5: [https://blockscan.com/address/0x5fF137D4b0FDCD49DcA30c7CF57E578a026d2789](https://blockscan.com/address/0x5fF137D4b0FDCD49DcA30c7CF57E578a026d2789)
-- v0.6: [https://blockscan.com/address/0x0576a174D229E3cFA37253523E645A78A0C91B57](https://blockscan.com/address/0x0576a174D229E3cFA37253523E645A78A0C91B57)
+- v0.5: [https://contractscan.xyz/contract/0x0576a174d229e3cfa37253523e645a78a0c91b57](https://contractscan.xyz/contract/0x0576a174d229e3cfa37253523e645a78a0c91b57)
+- v0.6: [https://contractscan.xyz/contract/0x5ff137d4b0fdcd49dca30c7cf57e578a026d2789](https://contractscan.xyz/contract/0x5ff137d4b0fdcd49dca30c7cf57e578a026d2789)
+- v0.7: [https://contractscan.xyz/contract/0x0000000071727de22e5e9d8baf0edac6f37da032](https://contractscan.xyz/contract/0x0000000071727de22e5e9d8baf0edac6f37da032)
 
 If you want to analyze the combined data of all EVM chains, it would clearly be too cumbersome to write the analyses one by one. Therefore, based on the spellbook of the dune platform, we have aggregated the data of the EntryPoint contracts of two versions on 9 major blockchains into two new data tables. These tables can currently be directly used on the dune platform for easy analysis. The specific source code can be found at:
 
