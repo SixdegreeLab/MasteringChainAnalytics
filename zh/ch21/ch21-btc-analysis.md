@@ -1,9 +1,9 @@
-# 如何设计一个Dshboard-以BTC指标CDD(Coin Day Destroyed)为例
+# 如何设计一个Dashboard-以BTC指标CDD(Coin Day Destroyed)为例
 ## 一、BTC CDD指标介绍
 
 ### 1.指标说明
 
-CDD 是 Coin Day Destroyed 的简称，在某种程度上我们可以认为它是对链上交易量指标(Transaction Volumn)做了一些改进。具体的改进就思路就是在评估链上活动(Transfer)的时候引入时间特征：在链上处于长时间HODL状态(没有被转移到其他钱包)的Token发生移动的时候，我们给这次的转账赋予更大的权重。
+CDD 是 Coin Day Destroyed 的简称，在某种程度上我们可以认为它是对链上交易量指标(Transaction Volumn)做了一些改进。具体的改进思路就是在评估链上活动(Transfer)的时候引入时间特征：在链上处于长时间HODL状态(没有被转移到其他钱包)的Token发生移动的时候，我们给这次的转账赋予更大的权重。
 
 这里我们引入一个新的概念叫币天(Coin Day)，`币天(Coin Day)  = Token数量 * 该Token保持HODL状态的天数`。
 
@@ -14,7 +14,7 @@ CDD 是 Coin Day Destroyed 的简称，在某种程度上我们可以认为它�
 
 ### 2.底层逻辑
 
-我们设计所有指标都是为了更好地刻画描述出我们想要反应的状况，对于这个指标来讲，它最终是希望反应长期持有者的一些行为。从这个角度来看这其实是一个Smart Money类型的指标，大家倾向于认为长期持有者是BTC早期的参与者，进而他们对BTC以及市场的理解是更聪明以及有经验的，如果他们的Token(长期处于HODL状态)发生了转移，那么很有可能是市场发生了一些变化促使他们采取了一些行动(在很多情况下是转到交易所或者通过OTC出售，但也存在其他的场景，不能一概而论)。
+我们设计所有指标都是为了更好地刻画描述出我们想要反应的状况，对于这个指标来讲，它最终是希望反映长期持有者的一些行为。从这个角度来看这其实是一个Smart Money类型的指标，大家倾向于认为长期持有者是BTC早期的参与者，进而他们对BTC以及市场的理解是更聪明以及有经验的，如果他们的Token(长期处于HODL状态)发生了转移，那么很有可能是市场发生了一些变化促使他们采取了一些行动(在很多情况下是转到交易所或者通过OTC出售，但也存在其他的场景，不能一概而论)。
 
 如果你经常用Glassnode，你会发现Glassnode上非常多的指标都是基于上述逻辑设计的，这个可以算是现有BTC链上数据分析的最重要的底层逻辑之一。
 
@@ -25,7 +25,7 @@ CDD 是 Coin Day Destroyed 的简称，在某种程度上我们可以认为它�
 UTXO是 Unspent Transaction Output的简称，即未花费的交易产出。BTC现有的运行机制中其实没有Balance的概念，每个钱包的Balance是通过将与该钱包拥有的所有UTXO中包含的BTC数量求和得到的。
 
 
-搜索到一篇文章感觉讲地比较通俗易懂，这里放一下链接：https://www.liaoxuefeng.com/wiki/1207298049439968/1207298275932480
+搜索到一篇文章感觉讲得比较通俗易懂，这里放一下链接：https://www.liaoxuefeng.com/wiki/1207298049439968/1207298275932480
 
 ## 二、 Dune相关表
 
@@ -39,7 +39,7 @@ UTXO是 Unspent Transaction Output的简称，即未花费的交易产出。BTC�
   - `block_time`：这次转出Transaction发生的时间
   - `tx_id`：这次转出Transaction的tx id
   - `value`：这次转出Transaction包含的BTC金额
-  - `spent_tx_id`：这次产生Input(花费)是源于那个Output(我这次花的是之前收到哪笔钱)
+  - `spent_tx_id`：这次产生Input（花费）是源于那个Output（我这次花的是之前收到哪笔钱）
     
 ![input_info.png](img//input_info.png)       
 
@@ -59,7 +59,7 @@ UTXO是 Unspent Transaction Output的简称，即未花费的交易产出。BTC�
 ### 1. 如何设计一个Dashboard
 #### 1.1 整体思路
 
-如何设计一个Dashbaord取决于我们使用Dashboard的最终目的。Dashbaord或者数据的最终目的是辅助人去做决策。在我看来数据能通过回答以下两个问题来辅助决策，能有效回答这两个问题才算是一个合格的Dashboard。
+如何设计一个Dashboard取决于我们使用Dashboard的最终目的。Dashbaord或者数据的最终目的是辅助人去做决策。在我看来数据能通过回答以下两个问题来辅助决策，能有效回答这两个问题才算是一个合格的Dashboard。
 
 `[a].`XXX 是什么？ 它有什么特征？
 
@@ -111,11 +111,11 @@ UTXO是 Unspent Transaction Output的简称，即未花费的交易产出。BTC�
 
 ![recent_trend.png](img//recent_trend.png)     
 
-PS：这里还是可以看到这轮下跌钱又明显的CDD异动的。
+PS：这里还是可以看到这轮下跌前有明显的CDD异动的。
 
 #### 2.2 波动分析
 
-这里我只做了3个纬度的拆解：
+这里我只做了3个维度的拆解：
 
 - 按照时间(小时)拆解，这样我就指标异动发生在大概什么时间【统计最新一天的数据】    
 

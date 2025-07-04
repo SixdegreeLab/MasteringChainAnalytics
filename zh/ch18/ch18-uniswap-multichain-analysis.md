@@ -140,7 +140,7 @@ order by 1, 2
 - [https://dune.com/queries/1928825](https://dune.com/queries/1928825)
 
 
-上面提到我们想要对比每日新增用户和每日留存用户数量及其占比情况。由于我们的查询结果已经按照区块链进行了分组，这种情况下相关可视化图表一次只能展示一项数据，无法在同一个图表中显示每日新增用户数量和每日留存用户数量这两个数据指标。这种情况下，我们可以使用Dune SQL引擎的Query of Query 功能，编写一个新的查询，使用上述查询结果作为数据源，筛选出具体的一个区块链的统计结果。因为不在需要按区块链进行分组，所以我们可以在一个图表中输出多项指标。
+上面提到我们想要对比每日新增用户和每日留存用户数量及其占比情况。由于我们的查询结果已经按照区块链进行了分组，这种情况下相关可视化图表一次只能展示一项数据，无法在同一个图表中显示每日新增用户数量和每日留存用户数量这两个数据指标。这种情况下，我们可以使用Dune SQL引擎的Query of Query 功能，编写一个新的查询，使用上述查询结果作为数据源，筛选出具体的一个区块链的统计结果。因为不再需要按区块链进行分组，所以我们可以在一个图表中输出多项指标。
 
 ```sql
 select block_date,
@@ -405,7 +405,7 @@ group by 1
 - CTE `token_list` 筛选出所有交易对中用到的Token 列表。
 - CTE `latest_token_price` 计算这些Token的当前价格。因为`prices.usd`中价格数据可能会有时间延迟，我们先取出最近1天内的数据，然后结合`row_number() over (partition by contract_address order by minute desc)`计算行号并只返回行号等于1的行，这些就是各个Token的最新价格记录。
 - CTE `token_transfer_detail_amount`中我们用`token_transfer_detail`转入转出明细关联`latest_token_price`最新价格数据得到转入转出Token的USD金额。
-- 最后输出结果的查询中，我们汇总的每个区块链的当前TVL已经所有链的TVL总和。
+- 最后输出结果的查询中，我们汇总的每个区块链的当前TVL以及所有链的TVL总和。
 
 分别生成一个Pie Chart 和一个Counter 图表。添加到数据看板后显示如下：
 
@@ -458,7 +458,7 @@ where block_date >= date('2022-01-01')
 order by 1, 2
 ```
 
-我们发现Optmism链存在部分异常数据，所以上面的查询中添加了条件`abs(amount_usd) < 1e9`来排除。为这个查询生成一个Area Chart图表。加入数据看板，显示效果如下：
+我们发现Optimism链存在部分异常数据，所以上面的查询中添加了条件`abs(amount_usd) < 1e9`来排除。为这个查询生成一个Area Chart图表。加入数据看板，显示效果如下：
 
 ![image_08.png](img/image_08.png)
 
@@ -512,7 +512,7 @@ order by 2 desc
 limit 100
 ```
 
-我们可以分别生成一个Bar Chart图表和一个Table 图表，输出TVL锁仓金额最多的流动资金池数据。
+我们可以分别生成一个Bar Chart图表和一个Table 图表，输出TVL（锁仓金额）最多的流动资金池数据。
 
 ![image_09.png](img/image_09.png)
 

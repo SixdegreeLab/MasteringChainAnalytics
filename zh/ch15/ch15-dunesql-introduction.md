@@ -11,7 +11,7 @@ Dune SQL需要注意的书写语法要点有几个：
 - Dune SQL的字符串类型和常用数值类型分别是`varchar`、`double`和`decimal(38, 0)`。
 - Dune SQL 不支持隐式类型转换。比如，Dune SQL中，不能将`'2022-10-01'`直接与 block_time 进行比较，需要用 `date('2022-10-01')`等函数显式转换为日期后才能比较。不能直接将数值类型和字符串连接，要用`cast(number_value as varchar)`转换为字符串后才能连接。
 
-Dune 文档提供了一份比较详细的语法对照表表，链接是：[Syntax Comparison](https://dune.com/docs/reference/dune-v2/query-engine/#syntax-comparison)，大家可以参考。下图列出了部分差异对照：
+Dune 文档提供了一份比较详细的语法对照表，链接是：[Syntax Comparison](https://dune.com/docs/reference/dune-v2/query-engine/#syntax-comparison)，大家可以参考。下图列出了部分差异对照：
 
 ![image_01.png](img/image_01.png)
 

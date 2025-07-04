@@ -2,7 +2,7 @@
 
 ## 背景知识
 
-[NFT(Non-Fungable Token)](https://ethereum.org/zh/nft/)非同质化代币，他是一个遵循[ERC721](https://eips.ethereum.org/EIPS/eip-721)标准的代币，相比于遵从ERC20标准的同质化代币而言，传统上NFT最典型的特点是每个代币都具有不可分割、不可替代、独一无二等特点。NFT的用途一般有：
+[NFT(Non-Fungible Token)](https://ethereum.org/zh/nft/)非同质化代币，它是一个遵循[ERC721](https://eips.ethereum.org/EIPS/eip-721)标准的代币，相比于遵从ERC20标准的同质化代币而言，传统上NFT最典型的特点是每个代币都具有不可分割、不可替代、独一无二等特点。NFT的用途一般有：
 
 - 数字艺术品/藏品
 - 游戏内物品
@@ -106,7 +106,7 @@ uint256 constant receivedItemsHash_ptr = 0x60;
  *
 ```
 
-比如张三以10ETH挂单了一个编号[3638](https://opensea.io/assets/ethereum/0xed5af388653567af2f388e6224dc7c4b3241c544/3638)的Azuki的NFT，那么他会触发发fulfillBasicOrder函数，交易成功后，会出发OrderFulfilled这个event事件，同时记录到链上，具体信息查看；[Etherscan链接](https://etherscan.io/tx/0x9beb69ec6505e27f845f508169dae4229e851a8d7c7b580abef110bf831dc338https://etherscan.io/tx/0x9beb69ec6505e27f845f508169dae4229e851a8d7c7b580abef110bf831dc338) 和[dune链接](https://dune.com/queries/1660679)。
+比如张三以10ETH挂单了一个编号[3638](https://opensea.io/assets/ethereum/0xed5af388653567af2f388e6224dc7c4b3241c544/3638)的Azuki的NFT，那么他会触发fulfillBasicOrder函数，交易成功后，会触发OrderFulfilled这个event事件，同时记录到链上，具体信息查看；[Etherscan链接](https://etherscan.io/tx/0x9beb69ec6505e27f845f508169dae4229e851a8d7c7b580abef110bf831dc338https://etherscan.io/tx/0x9beb69ec6505e27f845f508169dae4229e851a8d7c7b580abef110bf831dc338) 和[dune链接](https://dune.com/queries/1660679)。
 
 
 

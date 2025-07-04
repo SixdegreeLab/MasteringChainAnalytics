@@ -8,7 +8,7 @@
 
 **获取单个ERC20代币的最新价格:**
 
-`prices.usd`表中的价格是按分钟记录的，我们只需要根据代币的符号及其归属的区块链取最新的一条记录即可，如果有合约地址，也可以使用合约地址来查询。`usd_latest`表中则记录了每种代币的最新价格，每个代币只有一行记录。以下几种方式都可以查询单个代币（以WETH为例）的最新价格。因为价格信息按每分钟每个代币一条记录的方式保存，具体到每一个代币其记录数量也很庞大，我们通过限制读取最新的部分数据来提高查询的效率。由于偶尔可能会存在一定的延迟，下面的实例中我们从过去6小时的记录里面读取最新的一条，确保能取到价格。
+`prices.usd`表中的价格是按分钟记录的，我们只需要根据代币的符号及其归属的区块链取最新的一条记录即可，如果有合约地址，也可以使用合约地址来查询。`usd_latest`表中则记录了每种代币的最新价格，每个代币只有一行记录。以下几种方式都可以查询单个代币（以WETH为例）的最新价格。因为价格信息按每分钟每个代币一条记录的方式保存，具体到每一个代币其记录数量也很庞大，我们通过限制只读取最新部分的数据来提高查询的效率。由于偶尔可能会存在一定的延迟，下面的实例中我们从过去6小时的记录里面读取最新的一条，确保能取到价格。
 
 **使用代币符号值读取`prices.usd`表的最新价格信息：**
 
@@ -39,7 +39,7 @@ where symbol = 'WETH'
     and blockchain = 'ethereum'
 ```
 
-读取`prices.usd_latest`表的查询更加简洁。但是因为它实际上是`prices.usd`表的一个视图（参考源代码：[prices_usd_latest](https://github.com/duneanalytics/spellbook/blob/main/models/prices/prices_usd_latest.sql)），相比来说查询执行的效率略低。
+读取`prices.usd_latest`表的查询更加简洁。但由于为它实际上是`prices.usd`表的一个视图（参考源代码：[prices_usd_latest](https://github.com/duneanalytics/spellbook/blob/main/models/prices/prices_usd_latest.sql)），相比来说查询执行的效率略低。
 
 
 ## 查询多个ERC20代币的最新价格
@@ -70,7 +70,7 @@ from (
 where row_num = 1
 ```
 
-因为我们要同时读取多个代币的最新价格，就不能简单地使用`limit`子句限制结果数量来得到需要的结果。因为我们实际需要返回的是每个不同的代币分别按`minute`字段降序排序后取第一条记录。上面的查询中，我们使用了`row_number() over (partition by symbol order by minute desc) as row_num`来生成一个新的列，这个列的值按照`symbol`分组并按`minute`字段降序排序来生成，即每个不同的代币都会生成自己的1，2，3，4...这样的行号序列值。我们将其放到一个子查询中，外层查询中筛选`where row_num = 1`的记录，就是每个代币最新的记录。这种方法看起来稍显复杂，但是实际应用中经常需要用到类似的查询，通过`row_number()`函数生成新的列然后用于过滤数据。
+因为我们要同时读取多个代币的最新价格，就不能简单地使用`limit`子句限制结果数量来得到需要的结果。因为我们实际需要返回的是每个不同的代币分别按`minute`字段降序排序后取第一条记录。上面的查询中，我们使用了`row_number() over (partition by symbol order by minute desc) as row_num`来生成一个新的列，这个列的值按照`symbol`分组并按`minute`字段降序排序来生成，即每个不同的代币都会生成自己的1，2，3，4...这样的行号序列值。我们将其放到一个子查询中，外层查询中筛选`where row_num = 1`的记录，就是每个代币最新的记录。这种方法看起来稍显复杂，但是实际应用中经常需要用到，通过`row_number()`函数生成新列后用于过滤数据。
 
 ## 查询单个ERC20代币的每日平均价格
 
@@ -87,7 +87,7 @@ group by 1
 order by 1
 ```
 
-如果我们同时还需要返回其他字段，可以把它们加入SELECT列表并同时加入到GROUP BY里面。这是因为，当使用`group by`子句时，SELECT列表中出现的字段如果不是汇总函数就必须同时出现在GROUP BY子句中。SQL修改后如下：
+如果还需要返回其他字段，可以将它们加入SELECT列表，并同时加入到GROUP BY子句中。这是因为，当使用`group by`子句时，SELECT列表中出现的字段如果不是汇总函数就必须同时出现在GROUP BY子句中。SQL修改后如下：
 
 ```sql
 select date_trunc('day', minute) as block_date,
@@ -260,7 +260,7 @@ select * from current_token_price
 
 提示：本小节的内容相对比较复杂，如果觉得有难度，可以直接跳过。
 
-一种比较特殊的情况是当分析一个新的DeFi项目或者一个Dune新近支持的区块链的时候。此时还没有相应的`prices.usd`数据，对应项目的智能合约还没有被提交解析完成，交易记录也没有被集成到`dex.trades`这样的魔法表中。此时，我们唯一能访问的就是`transactions`和`logs`这样的原始数据表。此时，我们可以先找到几个交易记录，分析在区块链上显示的事件日志的详细，确定事件的`data`值里面包含的数据类型和相对位置，再据此手动解析数据用于换算价格。
+一种特殊情况是分析新上线的DeFi项目或Dune新支持的区块链时，此时还没有相应的`prices.usd`数据，对应项目的智能合约也未被解析，交易记录也未集成到`dex.trades`等魔法表中。此时只能访问`transactions`和`logs`等原始数据表。此时，我们可以先找到几个交易记录，分析在区块链上显示的事件日志的详细，确定事件的`data`值里面包含的数据类型和相对位置，再据此手动解析数据用于换算价格。
 
 比如，我们需要计算Optimism链上$OP代币的价格，并且假定此时满足前述所有情况，必须从交易事件日志原始表来计算价格。我们先根据项目方提供的线索（合约地址、案例哈希等）找到一个兑换交易记录：[https://optimistic.etherscan.io/tx/0x1df6dda6a4cffdbc9e477e6682b982ca096ea747019e1c0dacf4aceac3fc532f](https://optimistic.etherscan.io/tx/0x1df6dda6a4cffdbc9e477e6682b982ca096ea747019e1c0dacf4aceac3fc532f)。这是一个兑换交易，其中最后一个`logs`日志的`topic1`值“0xd78ad95fa46c994b6551d0da85fc275fe613ce37657fb8d5e3d130840159d822”对应“Swap(address,uint256,uint256,uint256,uint256,address)”方法。这个可以通过查询`decoding.evm_signatures`表来进一步验证（这是因为Optimism是EVM兼容的区块链，其使用的相关函数与Ethereum相同）。
 
