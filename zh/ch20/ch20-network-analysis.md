@@ -2,7 +2,7 @@
 
 ## 写在前边
 
-所有的公链本身就是一个大的网络，分析链上数据大概率是逃不掉关于网络的分析。常用的数据平台比如Dune现有的可视化功能其实目前很难比较好地刻画公链上各个节点之间的关系。这里我们以之前传的沸沸扬扬的FTX"黑客"地址(0x59ABf3837Fa962d6853b4Cc0a19513AA031fd32b)为例做一些网络分析(具体是黑客还是巴拿马政府这里就不细究了)，去看下这个地址下的ETH都去了哪里(这里我们看从这个地址往外的2层关系)
+所有的公链本身就是一个大的网络，分析链上数据时，网络分析几乎是不可避免的。常用的数据平台比如Dune现有的可视化功能其实目前很难比较好地刻画公链上各个节点之间的关系。这里我们以之前传的沸沸扬扬的FTX"黑客"地址(0x59ABf3837Fa962d6853b4Cc0a19513AA031fd32b)为例做一些网络分析(具体是黑客还是巴拿马政府这里就不细究了)，去看下这个地址下的ETH都去了哪里(这里我们看从这个地址往外的2层关系)
 
 整个过程中用到的东西
 
@@ -48,15 +48,15 @@ SQL比较复杂，就不展开说了，大家感兴趣去URL里自己研究
 
   ![image-20221214170041781.png](img/image-20221214170041781.png)
 
-#### 二、用pandas读取本地文件到Dataframe并通过Etherscan API补充Balnace列
+#### 二、用pandas读取本地文件到Dataframe并通过Etherscan API补充Balance列
 
 - 将dune的数据下载到本地(可以通过Dune的API或者通过直接复制粘贴)通过pandas从本地读取在dune中获得的数据
 
 ```python
 ## 路径改成自己本地的文件路径
-df_target_label  = pd.read_csv(u'YOUE FILE PATH/graph_raw_label.csv')
-df_target_relation  = pd.read_csv(u'YOUE FILE PATH/graph_relation.csv')
-##取所有addresss list用于请求API
+df_target_label  = pd.read_csv(u'YOUR FILE PATH/graph_raw_label.csv')
+df_target_relation  = pd.read_csv(u'YOUR FILE PATH/graph_relation.csv')
+##取所有address list用于请求API
 address_list=list(df_target_label.address.values)
 balance_list=[]
 print(address_list)
@@ -93,9 +93,9 @@ df_target_label=df_target_label.merge(df_balance,left_on=['address'],right_on=['
 print('end')
 ```
 
-- 将list中的Balance放入Dataframe中并定一个列Balance_level(根据Balance大小打标签)后续控制网络图中Node的大小
+- 将list中的Balance放入Dataframe中并定一个列Balance_level（根据Balance大小打标签）后续控制网络图中Node的大小
 ```python
-##定一个一个函数根据值的大小去返回不同的标签，类似于SQL里的case when
+##定义一个函数根据值的大小去返回不同的标签，类似于SQL里的case when
 
 def get_balance_level(x):
     if x ==0 :
@@ -293,7 +293,7 @@ print('end')
 
 - Node大小
 
-  - Node越大表明对应地址的余额越大，其中最大的Node表示当前地址那Balance余额大于10000ETH
+  - Node越大表明对应地址的余额越大，其中最大的Node表示当前地址的Balance余额大于10000ETH
 
   可以看出与FTX"黑客"地址有关的所有地址中目前至少还有12个地址有超过10000个ETH，也就是说至少有12万ETH还没有被"黑客"抛售
 

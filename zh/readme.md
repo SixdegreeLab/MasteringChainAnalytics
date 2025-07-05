@@ -72,4 +72,4 @@
 与此同时，有非常多的贡献者也参与到了此书的编写中，非常感谢他们的努力付出。
 
 
-- george-taotaome, chenxsan, Brendan, 肖宁, g.c., ken, shell, yueyan, wodeche,Winkey
+- george-taotaome, chenxsan, Brendan, 肖宁, g.c., ken, shell, yueyan, wodeche, Winkey

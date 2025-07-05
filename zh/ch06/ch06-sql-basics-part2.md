@@ -20,7 +20,7 @@ select now() -- 当前系统日期和时间
 
 ### 2. DateAdd()、Date_Add()、Date_Sub()和DateDiff()函数
 
-函数`dateadd(unit, value, expr)`在一个日期表达式上添加一个的日期时间单位。这里的“日期时间单位”使用常量表示，常用的有HOUR、DAY、WEEK、MONTH等。其中的value值可以为负数，表示从后面的表达式减去对应的日期时间单位。也正是因为可以用负数表示减去一个日期时间间隔，所以不需要也确实没有`datesub()`函数。
+函数`dateadd(unit, value, expr)`在一个日期表达式上添加一个日期时间单位。这里的“日期时间单位”使用常量表示，常用的有HOUR、DAY、WEEK、MONTH等。其中的value值可以为负数，表示从后面的表达式减去对应的日期时间单位。因为可以用负数表示减去一个日期时间间隔，所以不需要也确实没有`datesub()`函数。
 
 函数`date_add(startDate, numDays)`在一个日期表达式上加上或者减去指定的天数，返回另外一个日期。参数`numDays`为正数表示返回`startDate`之后指定天数的日期，为负表示返回之前指定天数的日期。函数`date_sub(startDate, numDays)`作用类似，但表示的意思正好相反，即负数表示返回之后的日期，正数表示之前的日期。
 
@@ -40,7 +40,7 @@ select date_add('MONTH', 2, current_date) -- 当前日期加2个月后的日期
 
 ### 3. INTERVAL 类型
 
-Interval是一种数据类型，以指定的日期时间单位表示某个时间间隔。以Interval 表示的时间间隔使用起来非常便利，避免被前面的几个名称相似、作用也类似的日期函数困扰。
+Interval是一种数据类型，以指定的日期时间单位表示某个时间间隔。以Interval 表示的时间间隔使用起来非常便利，避免被前面的几个名称相似、作用也类似的日期函数混淆。
 
 ```sql
 select now() - interval '2' hour -- 2个小时之前
